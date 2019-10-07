@@ -1,17 +1,51 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, TextInput, Button, Statusbar} from 'react-native';
+import {Platform, StyleSheet, Text, View, TextInput, Button, StatusBar, Switch} from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons'
+import Feather from 'react-native-vector-icons/Feather'
 
 
 export default class Login extends Component {
+  constructor(props){
+    super(props);
+    this.state = {rememberPass: false};
+  }
+
   render() {
     return (
       
       <View style={styles.container}>
+        
+
+        <StatusBar backgroundColor="#194c40" barStyle="light-content" />
         <View style={styles.loginCard}>
-          <TextInput placeholder="Digite aqui o seu email"  underlineColorAndroid="#0000ff" />
-          <TextInput  underlineColorAndroid='#0000ff' textContentType='password' placeholder="Senha" secureTextEntry={true}/>
+          <View style={styles.email}>
+            <View style={{justifyContent: 'center', }}>
+              <Icon name="person" size={25} color="black" style={{alignSelf: 'baseline'}}/>
+            </View>
+            <View style={{flex: 1, justifyContent: 'center'}}>
+              <TextInput placeholder="Digite aqui o seu email"  underlineColorAndroid="#0000ff" />
+            </View>
+          </View>
+          <View>
+            <View style={styles.password}>
+              <View style={{justifyContent: 'center', }}>
+                <Icon name="lock" size={25} color="black" style={{alignSelf: 'baseline'}}/>
+              </View>
+              <View style={{justifyContent: 'center', flex: 1 }}>
+                <TextInput  underlineColorAndroid='#0000ff' textContentType='password' placeholder="Senha" secureTextEntry={true}/>
+              </View>
+            </View>
+          </View>
+          
           <View style={styles.lembrarSenha}>
-            <Text >Lembrar minha senha</Text>
+            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+              <Text >Lembrar minha senha</Text>
+            </View>
+            <View style={{flex: 1, alignItems: 'center'}}>
+              <Switch value={this.state.rememberPass} onValueChange={()=>{
+                this.setState({rememberPass: !this.state.rememberPass});
+              }}/>
+            </View>
           </View>
         </View>
         <View style={styles.btn}>
@@ -25,25 +59,35 @@ export default class Login extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    //justifyContent: 'center',
-    //alignItems: 'center',
-    //backgroundColor: '#F5FCFF',
     backgroundColor: '#3ca597',
   },
   loginCard:{
     //height: 40,
+    elevation: 5,
     marginTop: 50,
     marginBottom: 10, 
     marginLeft: 20, 
     marginRight: 20, 
     backgroundColor: '#ffffff'
   },
+  email: {
+    flex: 0,
+    flexDirection: 'row',
+    
+  },
+  password: {
+    flex: 0,
+    flexDirection: 'row',
+  },
   lembrarSenha: {
-    height: 30
+    height: 40,
+    flex: 0,
+    flexDirection: 'row'
   },
   btn:{
     marginLeft: 20, 
     marginRight: 20,
+    elevation: 5
   },
   welcome: {
     fontSize: 20,
