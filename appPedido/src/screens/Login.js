@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, TextInput, Button, StatusBar, Switch, Picker} from 'react-native';
+import {StyleSheet, Text, View, TextInput, Button, StatusBar, Switch, Picker} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import Feather from 'react-native-vector-icons/Feather'
 
 
 export default class Login extends Component {
@@ -14,9 +13,7 @@ export default class Login extends Component {
     return (
       
       <View style={styles.container}>
-        
-
-        <StatusBar backgroundColor="#194c40" barStyle="light-content" />
+      <StatusBar backgroundColor="#194c40" barStyle="light-content" />
         <View style={styles.loginCard}>
           <View style={styles.user}>
             <View style={{justifyContent: 'center', }}>
