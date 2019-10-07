@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, TextInput, Button, StatusBar, Switch} from 'react-native';
+import {Platform, StyleSheet, Text, View, TextInput, Button, StatusBar, Switch, Picker} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import Feather from 'react-native-vector-icons/Feather'
 
@@ -7,7 +7,7 @@ import Feather from 'react-native-vector-icons/Feather'
 export default class Login extends Component {
   constructor(props){
     super(props);
-    this.state = {rememberPass: false};
+    this.state = {rememberPass: false, language: ''};
   }
 
   render() {
@@ -18,12 +18,20 @@ export default class Login extends Component {
 
         <StatusBar backgroundColor="#194c40" barStyle="light-content" />
         <View style={styles.loginCard}>
-          <View style={styles.email}>
+          <View style={styles.user}>
             <View style={{justifyContent: 'center', }}>
               <Icon name="person" size={25} color="black" style={{alignSelf: 'baseline'}}/>
             </View>
             <View style={{flex: 1, justifyContent: 'center'}}>
-              <TextInput placeholder="Digite aqui o seu email"  underlineColorAndroid="#0000ff" />
+              <Picker
+                selectedValue={this.state.language}
+                mode="dialog"
+                onValueChange={(itemValue, itemIndex) =>
+                  this.setState({language: itemValue})
+                }>
+                <Picker.Item label="Java" value="java" />
+                <Picker.Item label="JavaScript" value="js" />
+              </Picker>
             </View>
           </View>
           <View>
@@ -32,7 +40,7 @@ export default class Login extends Component {
                 <Icon name="lock" size={25} color="black" style={{alignSelf: 'baseline'}}/>
               </View>
               <View style={{justifyContent: 'center', flex: 1 }}>
-                <TextInput  underlineColorAndroid='#0000ff' textContentType='password' placeholder="Senha" secureTextEntry={true}/>
+                <TextInput  /*underlineColorAndroid='#0000ff'*/ textContentType='password' placeholder="Senha" secureTextEntry={true}/>
               </View>
             </View>
           </View>
@@ -68,16 +76,20 @@ const styles = StyleSheet.create({
     marginBottom: 10, 
     marginLeft: 20, 
     marginRight: 20, 
-    backgroundColor: '#ffffff'
+    backgroundColor: '#ffffff',
+    borderRadius: 5
   },
-  email: {
+  user: {
     flex: 0,
     flexDirection: 'row',
-    
+    borderBottomWidth: 1,
+    borderBottomColor: 'gray'
   },
   password: {
     flex: 0,
     flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderBottomColor: 'gray'
   },
   lembrarSenha: {
     height: 40,
