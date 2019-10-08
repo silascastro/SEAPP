@@ -7,6 +7,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 const DATA = [
   {title: 'Pedidos', subtitle: 'Crie e gerencie os pedidos', icon: 'local-offer', type: Icon}, {title: 'Clientes', subtitle: 'Analise e gerencie seus clientes', icon: 'people', type: Icon},{title: 'Produtos', subtitle: 'Analise e gerencie seus produtos', icon: 'md-cube' , type: Ionicons},{title: 'Financeiro', subtitle: 'Posição financeira dos clientes', icon: 'finance',type: MaterialCommunityIcons}
 ];
+
 export default class Home extends Component<Props> {
   constructor(props){
     super(props);
@@ -17,7 +18,7 @@ export default class Home extends Component<Props> {
     title: 'Home',
     headerTintColor: 'white',
     headerStyle: {
-      backgroundColor: '#008577',
+      backgroundColor: '#247869',
     },
   };
 

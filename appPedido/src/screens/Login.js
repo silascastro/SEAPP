@@ -9,11 +9,11 @@ export default class Login extends Component {
     this.state = {rememberPass: false, language: ''};
   }
 
-  static navigationOptions ={
+  static navigationOptions = {
     title: 'Login',
     headerTintColor: 'white',
     headerStyle: {
-      backgroundColor: '#008577',
+      backgroundColor: '#247869',
     },
   };
 
@@ -72,7 +72,7 @@ export default class Login extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#3ca597',
+    backgroundColor: '#ffffff'/*'#3ca597'*/,
   },
   loginCard:{
     //height: 40,
