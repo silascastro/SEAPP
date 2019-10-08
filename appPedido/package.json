@@ -1,5 +1,5 @@
 {
-  "name": "appPedido",
+  "name": "apppedido",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -24,5 +24,9 @@
   },
   "jest": {
     "preset": "react-native"
-  }
+  },
+  "description": "app",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC"
 }
