@@ -9,6 +9,14 @@ export default class Login extends Component {
     this.state = {rememberPass: false, language: ''};
   }
 
+  static navigationOptions ={
+    title: 'Login',
+    headerTintColor: 'white',
+    headerStyle: {
+      backgroundColor: '#008577',
+    },
+  };
+
   render() {
     return (
       
@@ -54,7 +62,7 @@ export default class Login extends Component {
           </View>
         </View>
         <View style={styles.btn}>
-          <Button title="login" color="#124d34" />
+          <Button title="login" color="#124d34" onPress={()=>this.props.navigation.navigate('Home')} />
         </View>
       </View>
     );

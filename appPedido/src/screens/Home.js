@@ -13,6 +13,14 @@ export default class Home extends Component<Props> {
     this.state = {};
   }
 
+  static navigationOptions ={
+    title: 'Home',
+    headerTintColor: 'white',
+    headerStyle: {
+      backgroundColor: '#008577',
+    },
+  };
+
   componentDidMount(){
     //let aux = []
     //this.setState({menu: })
