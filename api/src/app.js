@@ -10,6 +10,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(logger());
 app.use('/', indexRoute);
-app.use('/func', functionarioRoute);
+app.use('/funcionarios', functionarioRoute);
+
 
 module.exports = app;
