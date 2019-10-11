@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
+
 const DATA = [
   {title: 'Pedidos', subtitle: 'Crie e gerencie os pedidos', icon: 'local-offer', type: Icon}, {title: 'Clientes', subtitle: 'Analise e gerencie seus clientes', icon: 'people', type: Icon},{title: 'Produtos', subtitle: 'Analise e gerencie seus produtos', icon: 'md-cube' , type: Ionicons},{title: 'Financeiro', subtitle: 'Posição financeira dos clientes', icon: 'finance',type: MaterialCommunityIcons}
 ];
@@ -14,13 +15,22 @@ export default class Home extends Component<Props> {
     this.state = {loading: true};
   }
 
-  static navigationOptions ={
-    title: 'Home',
-    headerTintColor: 'white',
-    headerStyle: {
-      backgroundColor: '#247869',
-    },
-  };
+  static navigationOptions = ({navigation}) => ({
+      title: 'Home',
+      headerTintColor: '#ffffff',
+      headerStyle: {
+        backgroundColor: '#247869',
+      },
+      headerTitleStyle: {
+        fontWeight: 'bold',
+        alignSelf: 'center'
+        },
+        tabBarVisible: true,
+        headerRight: <View style={{margin: 10}}>
+              <Icon name={'search'} size={25} color="#ffffff" onPress={()=>navigation.navigate('Search')}/>
+            </View>
+
+  });
 
   componentDidMount(){
     //let aux = []
@@ -28,6 +38,7 @@ export default class Home extends Component<Props> {
     setTimeout(() => {
       this.setState({loading: false});
     }, 3000);
+    
   }
 
   render() {

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {ActivityIndicator,StyleSheet, Text, View, TextInput, Button, StatusBar, Switch, Picker, NativeModules, DeviceEventEmitter, NativeEventEmitter} from 'react-native';
+import {ActivityIndicator,StyleSheet, Text, View, TextInput, Button,Alert ,StatusBar, Switch, Picker, NativeModules, DeviceEventEmitter, NativeEventEmitter} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const eventEmitter = new NativeEventEmitter(NativeModules.LoginModule);
@@ -31,7 +31,7 @@ export default class Login extends Component {
   }
 
   getUsers(){
-    fetch('http://192.168.0.4:3000/funcionarios', {
+    fetch('http://192.168.0.5:3000/funcionarios', {
       method: 'GET',
       headers: {
         Accept: 'application/json',
@@ -48,13 +48,16 @@ export default class Login extends Component {
       }
       this.setState({usuarios: aux});
     }).catch((err)=>{
-      console.log(err);
+      Alert.alert('Atenção', 'erro ao conectar-se com o servidor!');
     });
   }
 
   doLogin(user){
+    if(user==""){
+      Alert.alert('Atenção', 'nenhum usuário selecionado!');
+    }else{
       this.setState({loading: true});
-      fetch('http://192.168.0.4:3000/funcionarios/'+user, {
+      fetch('http://192.168.0.5:3000/funcionarios/'+user, {
         method: 'GET',
         headers: {
           Accept: 'application/json',
@@ -74,9 +77,9 @@ export default class Login extends Component {
         }
       }).catch((err)=>{
         this.setState({loading: false});
-        alert('senha incorreta!');
+        
       });
-
+    }
   }
   
 
@@ -134,8 +137,10 @@ export default class Login extends Component {
         </View>
         <View style={styles.btn}>
           <Button title="login" color="#124d34" onPress={()=>{
-            
-            this.doLogin(this.state.userSelect);
+            if(this.state.password!='')
+              this.doLogin(this.state.userSelect);
+            else
+            Alert.alert('Atenção', 'digite a sua senha!');
             
             }/**/
           }/>
