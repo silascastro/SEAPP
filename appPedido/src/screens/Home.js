@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, FlatList, TouchableNativeFeedback} from 'react-native';
+import {Platform, StyleSheet, Text, View, FlatList, TouchableNativeFeedback, ActivityIndicator} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -11,7 +11,7 @@ const DATA = [
 export default class Home extends Component<Props> {
   constructor(props){
     super(props);
-    this.state = {};
+    this.state = {loading: true};
   }
 
   static navigationOptions ={
@@ -25,10 +25,16 @@ export default class Home extends Component<Props> {
   componentDidMount(){
     //let aux = []
     //this.setState({menu: })
+    setTimeout(() => {
+      this.setState({loading: false});
+    }, 3000);
   }
 
   render() {
+    
     return (
+      this.state.loading?
+      <ActivityIndicator size="large"/>:
       <View style={styles.container}>
         <FlatList
           style={{}}

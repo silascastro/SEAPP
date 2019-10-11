@@ -32,6 +32,7 @@ public class MainApplication extends Application implements ReactApplication {
             new RNScreensPackage(),
             new RNGestureHandlerPackage(),
             new ReanimatedPackage(),
+            new LoginPackage(),
           new VectorIconsPackage()
       );
     }

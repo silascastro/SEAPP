@@ -12,9 +12,8 @@ exports.get = async(req, res, next) => {
 }
 
 exports.getOne = async(req, res, next) => {
-    var id = req.params.id;
-    console.log(id);
-    tbfuncionario.findOne({where: {id_funcionario:id}}).then(resp => {
+    var nome_param = req.params.nome;
+    tbfuncionario.findOne({where: {nome: nome_param}}).then(resp => {
         if(resp){
             res.status(200).send(resp);
         }

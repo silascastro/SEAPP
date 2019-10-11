@@ -3,7 +3,7 @@ const router = express.Router();
 const funcionarioController = require('../controllers/funcionarioController');
 
 router.get('/',funcionarioController.get);
-router.get('/:id',funcionarioController.getOne);
+router.get('/:nome',funcionarioController.getOne);
 
 
 module.exports = router;

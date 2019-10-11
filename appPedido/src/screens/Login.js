@@ -1,12 +1,14 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, TextInput, Button, StatusBar, Switch, Picker} from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons'
+import {StyleSheet, Text, View, TextInput, Button, StatusBar, Switch, Picker, NativeModules, DeviceEventEmitter, NativeEventEmitter} from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
-
+const eventEmitter = new NativeEventEmitter(NativeModules.LoginModule);
+const LoginModule = NativeModules.LoginModule;
 export default class Login extends Component {
   constructor(props){
     super(props);
-    this.state = {rememberPass: false, language: ''};
+    this.state = {rememberPass: false, userSelect: '', usuarios: [],user: '', password: ''};
+
   }
 
   static navigationOptions = {
@@ -17,7 +19,68 @@ export default class Login extends Component {
     },
   };
 
+  componentDidMount(){
+    this. getUsers();
+    /*   
+    eventEmitter.addListener(
+      'LoginStatus', (e) =>{
+        console.log(e);
+      }
+    );
+    LoginModule.getLoginStatus();*/
+  }
+
+  getUsers(){
+    fetch('http://192.168.0.4:3000/funcionarios', {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      /*body: JSON.stringify({
+        firstParam: 'yourValue',
+        secondParam: 'yourOtherValue',
+      }),*/
+    }).then((response)=> response.json()).then((resp) => {
+      var aux = [];
+      for(let e in resp){
+        aux.push(resp[e]);
+      }
+      this.setState({usuarios: aux});
+    }).catch((err)=>{
+      console.log(err);
+    });
+  }
+
+  doLogin(user){
+      fetch('http://192.168.0.4:3000/funcionarios/'+user, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        /*body: JSON.stringify({
+          firstParam: 'yourValue',
+          secondParam: 'yourOtherValue',
+        }),*/
+      }).then((response)=> response.json()).then((resp) => {
+        if(this.state.password == resp.senha){
+          LoginModule.login(this.state.user,this.state.password);
+          this.props.navigation.navigate('Home');
+        }else{
+          alert('senha incorreta!');
+        }
+      }).catch((err)=>{
+        alert('senha incorreta!');
+      });
+  }
+  
+
   render() {
+    let serviceItems = this.state.usuarios.map( (s, i) => {
+      console.log(s);
+      return <Picker.Item key={i} value={s.nome} label={s.nome} />
+    });
     return (
       
       <View style={styles.container}>
@@ -29,13 +92,12 @@ export default class Login extends Component {
             </View>
             <View style={{flex: 1, justifyContent: 'center'}}>
               <Picker
-                selectedValue={this.state.language}
+                selectedValue={this.state.userSelect}
                 mode="dialog"
                 onValueChange={(itemValue, itemIndex) =>
-                  this.setState({language: itemValue})
+                  this.setState({userSelect: itemValue})
                 }>
-                <Picker.Item label="Java" value="java" />
-                <Picker.Item label="JavaScript" value="js" />
+                  {serviceItems}
               </Picker>
             </View>
           </View>
@@ -45,7 +107,9 @@ export default class Login extends Component {
                 <Icon name="lock" size={25} color="black" style={{alignSelf: 'baseline'}}/>
               </View>
               <View style={{justifyContent: 'center', flex: 1 }}>
-                <TextInput  /*underlineColorAndroid='#0000ff'*/ textContentType='password' placeholder="Senha" secureTextEntry={true}/>
+                <TextInput  /*underlineColorAndroid='#0000ff'*/value={this.state.password} select textContentType='password' placeholder="Senha" secureTextEntry={true}
+                  onChangeText={(text)=>this.setState({password:text})}
+                />
               </View>
             </View>
           </View>
@@ -62,7 +126,12 @@ export default class Login extends Component {
           </View>
         </View>
         <View style={styles.btn}>
-          <Button title="login" color="#124d34" onPress={()=>this.props.navigation.navigate('Home')} />
+          <Button title="login" color="#124d34" onPress={()=>{
+            
+            this.doLogin(this.state.userSelect);
+            
+            }/**/
+          }/>
         </View>
       </View>
     );

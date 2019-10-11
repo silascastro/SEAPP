@@ -18,7 +18,7 @@ exports.getOneClienteByName = async(req, res, next) => {
         if(resp){
             res.status(200).send(resp);
         }
-        res.status(404).send({msg: 'Funcionário não encontrado!'});
+        res.status(404).send({msg: 'Cliente não encontrado!'});
     }).catch((e)=>{
         res.status(500).send(e);
     });
