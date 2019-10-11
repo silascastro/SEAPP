@@ -3,6 +3,7 @@ import {createStackNavigator} from 'react-navigation-stack';
 
 import Login from './screens/Login';
 import Home from './screens/Home';
+import AuthLoading from './screens/AuthLoading';
 
 const Routes = createAppContainer(
     createStackNavigator({Login: Login, Home: Home},{

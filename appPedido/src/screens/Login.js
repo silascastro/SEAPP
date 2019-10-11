@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, TextInput, Button, StatusBar, Switch, Picker, NativeModules, DeviceEventEmitter, NativeEventEmitter} from 'react-native';
+import {ActivityIndicator,StyleSheet, Text, View, TextInput, Button, StatusBar, Switch, Picker, NativeModules, DeviceEventEmitter, NativeEventEmitter} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const eventEmitter = new NativeEventEmitter(NativeModules.LoginModule);
@@ -7,7 +7,7 @@ const LoginModule = NativeModules.LoginModule;
 export default class Login extends Component {
   constructor(props){
     super(props);
-    this.state = {rememberPass: false, userSelect: '', usuarios: [],user: '', password: ''};
+    this.state = {rememberPass: false, userSelect: '', usuarios: [],user: '', password: '', loading: false};
 
   }
 
@@ -53,6 +53,7 @@ export default class Login extends Component {
   }
 
   doLogin(user){
+      this.setState({loading: true});
       fetch('http://192.168.0.4:3000/funcionarios/'+user, {
         method: 'GET',
         headers: {
@@ -64,6 +65,7 @@ export default class Login extends Component {
           secondParam: 'yourOtherValue',
         }),*/
       }).then((response)=> response.json()).then((resp) => {
+        this.setState({loading: false});
         if(this.state.password == resp.senha){
           LoginModule.login(this.state.user,this.state.password);
           this.props.navigation.navigate('Home');
@@ -71,18 +73,23 @@ export default class Login extends Component {
           alert('senha incorreta!');
         }
       }).catch((err)=>{
+        this.setState({loading: false});
         alert('senha incorreta!');
       });
+
   }
   
 
   render() {
     let serviceItems = this.state.usuarios.map( (s, i) => {
-      console.log(s);
       return <Picker.Item key={i} value={s.nome} label={s.nome} />
     });
     return (
-      
+      this.state.loading?
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <ActivityIndicator size="large"/>
+        <Text>Carregando</Text>
+      </View>:
       <View style={styles.container}>
       <StatusBar backgroundColor="#194c40" barStyle="light-content" />
         <View style={styles.loginCard}>

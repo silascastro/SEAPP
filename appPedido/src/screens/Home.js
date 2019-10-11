@@ -33,8 +33,6 @@ export default class Home extends Component<Props> {
   render() {
     
     return (
-      this.state.loading?
-      <ActivityIndicator size="large"/>:
       <View style={styles.container}>
         <FlatList
           style={{}}

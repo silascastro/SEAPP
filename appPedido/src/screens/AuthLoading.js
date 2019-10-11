@@ -6,7 +6,6 @@ import {
   View,
 } from 'react-native';
 import { StackActions, NavigationActions, navigate } from 'react-navigation';
-import AsyncStorage from '@react-native-community/async-storage';
 
 export default class AuthLoadingScreen extends Component<Props> {
   constructor(props) {
@@ -18,6 +17,41 @@ export default class AuthLoadingScreen extends Component<Props> {
     header: null,
     headerVisible: false,
   };
+
+  _bootstrapAsync = async () => {
+    const {dispatch} = this.props.navigation;
+    const resetActionHome = StackActions.reset({
+        index: 0,
+        actions: [
+          NavigationActions.navigate({ routeName: 'Home' }),
+          NavigationActions.navigate({ routeName: 'Login' }),
+        ],
+      });
+      const resetActionLogin = StackActions.reset({
+        index: 0,
+        actions: [
+          NavigationActions.navigate({ routeName: 'Login' }),
+          NavigationActions.navigate({ routeName: 'Home' })
+        ],
+      });
+        /*await AsyncStorage.getItem('LOGIN').then(resp => {
+            if(resp){
+                if(resp == '1'){
+                    dispatch(resetActionHome);
+                }
+                if(resp == '0'){
+                    dispatch(resetActionLogin);
+                }
+            }else{
+                dispatch(resetActionLogin);
+            }
+        })*/
+
+    // This will switch to the App screen or Auth screen and this loading
+    // screen will be unmounted and thrown away.
+    //this.props.navigation.navigate(userToken ? 'App' : 'Auth');
+  };
+
 
   // Render any loading content that you like here
   render() {
