@@ -24,7 +24,7 @@ export default class AuthLoadingScreen extends Component<Props> {
     const resetActionHome = StackActions.reset({
       index: 0,
       actions: [
-        NavigationActions.navigate({ routeName: 'Main' }),
+        NavigationActions.navigate({ routeName: 'Home' }),
         NavigationActions.navigate({ routeName: 'Login' }),
       ],
     });
@@ -32,7 +32,7 @@ export default class AuthLoadingScreen extends Component<Props> {
       index: 0,
       actions: [
         NavigationActions.navigate({ routeName: 'Login' }),
-        NavigationActions.navigate({ routeName: 'Main' })
+        NavigationActions.navigate({ routeName: 'Home' })
       ],
     });
 

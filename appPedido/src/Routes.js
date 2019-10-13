@@ -11,7 +11,7 @@ import Config from './screens/Config';
 import AuthLoading from './screens/AuthLoading';
 import Search from './screens/Search';
 
-const MainStack = createStackNavigator({
+/*const MainStack = createStackNavigator({
   Home: Home,
   Search: Search
 },{headerMode: 'screen'});
@@ -63,11 +63,11 @@ MainStack.navigationOptions = ({navigation}) => {
     tabBarVisible,
 
   };
-};
+};*/
 
-const Routes = createAppContainer(createStackNavigator({AuthLoading: AuthLoading,Login: Login, Main: {screen: TabNavigator}},{
+const Routes = createAppContainer(createStackNavigator({AuthLoading: AuthLoading,Login: Login,Home: Home,Search: Search /* Main: {screen: TabNavigator}*/},{
 
-    headerMode: 'none'
+    //headerMode: 'none'
 }));
 
 
