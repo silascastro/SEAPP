@@ -10,6 +10,7 @@ import Home from './screens/Home';
 import Config from './screens/Config';
 import AuthLoading from './screens/AuthLoading';
 import Search from './screens/Search';
+import Request from './screens/Request';
 
 /*const MainStack = createStackNavigator({
   Home: Home,
@@ -65,7 +66,7 @@ MainStack.navigationOptions = ({navigation}) => {
   };
 };*/
 
-const Routes = createAppContainer(createStackNavigator({AuthLoading: AuthLoading,Login: Login,Home: Home,Search: Search /* Main: {screen: TabNavigator}*/},{
+const Routes = createAppContainer(createStackNavigator({AuthLoading: AuthLoading,Login: Login,Home: Home,Search: Search, Request: Request },{
 
     //headerMode: 'none'
 }));

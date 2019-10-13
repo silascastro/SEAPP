@@ -10,14 +10,14 @@ const DATA = [
   {title: 'Pedidos', subtitle: 'Crie e gerencie os pedidos', icon: 'local-offer', type: Icon}, {title: 'Clientes', subtitle: 'Analise e gerencie seus clientes', icon: 'people', type: Icon},{title: 'Produtos', subtitle: 'Analise e gerencie seus produtos', icon: 'md-cube' , type: Ionicons},{title: 'Financeiro', subtitle: 'Posição financeira dos clientes', icon: 'finance',type: MaterialCommunityIcons}
 ];
 
-export default class Home extends Component<Props> {
+export default class Request extends Component<Props> {
   constructor(props){
     super(props);
     this.state = {loading: true};
   }
 
   static navigationOptions = ({navigation}) => ({
-      title: 'Home',
+      title: 'Novo Pedido',
       headerTintColor: '#ffffff',
       headerStyle: {
         backgroundColor: '#247869',
@@ -27,9 +27,7 @@ export default class Home extends Component<Props> {
         alignSelf: 'center'
         },
         tabBarVisible: true,
-        headerRight: <View style={{margin: 10}}>
-              <Icon name={'search'} size={25} color="#ffffff" onPress={()=>navigation.navigate('Search')}/>
-            </View>
+        headerRight: null
 
   });
 
@@ -46,33 +44,7 @@ export default class Home extends Component<Props> {
     
     return (
       <View style={styles.container}>
-        <FlatList
-          style={{}}
-          data={DATA}
-          renderItem={({item})=>
-            <View style={styles.card}>
-              <TouchableNativeFeedback >
-
-                <View style={styles.cardContent}>
-                  <View style={{flex: 1,alignItems: 'center'}}>
-                    <item.type name={item.icon} size={25} color="black"/>
-                    
-                  </View>
-                  <View style={{flex: 6, textDecorationStyle: 'solid', textDecorationColor: 'red'}}>
-                    <Text style={{fontWeight: '700', fontSize: 15}}>{item.title}</Text>
-                    <Text style={{}}>{item.subtitle}</Text>
-                  </View>
-                </View>
-                
-              </TouchableNativeFeedback>
-            </View>
-          }
-        />
-
-        <View style={styles.float}>
-          <AntDesign name={'plus'} size={25} color="#ffffff" onPress={()=>{this.props.navigation.navigate('Request')}}/>
-        </View>
-
+       
       </View>
     );
   }

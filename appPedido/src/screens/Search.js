@@ -4,37 +4,49 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import { TextInput } from 'react-native-gesture-handler';
 const LoginModule = NativeModules.LoginModule;
 
-class LogoTitle extends React.Component {
-  render() {
-    return (
-      <TextInput placeholder="Pesquise alguma coisa" placeholderTextColor="#ffffff" style={{color: 'white'}}/>
-    );
-  }
-}
 
 export default class Search extends Component<Props> {
   constructor(props){
     super(props);
-    this.state = {loading: true};
+    this.state = {loading: true, searchValue:''};
   }
 
-  static navigationOptions ={
+  static navigationOptions = ({navigation})=>{
+    const { params } = navigation.state;
+    return {
     //title: 'Pesquisa',
-    headerTitle: <LogoTitle/>,
+    headerTitle: <TextInput placeholder="Pesquise alguma coisa" placeholderTextColor="#ffffff"  style={{color: 'white'}} value={(navigation.getParam('inputValue'))} onChangeText={(value)=>{params.changeInput(value);}}/>,
     headerTintColor: 'white',
     headerStyle: {
       backgroundColor: '#247869',
       
     },
     tabBarVisible: false,
-    headerRight: <View style={{margin: 10}}>
-        <Icon name={'close'} size={25} color="#ffffff" onPress={()=>navigation.navigate('Home')}/>
-      </View>
+    headerRight: (navigation.getParam('inputValue')!=''? <View style={{margin: 10}}>
+    <Icon name={'close'} size={25} color="#ffffff" onPress={()=>params.changeInput('')}/>
+  </View>: null),
+    };
   };
 
   componentDidMount(){
-    LoginModule.logoff();
+    this.props.navigation.setParams({
+      inputValue: this.searchValue,
+      changeInput: this._changeInput
+    });
   }
+
+
+  _changeInput = (value) => {
+    this.setState({
+      searchValue: value,
+    });
+    this.props.navigation.setParams({
+      inputValue: value,
+    });
+
+  }
+
+
 
   render() {
     
