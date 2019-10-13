@@ -1,9 +1,16 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, FlatList, TouchableNativeFeedback, ActivityIndicator, NativeModules} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { TextInput } from 'react-native-gesture-handler';
 const LoginModule = NativeModules.LoginModule;
+
+class LogoTitle extends React.Component {
+  render() {
+    return (
+      <TextInput placeholder="Pesquise alguma coisa" placeholderTextColor="#ffffff" style={{color: 'white'}}/>
+    );
+  }
+}
 
 export default class Search extends Component<Props> {
   constructor(props){
@@ -12,12 +19,17 @@ export default class Search extends Component<Props> {
   }
 
   static navigationOptions ={
-    title: 'Pesquisa',
+    //title: 'Pesquisa',
+    headerTitle: <LogoTitle/>,
     headerTintColor: 'white',
     headerStyle: {
       backgroundColor: '#247869',
+      
     },
-    tabBarVisible: false
+    tabBarVisible: false,
+    headerRight: <View style={{margin: 10}}>
+        <Icon name={'close'} size={25} color="#ffffff" onPress={()=>navigation.navigate('Home')}/>
+      </View>
   };
 
   componentDidMount(){
@@ -28,7 +40,7 @@ export default class Search extends Component<Props> {
     
     return (
       <View style={styles.container}>
-        <Text>Search</Text>
+        
       </View>
     );
   }

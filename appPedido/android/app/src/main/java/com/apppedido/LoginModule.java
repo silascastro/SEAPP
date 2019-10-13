@@ -25,9 +25,9 @@ public class LoginModule extends ReactContextBaseJavaModule {
     public LoginModule(@Nonnull ReactApplicationContext reactContext) {
         super(reactContext);
         mReactContext = reactContext;
-        login = reactContext.getSharedPreferences("login",Context.MODE_PRIVATE);
-        user = reactContext.getSharedPreferences("user",Context.MODE_PRIVATE);
-        password = reactContext.getSharedPreferences("password",Context.MODE_PRIVATE);
+        login = reactContext.getSharedPreferences("login_app_pedidos",Context.MODE_PRIVATE);
+        user = reactContext.getSharedPreferences("user_app_pedidos",Context.MODE_PRIVATE);
+        password = reactContext.getSharedPreferences("password_app_pedidos",Context.MODE_PRIVATE);
     }
 
     @Nonnull
@@ -39,7 +39,7 @@ public class LoginModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void login(String name,String password){
         SharedPreferences.Editor editor = login.edit();
-        editor.putInt("login",1);
+        editor.putInt("login_app_pedidos",1);
         editor.apply();
 
         setUser(name);
@@ -50,7 +50,7 @@ public class LoginModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void logoff(){
         SharedPreferences.Editor editor = login.edit();
-        editor.putInt("login",0);
+        editor.putInt("login_app_pedidos",0);
         editor.apply();
 
         removelogin();
@@ -59,32 +59,32 @@ public class LoginModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void setUser(String name){
         SharedPreferences.Editor editor = user.edit();
-        editor.putString("user",name);
+        editor.putString("user_app_pedidos",name);
         editor.apply();
     }
 
     @ReactMethod
     public void setPassword(String pass){
         SharedPreferences.Editor editor = password.edit();
-        editor.putString("password",pass);
+        editor.putString("password_app_pedidos",pass);
         editor.apply();
     }
 
 
     public void removelogin(){
         SharedPreferences.Editor editor = user.edit();
-        editor.putString("login",null);
+        editor.putString("login_app_pedidos",null);
         editor.apply();
 
         SharedPreferences.Editor editor2 = password.edit();
-        editor.putString("password",null);
+        editor.putString("password_app_pedidos",null);
         editor2.apply();
     }
 
 
     @ReactMethod
     public void getLoginStatus(){
-        int loginStatus = login.getInt("login",Context.MODE_PRIVATE);
+        int loginStatus = login.getInt("login_app_pedidos",Context.MODE_PRIVATE);
         WritableMap params = Arguments.createMap();
         params.putInt("login",loginStatus);
         ReactApplicationContext mContext = getReactApplicationContext();

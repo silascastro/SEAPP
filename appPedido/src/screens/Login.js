@@ -1,9 +1,21 @@
 import React, {Component} from 'react';
 import {ActivityIndicator,StyleSheet, Text, View, TextInput, Button,Alert ,StatusBar, Switch, Picker, NativeModules, DeviceEventEmitter, NativeEventEmitter} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { StackActions, NavigationActions, navigate } from 'react-navigation';
 
 const eventEmitter = new NativeEventEmitter(NativeModules.LoginModule);
 const LoginModule = NativeModules.LoginModule;
+
+
+const resetActionHome = StackActions.reset({
+  index: 0,
+  actions: [
+    NavigationActions.navigate({ routeName: 'Home' }),
+    NavigationActions.navigate({ routeName: 'Search' }),
+
+    //NavigationActions.navigate({ routeName: 'Login' }),
+  ],
+});
 export default class Login extends Component {
   constructor(props){
     super(props);
@@ -21,17 +33,10 @@ export default class Login extends Component {
 
   componentDidMount(){
     this. getUsers();
-    /*   
-    eventEmitter.addListener(
-      'LoginStatus', (e) =>{
-        console.log(e);
-      }
-    );
-    LoginModule.getLoginStatus();*/
   }
 
   getUsers(){
-    fetch('http://192.168.0.5:3000/funcionarios', {
+    fetch('http://192.168.0.4:3000/funcionarios', {
       method: 'GET',
       headers: {
         Accept: 'application/json',
@@ -57,7 +62,7 @@ export default class Login extends Component {
       Alert.alert('Atenção', 'nenhum usuário selecionado!');
     }else{
       this.setState({loading: true});
-      fetch('http://192.168.0.5:3000/funcionarios/'+user, {
+      fetch('http://192.168.0.4:3000/funcionarios/'+user, {
         method: 'GET',
         headers: {
           Accept: 'application/json',
@@ -71,7 +76,9 @@ export default class Login extends Component {
         this.setState({loading: false});
         if(this.state.password == resp.senha){
           LoginModule.login(this.state.user,this.state.password);
-          this.props.navigation.navigate('Home');
+          const {dispatch} = this.props.navigation;
+          dispatch(resetActionHome);
+          //this.props.navigation.navigate('Home');
         }else{
           alert('senha incorreta!');
         }

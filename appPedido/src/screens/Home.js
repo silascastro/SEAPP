@@ -35,9 +35,9 @@ export default class Home extends Component<Props> {
   componentDidMount(){
     //let aux = []
     //this.setState({menu: })
-    setTimeout(() => {
+    /*setTimeout(() => {
       this.setState({loading: false});
-    }, 3000);
+    }, 3000);*/
     
   }
 
