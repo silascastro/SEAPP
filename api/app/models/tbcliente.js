@@ -7,6 +7,9 @@ module.exports = (sequelize, DataTypes) =>{
         bairro: {type: DataTypes.STRING},
         telefone: {type: DataTypes.STRING},
         cidade: DataTypes.STRING,
+	estado: DataTypes.STRING,
+	cep: DataTypes.STRING,
+        limite: DataTypes.STRING,
         email: {type: DataTypes.STRING,}
       }, {
         freezeTableName: true,

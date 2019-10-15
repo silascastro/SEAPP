@@ -10,11 +10,11 @@ exports.get = async(req, res, next) => {
     });
 
 }
-/*
+
 exports.getOne = async(req, res, next) => {
     var id = req.params.id;
     console.log(id);
-    tbfuncionario.findOne({where: {id_funcionario:id}}).then(resp => {
+    tbfuncionario.findOne({where: {cod_cliente:id}}).then(resp => {
         if(resp){
             res.status(200).send(resp);
         }
@@ -22,4 +22,4 @@ exports.getOne = async(req, res, next) => {
     }).catch((e)=>{
         res.status(500).send(e);
     })
-}*/
+}

@@ -11,6 +11,7 @@ import Config from './screens/Config';
 import AuthLoading from './screens/AuthLoading';
 import Search from './screens/Search';
 import Request from './screens/Request';
+import Cliente from './screens/Cliente';
 
 /*const MainStack = createStackNavigator({
   Home: Home,
@@ -66,7 +67,7 @@ MainStack.navigationOptions = ({navigation}) => {
   };
 };*/
 
-const Routes = createAppContainer(createStackNavigator({AuthLoading: AuthLoading,Login: Login,Home: Home,Search: Search, Request: Request },{
+const Routes = createAppContainer(createStackNavigator({AuthLoading: AuthLoading,Login: Login,Home: Home,Search: Search, Request: Request , Cliente: Cliente},{
 
     //headerMode: 'none'
 }));

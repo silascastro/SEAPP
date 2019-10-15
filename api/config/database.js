@@ -5,7 +5,7 @@ module.exports = {
   //host: '189.58.89.79',
   //host: '186.214.218.96',
   //host: '192.168.25.1',
-  host: '189.58.79.55',
+  host: '189.58.88.207',
   port: '5432',
   dialect: 'postgres',
   /*username: 'root',

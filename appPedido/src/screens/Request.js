@@ -32,19 +32,14 @@ export default class Request extends Component<Props> {
   });
 
   componentDidMount(){
-    //let aux = []
-    //this.setState({menu: })
-    /*setTimeout(() => {
-      this.setState({loading: false});
-    }, 3000);*/
-    
+
   }
 
   render() {
     
     return (
       <View style={styles.container}>
-       
+        
       </View>
     );
   }

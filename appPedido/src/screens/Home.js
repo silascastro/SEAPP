@@ -1,13 +1,12 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, FlatList, TouchableNativeFeedback, ActivityIndicator} from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons'
+import {StyleSheet, Text, View, FlatList, TouchableNativeFeedback,StatusBar} from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
-
 const DATA = [
-  {title: 'Pedidos', subtitle: 'Crie e gerencie os pedidos', icon: 'local-offer', type: Icon}, {title: 'Clientes', subtitle: 'Analise e gerencie seus clientes', icon: 'people', type: Icon},{title: 'Produtos', subtitle: 'Analise e gerencie seus produtos', icon: 'md-cube' , type: Ionicons},{title: 'Financeiro', subtitle: 'Posição financeira dos clientes', icon: 'finance',type: MaterialCommunityIcons}
+  {title: 'Pedidos', subtitle: 'Crie e gerencie os pedidos', icon: 'local-offer', type: Icon}, {title: 'Clientes', subtitle: 'Analise e gerencie seus clientes', icon: 'people', type: Icon},{title: 'Produtos', subtitle: 'Analise e gerencie seus produtos', icon: 'md-cube' , type: Ionicons},
 ];
 
 export default class Home extends Component<Props> {
@@ -27,18 +26,12 @@ export default class Home extends Component<Props> {
         alignSelf: 'center'
         },
         tabBarVisible: true,
-        headerRight: <View style={{margin: 10}}>
+        headerRight: /*<View style={{margin: 10}}>
               <Icon name={'search'} size={25} color="#ffffff" onPress={()=>navigation.navigate('Search')}/>
-            </View>
-
+            </View>*/null
   });
 
   componentDidMount(){
-    //let aux = []
-    //this.setState({menu: })
-    /*setTimeout(() => {
-      this.setState({loading: false});
-    }, 3000);*/
     
   }
 
@@ -46,21 +39,25 @@ export default class Home extends Component<Props> {
     
     return (
       <View style={styles.container}>
+        <StatusBar backgroundColor="#194c40" barStyle="light-content" />
         <FlatList
           style={{}}
           data={DATA}
           renderItem={({item})=>
-            <View style={styles.card}>
-              <TouchableNativeFeedback >
+            <View style={styles.card} >
+              <TouchableNativeFeedback onPress={()=>{
+                if(item.title == "Clientes"){
+                  this.props.navigation.push('Cliente');
+                }
+              }}>
 
                 <View style={styles.cardContent}>
                   <View style={{flex: 1,alignItems: 'center'}}>
-                    <item.type name={item.icon} size={25} color="black"/>
-                    
+                    <item.type name={item.icon} size={25} color="black"/> 
                   </View>
                   <View style={{flex: 6, textDecorationStyle: 'solid', textDecorationColor: 'red'}}>
                     <Text style={{fontWeight: '700', fontSize: 15}}>{item.title}</Text>
-                    <Text style={{}}>{item.subtitle}</Text>
+                    
                   </View>
                 </View>
                 
@@ -70,7 +67,9 @@ export default class Home extends Component<Props> {
         />
 
         <View style={styles.float}>
-          <AntDesign name={'plus'} size={25} color="#ffffff" onPress={()=>{this.props.navigation.navigate('Request')}}/>
+          <AntDesign name={'plus'} size={25} color="#ffffff" onPress={()=>{
+            this.props.navigation.push('Request');
+          }}/>
         </View>
 
       </View>

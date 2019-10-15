@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {ActivityIndicator,StyleSheet, Text, View, TextInput, Button,Alert ,StatusBar, Switch, Picker, NativeModules, DeviceEventEmitter, NativeEventEmitter} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { StackActions, NavigationActions, navigate } from 'react-navigation';
+import * as Permission from '../../Permissions';
 
 const eventEmitter = new NativeEventEmitter(NativeModules.LoginModule);
 const LoginModule = NativeModules.LoginModule;
@@ -11,15 +12,15 @@ const resetActionHome = StackActions.reset({
   index: 0,
   actions: [
     NavigationActions.navigate({ routeName: 'Home' }),
-    NavigationActions.navigate({ routeName: 'Search' }),
 
-    //NavigationActions.navigate({ routeName: 'Login' }),
+    NavigationActions.navigate({ routeName: 'Search' }),
+    NavigationActions.navigate({ routeName: 'Cliente' }),
   ],
 });
 export default class Login extends Component {
   constructor(props){
     super(props);
-    this.state = {rememberPass: false, userSelect: '', usuarios: [],user: '', password: '', loading: false};
+    this.state = {rememberPass: false, userSelect: '', usuarios: [],user: '', password: '', loading: false, imei: ''};
 
   }
 
@@ -33,10 +34,22 @@ export default class Login extends Component {
 
   componentDidMount(){
     this. getUsers();
+    Permission.readPhoneState();
+    this.getImei();
+  }
+
+  async getImei(){
+    eventEmitter.addListener(
+      'imei', (e) =>{
+        //alert(e.imei);
+        this.setState({imei: e.imei});
+      }
+    );
+    LoginModule.getImei();
   }
 
   getUsers(){
-    fetch('http://192.168.0.4:3000/funcionarios', {
+    fetch(/*'http://192.168.0.4:3000/funcionarios'*/'http://189.58.79.55:3000/funcionarios', {
       method: 'GET',
       headers: {
         Accept: 'application/json',
@@ -62,7 +75,7 @@ export default class Login extends Component {
       Alert.alert('Atenção', 'nenhum usuário selecionado!');
     }else{
       this.setState({loading: true});
-      fetch('http://192.168.0.4:3000/funcionarios/'+user, {
+      fetch(/*'http://192.168.0.4:3000/funcionarios/'+user*/'http://189.58.79.55:3000/funcionarios/'+user, {
         method: 'GET',
         headers: {
           Accept: 'application/json',
@@ -75,10 +88,14 @@ export default class Login extends Component {
       }).then((response)=> response.json()).then((resp) => {
         this.setState({loading: false});
         if(this.state.password == resp.senha){
-          LoginModule.login(this.state.user,this.state.password);
-          const {dispatch} = this.props.navigation;
-          dispatch(resetActionHome);
-          //this.props.navigation.navigate('Home');
+          if(this.state.imei == resp.codigo1){
+            LoginModule.login(this.state.user,this.state.password);
+            const {dispatch} = this.props.navigation;
+            dispatch(resetActionHome);
+            //this.props.navigation.navigate('Home');
+          }else{
+            Alert.alert('Atenção', 'dispositivo não autorizado!');
+          }
         }else{
           alert('senha incorreta!');
         }

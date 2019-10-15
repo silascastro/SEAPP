@@ -25,16 +25,16 @@ export default class AuthLoadingScreen extends Component<Props> {
       index: 0,
       actions: [
         NavigationActions.navigate({ routeName: 'Home' }),
-        NavigationActions.navigate({ routeName: 'Search' }),
+        //NavigationActions.navigate({ routeName: 'Search' }),
         NavigationActions.navigate({ routeName: 'Request' }),
       ],
     });
     const resetActionLogin = StackActions.reset({
       index: 0,
       actions: [
-        //NavigationActions.navigate({ routeName: 'Login' }),
+        NavigationActions.navigate({ routeName: 'Login' }),
         NavigationActions.navigate({ routeName: 'Home' }),
-        NavigationActions.navigate({ routeName: 'Search' }),
+        //NavigationActions.navigate({ routeName: 'Search' }),
         NavigationActions.navigate({ routeName: 'Request' }),
       ],
     });
@@ -46,7 +46,6 @@ export default class AuthLoadingScreen extends Component<Props> {
           this.setState({login: true});
         }if(e.login==0){
           dispatch(resetActionLogin);
-          this.setState({login: false});
         }
       }
     );
