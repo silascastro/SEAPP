@@ -60,7 +60,7 @@ exports.getOneClienteByName = async(req, res, next) => {
             'tbcontasreceber.documento',
             'tbcontasreceber.tipo',
             'tbcontasreceber.dt_vencimento',*/],
-            include: [{model: tbcontasreceber, as:'tbcontasreceber',
+            include: [{model: tbcontasreceber,as:'tbcontasreceber',
                     attributes:[
                         [Sequelize.fn('sum',Sequelize.col('tbcontasreceber.valor')),'saldo_devedor'],
                         [Sequelize.literal('tbcliente.limite - sum(tbcontasreceber.valor)'),'saldo_compra']

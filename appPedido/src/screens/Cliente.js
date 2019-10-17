@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {DrawerLayoutAndroid,StyleSheet, Text, View, TextInput, ActivityIndicator, FlatList, TouchableNativeFeedback} from 'react-native';
+import {DrawerLayoutAndroid,Alert,StyleSheet, Text, View, TextInput, ActivityIndicator, FlatList, TouchableNativeFeedback} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 
@@ -27,7 +27,7 @@ export default class Cliente extends Component<Props> {
   }
 
   getContasAReceber(id){
-    fetch('http://192.168.0.4:3000/contasreceber/'+id, {
+    fetch('http://192.168.0.7:3000/contasreceber/'+id, {
         method: 'GET',
         headers: {
           Accept: 'application/json',
@@ -47,8 +47,8 @@ export default class Cliente extends Component<Props> {
   }
 
 
-  getCliente(){
-      fetch('http://192.168.0.4:3000/clientes/'+(this.state.input).toUpperCase(), {
+  getClientes(){
+      fetch('http://192.168.0.7:3000/clientes/'+(this.state.input).toUpperCase(), {
         method: 'GET',
         headers: {
           Accept: 'application/json',
@@ -60,14 +60,17 @@ export default class Cliente extends Component<Props> {
         }),*/
       }).then((response)=> response.json()).then((resp) => {
         let aux = [];
+        
         for(e in resp){
           aux.push(resp[e]);
         }
+        
+        
         this.setState({clientes: aux});
         this.setState({loading: false});
         
       }).catch((err)=>{
-        Alert.alert('Atenção', 'erro ao conectar-se com o servidor!');
+        Alert.alert('Atenção', err);
       });
     
   }
@@ -82,7 +85,7 @@ export default class Cliente extends Component<Props> {
             this.setState({loading: true});
             this.setState({pesquisado: true});
             this.setState({input: value});
-            this.getCliente();
+            this.getClientes();
             
           }}/>
           {this.state.input != '' ?<Icon name='close' size={25} color="black"  style={{flex: 1,alignSelf: 'center', textAlign: 'right', paddingRight: 5}}
@@ -120,7 +123,7 @@ export default class Cliente extends Component<Props> {
 
                         <View style={{flex: 0, flexDirection: 'row'}}>
                           <Text style={{fontWeight: '600'}}>Endereço: </Text>
-                          <Text style={styles.endereco}>{item.nome}</Text>
+                          <Text style={styles.endereco}>{item.endereco}</Text>
                         </View>
                         <View style={{flex: 0, flexDirection: 'row'}}>
                           <Text style={{fontWeight: '600'}}>Limite de compra: </Text>
@@ -128,11 +131,11 @@ export default class Cliente extends Component<Props> {
                         </View>
                         <View style={{flex: 0, flexDirection: 'row'}}>
                           <Text style={{fontWeight: '600'}}>Saldo devedor: </Text>
-                          <Text style={styles.endereco}>${item.saldo_devedor}</Text>
+                          <Text style={styles.endereco}>${item['tbcontasreceber.saldo_devedor']}</Text>
                         </View>
                         <View style={{flex: 0, flexDirection: 'row'}}>
                           <Text style={{fontWeight: '600'}}>Saldo de compra: </Text>
-                          <Text style={styles.endereco}>${item.saldo_compra}</Text>
+                          <Text style={styles.endereco}>${item['tbcontasreceber.saldo_compra']}</Text>
                         </View>
                         
                       </View>

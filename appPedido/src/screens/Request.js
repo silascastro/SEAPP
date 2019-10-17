@@ -28,7 +28,6 @@ export default class Request extends Component<Props> {
         },
         tabBarVisible: true,
         headerRight: null
-
   });
 
   componentDidMount(){
