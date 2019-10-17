@@ -6,7 +6,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 export default class Cliente extends Component<Props> {
   constructor(props){
     super(props);
-    this.state = {loading: false, clientes: [], pesquisado: false, input: ''};
+    this.state = {loading: false, clientes: [], pesquisado: false, input: '', contasareceber: []};
   }
 
   static navigationOptions = ({navigation}) => ({
@@ -27,19 +27,20 @@ export default class Cliente extends Component<Props> {
   }
 
   getContasAReceber(id){
-    fetch('http://192.168.0.7:3000/contasreceber/'+id, {
+    fetch('http://177.16.72.10:3000/contasreceber/'+id, {
         method: 'GET',
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
         },
       }).then((response)=> response.json()).then((resp) => {
+        console.log(resp);
         let aux = [];
-        /*for(e in resp){
+        for(e in resp){
           aux.push(resp[e]);
         }
-        this.setState({clientes: aux});
-        this.setState({loading: false});*/
+        this.setState({contasareceber: aux});
+        //this.setState({loading: false});
         
       }).catch((err)=>{
         Alert.alert('Atenção', 'erro ao conectar-se com o servidor!');
@@ -48,7 +49,7 @@ export default class Cliente extends Component<Props> {
 
 
   getClientes(){
-      fetch('http://192.168.0.7:3000/clientes/'+(this.state.input).toUpperCase(), {
+      fetch('http://177.16.72.10:3000/clientes/'+(this.state.input).toUpperCase(), {
         method: 'GET',
         headers: {
           Accept: 'application/json',
@@ -76,9 +77,20 @@ export default class Cliente extends Component<Props> {
   }
 
   render() {
-    
+    var navigationView = (
+      <View style={{flex: 1, backgroundColor: '#fff'}}>
+        <Text style={{margin: 10, fontSize: 15, textAlign: 'left'}}>I'm in the Drawer!</Text>
+      </View>
+    );
     return (
-
+      <DrawerLayoutAndroid
+        drawerWidth={300}
+        ref={'DRAWER'}
+        drawerPosition={DrawerLayoutAndroid.positions.Right}
+        renderNavigationView={() => navigationView}
+        drawerLockMode="locked-closed"
+       
+      >
       <View style={styles.container}>
         <View style={styles.input}>
           <TextInput placeholder="Digite o nome do cliente" style={{flex: 4}} value={this.state.input} onChangeText={(value)=>{
@@ -103,7 +115,10 @@ export default class Cliente extends Component<Props> {
               numColumns={1}
               renderItem={({item}) => 
                 <View style={styles.card} >
-                    <TouchableNativeFeedback  onPress={(item)=>{console.log('touch!');}}>
+                    <TouchableNativeFeedback  onPress={()=>{
+                      this.refs['DRAWER'].openDrawer();
+                      this.getContasAReceber(item.cod_cliente);
+                      }}>
                       <View style={styles.cardContent}>
                         <View style={{flex: 0, flexDirection: 'row'}}>
                           <Text style={styles.title}>{item.cod_cliente}</Text>
@@ -154,6 +169,7 @@ export default class Cliente extends Component<Props> {
           : null
         }
       </View>
+      </DrawerLayoutAndroid>
     );
   }
 }

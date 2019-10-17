@@ -12,9 +12,8 @@ const resetActionHome = StackActions.reset({
   index: 0,
   actions: [
     NavigationActions.navigate({ routeName: 'Home' }),
-
-    NavigationActions.navigate({ routeName: 'Search' }),
-    NavigationActions.navigate({ routeName: 'Cliente' }),
+    //NavigationActions.navigate({ routeName: 'Search' }),
+    //NavigationActions.navigate({ routeName: 'Cliente' }),
   ],
 });
 export default class Login extends Component {
@@ -49,7 +48,7 @@ export default class Login extends Component {
   }
 
   getUsers(){
-    fetch(/*'http://192.168.0.4:3000/funcionarios'*/'http://189.58.79.55:3000/funcionarios', {
+    fetch(/*'http://192.168.0.4:3000/funcionarios'*/'http://177.16.72.10:3000/funcionarios', {
       method: 'GET',
       headers: {
         Accept: 'application/json',
@@ -75,7 +74,7 @@ export default class Login extends Component {
       Alert.alert('Atenção', 'nenhum usuário selecionado!');
     }else{
       this.setState({loading: true});
-      fetch(/*'http://192.168.0.4:3000/funcionarios/'+user*/'http://189.58.79.55:3000/funcionarios/'+user, {
+      fetch(/*'http://192.168.0.4:3000/funcionarios/'+user*/'http://177.16.72.10/funcionarios/'+user, {
         method: 'GET',
         headers: {
           Accept: 'application/json',
