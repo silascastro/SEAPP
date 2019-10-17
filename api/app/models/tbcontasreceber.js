@@ -1,5 +1,7 @@
+const {tbcliente} = require('../../app/models');
+
 module.exports = (sequelize, DataTypes) =>{
-    const tbcliente = sequelize.define('tbcontasreceber', {
+    const tbcontasreceber = sequelize.define('tbcontasreceber', {
         cod_cliente: {type: DataTypes.INTEGER, primaryKey: true},
         sequencia: {type: DataTypes.INTEGER, primaryKey: true},
         documento: {type: DataTypes.STRING(20), primaryKey: true},
@@ -11,6 +13,10 @@ module.exports = (sequelize, DataTypes) =>{
         schema: 'public',
         timestamps: false
     });
-    
-    return tbcliente;  
+    tbcontasreceber.associate = function(models){
+      models.tbcontasreceber.belongsTo(models.tbcliente, {foreignKey: 'cod_cliente'}, );
+      
+      
+    }
+    return tbcontasreceber;  
 }

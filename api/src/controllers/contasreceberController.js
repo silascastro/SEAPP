@@ -13,13 +13,14 @@ exports.get = async(req, res, next) => {
 
 exports.getOne = async(req, res, next) => {
     var id = req.params.id;
-    console.log(id);
-    tbfuncionario.findOne({where: {cod_cliente:id}}).then(resp => {
-        if(resp){
+    tbcontasreceber.findAll({where: {cod_cliente:id}}).then(resp => {
+        //console.log(resp.length);
+	if(resp){
             res.status(200).send(resp);
         }
-        res.status(404).send({msg: 'Funcionário não encontrado!'});
+        res.status(404).send({msg: 'contas não encontradas para o id informado!'});
     }).catch((e)=>{
         res.status(500).send(e);
     })
 }
+

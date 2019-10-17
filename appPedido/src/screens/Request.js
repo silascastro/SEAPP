@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, FlatList, TouchableNativeFeedback, ActivityIndicator} from 'react-native';
+import {DrawerLayoutAndroid,Platform, StyleSheet, Text, View,Button, FlatList, TouchableNativeFeedback, ActivityIndicator} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -35,12 +35,27 @@ export default class Request extends Component<Props> {
 
   }
 
-  render() {
-    
-    return (
-      <View style={styles.container}>
-        
+  render(){
+
+    var navigationView = (
+      <View style={{flex: 1, backgroundColor: '#fff'}}>
+        <Text style={{margin: 10, fontSize: 15, textAlign: 'left'}}>I'm in the Drawer!</Text>
       </View>
+    );
+    return (
+      <DrawerLayoutAndroid
+        drawerWidth={300}
+        ref={'DRAWER'}
+        drawerPosition={DrawerLayoutAndroid.positions.Right}
+        renderNavigationView={() => navigationView}
+        drawerLockMode="locked-closed"
+       
+      >
+        
+      <View style={{flex: 1, alignItems: 'center'}}>
+        <Button title="teste" onPress={()=>{this.refs['DRAWER'].openDrawer();}}/>
+      </View>
+    </DrawerLayoutAndroid>
     );
   }
 }

@@ -1,18 +1,16 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, TextInput, ActivityIndicator, FlatList, TouchableNativeFeedback} from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons'
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import {DrawerLayoutAndroid,StyleSheet, Text, View, TextInput, ActivityIndicator, FlatList, TouchableNativeFeedback} from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 
 export default class Cliente extends Component<Props> {
   constructor(props){
     super(props);
-    this.state = {loading: false, clientes: [], pesquisado: false};
+    this.state = {loading: false, clientes: [], pesquisado: false, input: ''};
   }
 
   static navigationOptions = ({navigation}) => ({
-    title: 'Cliente',
+    title: 'Clientes',
     headerTintColor: '#ffffff',
     headerStyle: {
       backgroundColor: '#247869',
@@ -22,38 +20,56 @@ export default class Cliente extends Component<Props> {
       alignSelf: 'center'
       },
       tabBarVisible: true,
-
-
   });
 
   componentDidMount(){
     
   }
 
+  getContasAReceber(id){
+    fetch('http://192.168.0.4:3000/contasreceber/'+id, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      }).then((response)=> response.json()).then((resp) => {
+        let aux = [];
+        /*for(e in resp){
+          aux.push(resp[e]);
+        }
+        this.setState({clientes: aux});
+        this.setState({loading: false});*/
+        
+      }).catch((err)=>{
+        Alert.alert('Atenção', 'erro ao conectar-se com o servidor!');
+      });
+  }
 
-  getCliente(client){
-    //this.setState({loading: true});
-    fetch('http://192.168.0.4:3000/clientes/'+client, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      /*body: JSON.stringify({
-        firstParam: 'yourValue',
-        secondParam: 'yourOtherValue',
-      }),*/
-    }).then((response)=> response.json()).then((resp) => {
-      let aux = [];
-      for(e in resp){
-        aux.push(resp[e]);
-      }
-      this.setState({clientes: aux});
-      this.setState({loading: false});
-      
-    }).catch((err)=>{
-      Alert.alert('Atenção', 'erro ao conectar-se com o servidor!');
-    });
+
+  getCliente(){
+      fetch('http://192.168.0.4:3000/clientes/'+(this.state.input).toUpperCase(), {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        /*body: JSON.stringify({
+          firstParam: 'yourValue',
+          secondParam: 'yourOtherValue',
+        }),*/
+      }).then((response)=> response.json()).then((resp) => {
+        let aux = [];
+        for(e in resp){
+          aux.push(resp[e]);
+        }
+        this.setState({clientes: aux});
+        this.setState({loading: false});
+        
+      }).catch((err)=>{
+        Alert.alert('Atenção', 'erro ao conectar-se com o servidor!');
+      });
+    
   }
 
   render() {
@@ -62,18 +78,18 @@ export default class Cliente extends Component<Props> {
 
       <View style={styles.container}>
         <View style={styles.input}>
-          <TextInput placeholder="Digite o nome do cliente" style={{flex: 4}} onChangeText={(value)=>{
+          <TextInput placeholder="Digite o nome do cliente" style={{flex: 4}} value={this.state.input} onChangeText={(value)=>{
             this.setState({loading: true});
             this.setState({pesquisado: true});
-            this.getCliente(value.toUpperCase());
+            this.setState({input: value});
+            this.getCliente();
             
           }}/>
-          <Icon name='search' size={30} color="black"  style={{flex: 1, alignSelf: 'center', textAlign: 'center'}}
+          {this.state.input != '' ?<Icon name='close' size={25} color="black"  style={{flex: 1,alignSelf: 'center', textAlign: 'right', paddingRight: 5}}
             onPress={()=> {
-              //this.setState({loading: true});
-              //this.getCliente(value);
+              this.setState({input: ''});
             }}
-          />
+          />:null}
         </View>
         {this.state.loading? <ActivityIndicator size="large"/>:null}
         {
@@ -105,6 +121,18 @@ export default class Cliente extends Component<Props> {
                         <View style={{flex: 0, flexDirection: 'row'}}>
                           <Text style={{fontWeight: '600'}}>Endereço: </Text>
                           <Text style={styles.endereco}>{item.nome}</Text>
+                        </View>
+                        <View style={{flex: 0, flexDirection: 'row'}}>
+                          <Text style={{fontWeight: '600'}}>Limite de compra: </Text>
+                          <Text style={styles.endereco}>${item.limite}</Text>
+                        </View>
+                        <View style={{flex: 0, flexDirection: 'row'}}>
+                          <Text style={{fontWeight: '600'}}>Saldo devedor: </Text>
+                          <Text style={styles.endereco}>${item.saldo_devedor}</Text>
+                        </View>
+                        <View style={{flex: 0, flexDirection: 'row'}}>
+                          <Text style={{fontWeight: '600'}}>Saldo de compra: </Text>
+                          <Text style={styles.endereco}>${item.saldo_compra}</Text>
                         </View>
                         
                       </View>

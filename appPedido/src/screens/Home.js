@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, FlatList, TouchableNativeFeedback,StatusBar} from 'react-native';
+import {StyleSheet, Text, View, FlatList, TouchableNativeFeedback,StatusBar, DrawerLayoutAndroid} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -36,7 +36,7 @@ export default class Home extends Component<Props> {
   }
 
   render() {
-    
+
     return (
       <View style={styles.container}>
         <StatusBar backgroundColor="#194c40" barStyle="light-content" />
@@ -65,6 +65,7 @@ export default class Home extends Component<Props> {
             </View>
           }
         />
+        
 
         <View style={styles.float}>
           <AntDesign name={'plus'} size={25} color="#ffffff" onPress={()=>{
