@@ -33,8 +33,7 @@ export default class Login extends Component {
 
   componentDidMount(){
     this. getUsers();
-    Permission.readPhoneState();
-    this.getImei();
+
   }
 
   async getImei(){
@@ -48,7 +47,7 @@ export default class Login extends Component {
   }
 
   getUsers(){
-    fetch(/*'http://192.168.0.4:3000/funcionarios'*/'http://177.16.72.10:3000/funcionarios', {
+    fetch('http://177.16.72.10:3000/funcionarios', {
       method: 'GET',
       headers: {
         Accept: 'application/json',
@@ -64,6 +63,7 @@ export default class Login extends Component {
         aux.push(resp[e]);
       }
       this.setState({usuarios: aux});
+      
     }).catch((err)=>{
       Alert.alert('Atenção', 'erro ao conectar-se com o servidor!');
     });
@@ -74,7 +74,7 @@ export default class Login extends Component {
       Alert.alert('Atenção', 'nenhum usuário selecionado!');
     }else{
       this.setState({loading: true});
-      fetch(/*'http://192.168.0.4:3000/funcionarios/'+user*/'http://177.16.72.10/funcionarios/'+user, {
+      fetch('http://177.16.72.10:3000/funcionarios/'+user, {
         method: 'GET',
         headers: {
           Accept: 'application/json',
@@ -89,11 +89,15 @@ export default class Login extends Component {
         if(this.state.password == resp.senha){
           if(this.state.imei == resp.codigo1){
             LoginModule.login(this.state.user,this.state.password);
-            const {dispatch} = this.props.navigation;
+            let {dispatch} = this.props.navigation;
             dispatch(resetActionHome);
             //this.props.navigation.navigate('Home');
           }else{
-            Alert.alert('Atenção', 'dispositivo não autorizado!');
+            //até resolver permissões do imei
+            LoginModule.login(this.state.user,this.state.password);
+            let {dispatch} = this.props.navigation;
+            dispatch(resetActionHome);
+            //Alert.alert('Atenção', 'dispositivo não autorizado!');
           }
         }else{
           alert('senha incorreta!');

@@ -77,6 +77,22 @@ public class LoginModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public void setPermission(){
+
+        WritableMap params = Arguments.createMap();
+        //params.putInt("login",loginStatus);
+        ReactApplicationContext mContext = getReactApplicationContext();
+        sendLoginStatus(mContext,"permissionStatus", params);
+    }
+
+
+    public void sendPermissionStatus(ReactContext reactContext, String eventName, @Nullable WritableMap params){
+        reactContext.
+                getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                .emit(eventName, params);
+    }
+
+    @ReactMethod
     public void getImei() {
         TelephonyManager telephonyManager = (TelephonyManager) mReactContext.getSystemService(Context.TELEPHONY_SERVICE);
         @SuppressLint("MissingPermission") String imei = telephonyManager.getDeviceId();

@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, FlatList, TouchableNativeFeedback,StatusBar, DrawerLayoutAndroid} from 'react-native';
+import {StyleSheet, Text, View, FlatList, TouchableNativeFeedback,StatusBar} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
 import AntDesign from 'react-native-vector-icons/AntDesign';
+//import CheckBox from '../components/CheckBox';
 
 const DATA = [
   {title: 'Pedidos', subtitle: 'Crie e gerencie os pedidos', icon: 'local-offer', type: Icon}, {title: 'Clientes', subtitle: 'Analise e gerencie seus clientes', icon: 'people', type: Icon},{title: 'Produtos', subtitle: 'Analise e gerencie seus produtos', icon: 'md-cube' , type: Ionicons},

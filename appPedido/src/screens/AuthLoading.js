@@ -2,7 +2,7 @@ import React, {Component}from 'react';
 
 import {ActivityIndicator,StatusBar,View,NativeModules, DeviceEventEmitter,NativeEventEmitter} from 'react-native';
 import { StackActions, NavigationActions, navigate } from 'react-navigation';
-
+import * as Permission from '../../Permissions';
 const LoginModule = NativeModules.LoginModule;
 const eventEmitter = new NativeEventEmitter(NativeModules.LoginModule);
 
@@ -20,6 +20,7 @@ export default class AuthLoadingScreen extends Component<Props> {
 
 
   _bootstrapAsync = async () => {
+    
     const {dispatch} = this.props.navigation;
     const resetActionHome = StackActions.reset({
       index: 0,
@@ -41,15 +42,19 @@ export default class AuthLoadingScreen extends Component<Props> {
 
     eventEmitter.addListener(
       'LoginStatus', (e) =>{
+        
         if(e.login==1){
           dispatch(resetActionHome);
           this.setState({login: true});
         }if(e.login==0){
           dispatch(resetActionLogin);
         }
+        
       }
     );
+    //Permission.readPhoneState();
     LoginModule.getLoginStatus();
+    
   };
 
 

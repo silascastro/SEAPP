@@ -47,7 +47,6 @@ export default class Cliente extends Component<Props> {
       });
   }
 
-
   getClientes(){
       fetch('http://177.16.72.10:3000/clientes/'+(this.state.input).toUpperCase(), {
         method: 'GET',
@@ -55,42 +54,26 @@ export default class Cliente extends Component<Props> {
           Accept: 'application/json',
           'Content-Type': 'application/json',
         },
-        /*body: JSON.stringify({
-          firstParam: 'yourValue',
-          secondParam: 'yourOtherValue',
-        }),*/
       }).then((response)=> response.json()).then((resp) => {
         let aux = [];
         
         for(e in resp){
           aux.push(resp[e]);
         }
-        
-        
+
         this.setState({clientes: aux});
         this.setState({loading: false});
         
       }).catch((err)=>{
         Alert.alert('Atenção', err);
       });
-    
   }
 
   render() {
     var navigationView = (
-      <View style={{flex: 1, backgroundColor: '#fff'}}>
-        <Text style={{margin: 10, fontSize: 15, textAlign: 'left'}}>I'm in the Drawer!</Text>
-      </View>
+      <View><Text>Teste</Text></View>
     );
     return (
-      <DrawerLayoutAndroid
-        drawerWidth={300}
-        ref={'DRAWER'}
-        drawerPosition={DrawerLayoutAndroid.positions.Right}
-        renderNavigationView={() => navigationView}
-        drawerLockMode="locked-closed"
-       
-      >
       <View style={styles.container}>
         <View style={styles.input}>
           <TextInput placeholder="Digite o nome do cliente" style={{flex: 4}} value={this.state.input} onChangeText={(value)=>{
@@ -116,8 +99,12 @@ export default class Cliente extends Component<Props> {
               renderItem={({item}) => 
                 <View style={styles.card} >
                     <TouchableNativeFeedback  onPress={()=>{
-                      this.refs['DRAWER'].openDrawer();
-                      this.getContasAReceber(item.cod_cliente);
+                      //this.refs['DRAWER'].openDrawer();
+                      //this.getContasAReceber(item.cod_cliente);
+                      this.props.navigation.navigate('ClienteContas',{
+                        cod_cliente: item.cod_cliente,
+                        nome: item.nome
+                      });
                       }}>
                       <View style={styles.cardContent}>
                         <View style={{flex: 0, flexDirection: 'row'}}>
@@ -169,7 +156,6 @@ export default class Cliente extends Component<Props> {
           : null
         }
       </View>
-      </DrawerLayoutAndroid>
     );
   }
 }
@@ -194,7 +180,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingLeft: 10,
     paddingRight: 10,
-
+    paddingBottom: 10
 },
   card: {
     //paddingLeft: 10,
@@ -213,7 +199,13 @@ cardContent: {
   flex: 1,
   //flexDirection: 'row'  
 },
-
-title: {fontWeight: '600', fontSize: 15, color: 'black'},
+menu: {
+  padding: 10,
+},
+title: {
+  fontWeight: '600', 
+  fontSize: 15, 
+  color: 'black'
+},
   
 });
