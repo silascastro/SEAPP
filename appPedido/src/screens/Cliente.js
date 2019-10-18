@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {DrawerLayoutAndroid,Alert,StyleSheet, Text, View, TextInput, ActivityIndicator, FlatList, TouchableNativeFeedback} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
+const API = "http://177.42.56.208:3000/";
 
 export default class Cliente extends Component<Props> {
   constructor(props){
@@ -27,7 +28,7 @@ export default class Cliente extends Component<Props> {
   }
 
   getContasAReceber(id){
-    fetch('http://177.16.72.10:3000/contasreceber/'+id, {
+    fetch(API+'contasreceber/'+id, {
         method: 'GET',
         headers: {
           Accept: 'application/json',
@@ -48,7 +49,7 @@ export default class Cliente extends Component<Props> {
   }
 
   getClientes(){
-      fetch('http://177.16.72.10:3000/clientes/'+(this.state.input).toUpperCase(), {
+      fetch(API+'clientes/'+(this.state.input).toUpperCase(), {
         method: 'GET',
         headers: {
           Accept: 'application/json',
@@ -113,9 +114,10 @@ export default class Cliente extends Component<Props> {
                           <Text style={styles.title}>{item.nome}</Text>
                           
                         </View>
+
                         <View style={{flex: 0, flexDirection: 'row'}}>
-                          <Text style={{fontWeight: '600'}}>Nome: </Text>
-                          <Text>{item.nome}</Text>
+                          <Text style={{fontWeight: '600'}}>Endereço: </Text>
+                          <Text style={styles.endereco}>{item.endereco}</Text>
                         </View>
                         
                         <View style={{flex: 0, flexDirection: 'row'}}>
@@ -123,20 +125,16 @@ export default class Cliente extends Component<Props> {
                           <Text>{item.cidade}</Text>
                         </View>
 
-                        <View style={{flex: 0, flexDirection: 'row'}}>
-                          <Text style={{fontWeight: '600'}}>Endereço: </Text>
-                          <Text style={styles.endereco}>{item.endereco}</Text>
-                        </View>
-                        <View style={{flex: 0, flexDirection: 'row'}}>
+                        <View style={{flex: 0, flexDirection: 'row', borderBottomWidth: 0.5,borderBottomColor: '#000000'}}>
                           <Text style={{fontWeight: '600'}}>Limite de compra: </Text>
                           <Text style={styles.endereco}>${item.limite}</Text>
                         </View>
                         <View style={{flex: 0, flexDirection: 'row'}}>
-                          <Text style={{fontWeight: '600'}}>Saldo devedor: </Text>
+                          <Text style={{fontWeight: '600', fontSize: 13, color: 'black'}}>Saldo devedor: </Text>
                           <Text style={styles.endereco}>${item['tbcontasreceber.saldo_devedor']}</Text>
                         </View>
                         <View style={{flex: 0, flexDirection: 'row'}}>
-                          <Text style={{fontWeight: '600'}}>Saldo de compra: </Text>
+                          <Text style={{fontWeight: '600', fontSize: 13, color: 'black'}}>Saldo de compra: </Text>
                           <Text style={styles.endereco}>${item['tbcontasreceber.saldo_compra']}</Text>
                         </View>
                         

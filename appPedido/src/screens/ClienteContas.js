@@ -7,6 +7,8 @@ import {
    FlatList, TouchableNativeFeedback} from 'react-native';
 
 
+const API = "http://177.42.56.208:3000/";
+
 
 export default class ClienteContas extends Component<Props> {
   constructor(props){
@@ -28,12 +30,12 @@ export default class ClienteContas extends Component<Props> {
   });
 
   componentDidMount(){
-    //this.getContasAReceber(this.props.navigation.getParam('cod_cliente'));
-    this.getContasAReceber(608);
+    this.getContasAReceber(this.props.navigation.getParam('cod_cliente'));
+    //this.getContasAReceber(608);
   }
 
   getContasAReceber(id){
-    fetch('http://177.16.72.10:3000/contasreceber/'+id, {
+    fetch(API+"contasreceber/"+id, {
         method: 'GET',
         headers: {
           Accept: 'application/json',
@@ -55,7 +57,7 @@ export default class ClienteContas extends Component<Props> {
 
 
   getClientes(){
-      fetch('http://177.16.72.10:3000/clientes/'+(this.state.input).toUpperCase(), {
+      fetch(API+'clientes/'+(this.state.input).toUpperCase(), {
         method: 'GET',
         headers: {
           Accept: 'application/json',

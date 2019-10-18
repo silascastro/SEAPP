@@ -3,7 +3,7 @@ import {StyleSheet, Text, View, FlatList, TouchableNativeFeedback,StatusBar} fro
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-//import CheckBox from '../components/CheckBox';
+import CheckBox from '../components/CheckBox';
 
 const DATA = [
   {title: 'Pedidos', subtitle: 'Crie e gerencie os pedidos', icon: 'local-offer', type: Icon}, {title: 'Clientes', subtitle: 'Analise e gerencie seus clientes', icon: 'people', type: Icon},{title: 'Produtos', subtitle: 'Analise e gerencie seus produtos', icon: 'md-cube' , type: Ionicons},
@@ -62,17 +62,17 @@ export default class Home extends Component<Props> {
                 </View>
                 
               </TouchableNativeFeedback>
+              
             </View>
           }
         />
         
-
+        
         <View style={styles.float}>
           <AntDesign name={'plus'} size={25} color="#ffffff" onPress={()=>{
             this.props.navigation.push('Request');
           }}/>
         </View>
-
       </View>
     );
   }

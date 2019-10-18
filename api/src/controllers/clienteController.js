@@ -30,6 +30,13 @@ exports.getOnClienteById = async(req, res, next) => {
     });
 }
 
+exports.getOneClienteByName = async(req, res, next) => {
+    tbcliente.findAll().then((resp) => {
+        
+    }).catch((err)=>{
+
+    });
+}
 
 
 exports.getOneClienteByName = async(req, res, next) => {
@@ -80,3 +87,4 @@ exports.getOneClienteByName = async(req, res, next) => {
         res.status(500).send(e.message);
     });
 }
+

@@ -7,6 +7,7 @@ import * as Permission from '../../Permissions';
 const eventEmitter = new NativeEventEmitter(NativeModules.LoginModule);
 const LoginModule = NativeModules.LoginModule;
 
+const API = "http://177.42.56.208:3000/";
 
 const resetActionHome = StackActions.reset({
   index: 0,
@@ -47,7 +48,7 @@ export default class Login extends Component {
   }
 
   getUsers(){
-    fetch('http://177.16.72.10:3000/funcionarios', {
+    fetch(API+'funcionarios', {
       method: 'GET',
       headers: {
         Accept: 'application/json',
@@ -74,7 +75,7 @@ export default class Login extends Component {
       Alert.alert('Atenção', 'nenhum usuário selecionado!');
     }else{
       this.setState({loading: true});
-      fetch('http://177.16.72.10:3000/funcionarios/'+user, {
+      fetch(API+'funcionarios/'+user, {
         method: 'GET',
         headers: {
           Accept: 'application/json',
