@@ -114,18 +114,22 @@ export default class Cliente extends Component<Props> {
                           <Text style={styles.title}>{item.nome}</Text>
                           
                         </View>
+                        <View style={{flex: 0, flexDirection: 'row'}}>
+                          <Text style={{fontWeight: '600'}}>Telefone: </Text>
+                          <Text>{item.telefone}</Text>
+                        </View>
 
                         <View style={{flex: 0, flexDirection: 'row'}}>
                           <Text style={{fontWeight: '600'}}>Endereço: </Text>
                           <Text style={styles.endereco}>{item.endereco}</Text>
                         </View>
                         
-                        <View style={{flex: 0, flexDirection: 'row'}}>
+                        <View style={{flex: 0, flexDirection: 'row', borderBottomWidth: 0.5,borderBottomColor: '#000000'}}>
                           <Text style={{fontWeight: '600'}}>Cidade: </Text>
                           <Text>{item.cidade}</Text>
                         </View>
 
-                        <View style={{flex: 0, flexDirection: 'row', borderBottomWidth: 0.5,borderBottomColor: '#000000'}}>
+                        <View style={{flex: 0, flexDirection: 'row', }}>
                           <Text style={{fontWeight: '600'}}>Limite de compra: </Text>
                           <Text style={styles.endereco}>${item.limite}</Text>
                         </View>

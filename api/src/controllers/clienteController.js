@@ -38,6 +38,24 @@ exports.getOneClienteByName = async(req, res, next) => {
     });
 }
 
+exports.getOneClienteByNameHasNotCont = async(req, res, next) => {
+    var nome_param = req.params.nome;
+    
+
+    tbcliente.findAll({
+        where: {nome: {[Op.like]: nome_param+'%'},cod_cliente: {[Op.notIn]: Sequelize.literal('(select cod_cliente from tbcontasreceber)')}},
+    }).then(resp => {
+        //console.log(resp);
+        if(resp){
+            res.status(200).send(resp);
+        }
+        res.status(404).send({msg: 'Cliente não encontrado!'});
+    }).catch((e)=>{
+        //console.log('erro:',e);
+        res.status(500).send(e.message);
+    });
+}
+
 
 exports.getOneClienteByName = async(req, res, next) => {
     var nome_param = req.params.nome;
