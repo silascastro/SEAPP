@@ -11,7 +11,8 @@ module.exports = (sequelize, DataTypes) =>{
         telefone: {type: DataTypes.STRING},
         cidade: DataTypes.STRING,
 	      estado: DataTypes.STRING,
-	      cep: DataTypes.STRING,
+        cep: DataTypes.STRING,
+        observacao: DataTypes.STRING,
         limite: DataTypes.STRING,
         email: {type: DataTypes.STRING,}
       }, {

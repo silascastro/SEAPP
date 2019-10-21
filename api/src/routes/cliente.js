@@ -6,6 +6,6 @@ router.get('/',clienteController.get);
 router.get('/byid/:id',clienteController.getOnClienteById);
 router.get('/notcont/:nome', clienteController.getOneClienteByNameHasNotCont);
 router.get('/byname/:nome',clienteController.getOneClienteByName);
-
+//router.get('/:nome',clienteController.getOneClienteByName);
 
 module.exports = router;

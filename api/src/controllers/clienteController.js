@@ -44,6 +44,7 @@ exports.getOneClienteByNameHasNotCont = async(req, res, next) => {
 
     tbcliente.findAll({
         where: {nome: {[Op.like]: nome_param+'%'},cod_cliente: {[Op.notIn]: Sequelize.literal('(select cod_cliente from tbcontasreceber)')}},
+        order:[['nome','ASC']],
     }).then(resp => {
         //console.log(resp);
         if(resp){
@@ -66,7 +67,7 @@ exports.getOneClienteByName = async(req, res, next) => {
             attributes: [
                 "limite",
                 "tbcontasreceber.cod_cliente",
-            "nome", "endereco","bairro", "telefone", "cidade","estado","cep","email"
+            "nome", "endereco","bairro", "telefone", "cidade","estado","cep","email","observacao"
             ],
             //attributes:[['tbcontasreceber.valor',[Sequelize.fn('sum',Sequelize.col('tbcontasreceber.valor')),'saldo_devedor']],],
             group: [
@@ -80,7 +81,7 @@ exports.getOneClienteByName = async(req, res, next) => {
                 "telefone", 
                 "cidade",
                 "estado",
-            "cep","email",              
+            "cep","email","observacao"            
             /*'tbcontasreceber.cod_cliente',
             'tbcontasreceber.documento',
             'tbcontasreceber.tipo',

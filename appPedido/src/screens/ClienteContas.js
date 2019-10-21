@@ -3,11 +3,12 @@ import {
   Alert,StyleSheet, 
   Text, View,
    TextInput, 
+   Button,
    ActivityIndicator,  
    FlatList, TouchableNativeFeedback} from 'react-native';
 
 
-const API = "http://189.58.85.181:3000/";
+   const API = "http://192.168.0.7:3000/";
 
 
 export default class ClienteContas extends Component<Props> {
@@ -47,6 +48,9 @@ export default class ClienteContas extends Component<Props> {
         for(e in resp){
           aux.push(resp[e]);
         }
+        for(let e in aux){
+          aux[e].status = "aberto";
+        }
         this.setState({contasareceber: aux});
         this.setState({loading: false});
         
@@ -84,6 +88,12 @@ export default class ClienteContas extends Component<Props> {
     
   }
 
+  changeState(index, _status){
+    let aux = this.state.contasareceber;
+    aux[index].status = _status;
+    this.setState({contasareceber: aux});
+}
+
   format(number){
     return number;
   }
@@ -100,20 +110,41 @@ export default class ClienteContas extends Component<Props> {
         ListHeaderComponent={()=>
           <View style={{flexDirection: 'row', marginBottom: 3}}>
             <Text style={{fontWeight: '800',color: 'black'}}>Cliente: </Text>
-            <Text>nome</Text>
+            <Text>{this.props.navigation.getParam('nome')}</Text>
           </View>
         }
         data={this.state.contasareceber}
-        renderItem={({item})=>
+        renderItem={({item, index})=>
             <View style={styles.card}>
                 <TouchableNativeFeedback>
-                  <View style={styles.cardContent}>
-                            <View>
-                                <Text>{item.documento}</Text>
-                                <Text>{item.valor}</Text>
+                <View style={styles.cardContent}>
+                      <View style={{flex: 0, flexDirection: 'row'}}>
+                            <View style={{flex: 2,}}>
+                                <View style={{flex: 0, flexDirection: 'row'}}>
+                                    <Text style={{fontWeight: '600', fontSize: 13, color: 'black'}}>Documento: </Text>
+                                    <Text>{item.documento}</Text>
+                                </View>
+                                <View style={{flex: 0, flexDirection: 'row'}}>
+                                    <Text style={{fontWeight: '600', fontSize: 13, color: 'black'}}>Valor: </Text>
+                                    <Text style={{color: 'green'}}>R${item.valor}</Text>
+                                </View>
                             </View>
+                            <View style={{ padding: 20,flex: 1, alignContent: 'center'}}>
+                                <View style={{width: 80}}>
+                                    <Button  
+                                    color={this.state.contasareceber[index].status == 'aberto'? 'green': 'red'} 
+                                    title={this.state.contasareceber[index].status}  
+                                    onPress={()=>{
+                                        if(this.state.contasareceber[index].status == 'aberto')
+                                        this.changeState(index,'fechado');
+                                        else
+                                        this.changeState(index,'aberto'); 
+                                        
+                                    }}/>
+                                </View>
+                            </View>
+                        </View>
                   </View>
-
                 </TouchableNativeFeedback>
             </View>
         }

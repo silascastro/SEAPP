@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {DrawerLayoutAndroid,Alert,StyleSheet, Text, View, TextInput, ActivityIndicator, FlatList, TouchableNativeFeedback} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const API = "http://189.58.85.181:3000/";
+const API = /*"http://189.58.85.181:3000/"*/"http://192.168.0.7:3000/";
 
 export default class Cliente extends Component<Props> {
   constructor(props){
@@ -49,6 +49,7 @@ export default class Cliente extends Component<Props> {
   }
 
   getClientes(){
+      
       fetch(API+'clientes/byname/'+(this.state.input).toUpperCase(), {
         method: 'GET',
         headers: {
@@ -64,9 +65,10 @@ export default class Cliente extends Component<Props> {
 
         this.setState({clientes: aux});
         this.setState({loading: false});
+        this.getClientesHasNotCont();
         
       }).catch((err)=>{
-        Alert.alert('Atenção', err);
+        //Alert.alert('Atenção', 'erro');
       });
   }
 
@@ -82,9 +84,17 @@ export default class Cliente extends Component<Props> {
         let aux = this.state.clientes;
 
         for(let e in resp){
-          resp[e].tbcontasreceber.saldo_devedor = "0.00";
-          resp[e].tbcontasreceber.saldo_compra = resp[e].limite;
-          aux.push(resp[e]);
+          //resp[e].tbcontasreceber.saldo_devedor = "0.00";
+          //resp[e].tbcontasreceber.saldo_compra = resp[e].limite;
+          let aux2 = {limite: resp[e].limite, cod_cliente: resp[e].cod_cliente,
+            nome: resp[e].nome, endereco: resp[e].endereco,
+            bairro: resp[e].bairro, telefone: resp[e].telefone, cidade: resp[e].cidade,
+            estado: resp[e].estado, cep: resp[e].cep, observacao: resp[e].observacao,
+            ["tbcontasreceber.saldo_devedor"]: '0.00',
+            ["tbcontasreceber.saldo_compra"]: resp[e].limite
+          }
+          //alert(resp[e].nome);
+          aux.push(aux2);
         }
 
         aux.sort();
@@ -92,7 +102,7 @@ export default class Cliente extends Component<Props> {
         this.setState({clientes: aux});
 
     }).catch(e => {
-      Alert.alert('Atenção', err);
+      //Alert.alert('Atenção', 'erro nos clientes que não tem contas');
     });
       
   }
@@ -104,11 +114,14 @@ export default class Cliente extends Component<Props> {
     return (
       <View style={styles.container}>
         <View style={styles.input}>
-          <TextInput placeholder="Digite o nome do cliente" style={{flex: 4}} value={this.state.input} onChangeText={(value)=>{
-            this.setState({loading: true});
-            this.setState({pesquisado: true});
-            this.setState({input: value});
-            this.getClientes();
+          <TextInput placeholder="Digite o nome do cliente" style={{flex: 4}} value={this.state.input} 
+          onChangeText={(value)=>{
+            if(value != ''){
+              this.setState({loading: true});
+              this.setState({pesquisado: true});
+              this.setState({input: value});
+              this.getClientes();
+            }
             
           }}/>
           {this.state.input != '' ?<Icon name='close' size={25} color="black"  style={{flex: 1,alignSelf: 'center', textAlign: 'right', paddingRight: 5}}
@@ -137,8 +150,8 @@ export default class Cliente extends Component<Props> {
                       <View style={styles.cardContent}>
                         <View style={{flex: 0, flexDirection: 'row'}}>
                           <Text style={styles.title}>{item.cod_cliente}</Text>
-                          <Text style={styles.title}>-</Text>
-                          <Text style={styles.title}>{item.nome}</Text>
+                          <Text style={{  fontWeight: '600', fontSize: 15, color: 'black'}}>-</Text>
+                          <Text style={{  fontWeight: '600', fontSize: 15, color: 'black', flex: 1}}>{item.nome}</Text>
                           
                         </View>
                         <View style={{flex: 0, flexDirection: 'row'}}>
@@ -148,12 +161,27 @@ export default class Cliente extends Component<Props> {
 
                         <View style={{flex: 0, flexDirection: 'row'}}>
                           <Text style={{fontWeight: '600'}}>Endereço: </Text>
-                          <Text style={{}}>{item.endereco}</Text>
+                          <Text style={{flex: 1}}>{item.endereco}</Text>
                         </View>
                         
+                        <View style={{flex: 0, flexDirection: 'row'}}>
+                          <View style={{flex: 2}}>
+                            <View style={{flexDirection: 'row'}}>
+                              <Text style={{fontWeight: '600'}}>Cidade: </Text>
+                              <Text>{item.cidade}</Text>
+                            </View>
+                          </View>
+                          <View style={{flex: 1}}>
+                            <View style={{flexDirection: 'row'}}>
+                              <Text style={{fontWeight: '600'}}>Estado: </Text>
+                              <Text>{item.estado}</Text>
+                            </View>
+                          </View>
+                        </View>
+
                         <View style={{flex: 0, flexDirection: 'row', borderBottomWidth: 0.5,borderBottomColor: '#000000'}}>
-                          <Text style={{fontWeight: '600'}}>Cidade: </Text>
-                          <Text>{item.cidade}</Text>
+                          <Text style={{fontWeight: '600', color: '#ff8d00'}}>Observação: </Text>
+                          <Text style={{color :'#ff8d00', flex: 1}}>{item.observacao}</Text>
                         </View>
 
                         <View style={{flex: 0, flexDirection: 'row', }}>
@@ -215,13 +243,14 @@ const styles = StyleSheet.create({
     //paddingLeft: 10,
     marginRight: 2,
     marginLeft: 2,
-    height: 150,
+    //height: 150,
     borderRadius: 5,
     backgroundColor: "#ffffff",
     elevation: 5,
     marginBottom: 10,
     alignContent: 'center',
     justifyContent: 'center',
+    
 },
 cardContent: {
   padding: 10,

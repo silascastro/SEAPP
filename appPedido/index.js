@@ -10,6 +10,6 @@ import Routes from './src/Routes';
 import Teste from './src/screens/Teste'
 import ClienteContas from './src/screens/ClienteContas';
 
-AppRegistry.registerComponent(appName, ()=>Teste);
-//AppRegistry.registerComponent(appName, () => Routes);
+//AppRegistry.registerComponent(appName, ()=>Teste);
+AppRegistry.registerComponent(appName, () => Routes);
 //AppRegistry.registerComponent(appName, () => ClienteContas);
