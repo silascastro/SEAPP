@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {DrawerLayoutAndroid,Alert,StyleSheet, Text, View, TextInput, ActivityIndicator, FlatList, TouchableNativeFeedback} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const API = /*"http://189.58.85.181:3000/"*/"http://192.168.0.7:3000/";
+const API = "http://189.58.85.181:3000/";
 
 export default class Cliente extends Component<Props> {
   constructor(props){
@@ -185,16 +185,16 @@ export default class Cliente extends Component<Props> {
                         </View>
 
                         <View style={{flex: 0, flexDirection: 'row', }}>
-                          <Text style={{fontWeight: '600'}}>Limite de compra: </Text>
-                          <Text style={styles.endereco}>${item.limite}</Text>
+                          <Text style={{fontWeight: '600',fontSize: 13, color: 'black'}}>Limite de compra: </Text>
+                          <Text style={{alignContent: "center"}}>${item.limite}</Text>
                         </View>
                         <View style={{flex: 0, flexDirection: 'row'}}>
                           <Text style={{fontWeight: '600', fontSize: 13, color: 'black'}}>Saldo devedor: </Text>
-                          <Text style={{color: 'red'}}>${item['tbcontasreceber.saldo_devedor']}</Text>
+                          <Text style={{color: 'red'}}>{item['tbcontasreceber.saldo_devedor']}</Text>
                         </View>
                         <View style={{flex: 0, flexDirection: 'row'}}>
                           <Text style={{fontWeight: '600', fontSize: 13, color: 'black'}}>Saldo de compra: </Text>
-                          <Text style={{color: 'green'}}>${item['tbcontasreceber.saldo_compra']}</Text>
+                          <Text style={{color: 'green'}}>{item['tbcontasreceber.saldo_compra']}</Text>
                         </View>
                         
                       </View>

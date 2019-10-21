@@ -8,7 +8,7 @@ import {
    FlatList, TouchableNativeFeedback} from 'react-native';
 
 
-   const API = "http://192.168.0.7:3000/";
+   const API = "http://189.58.85.181:3000/";
 
 
 export default class ClienteContas extends Component<Props> {

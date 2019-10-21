@@ -7,7 +7,7 @@ import * as Permission from '../../Permissions';
 const eventEmitter = new NativeEventEmitter(NativeModules.LoginModule);
 const LoginModule = NativeModules.LoginModule;
 
-const API = /*"http://189.58.85.181:3000/"*/"http://192.168.0.7:3000/";
+const API = "http://189.58.85.181:3000/";
 
 const resetActionHome = StackActions.reset({
   index: 0,
