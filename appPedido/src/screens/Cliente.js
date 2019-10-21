@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {DrawerLayoutAndroid,Alert,StyleSheet, Text, View, TextInput, ActivityIndicator, FlatList, TouchableNativeFeedback} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const API = "http://177.42.56.208:3000/";
+const API = "http://189.58.85.181:3000/";
 
 export default class Cliente extends Component<Props> {
   constructor(props){
@@ -49,7 +49,7 @@ export default class Cliente extends Component<Props> {
   }
 
   getClientes(){
-      fetch(API+'clientes/'+(this.state.input).toUpperCase(), {
+      fetch(API+'clientes/byname/'+(this.state.input).toUpperCase(), {
         method: 'GET',
         headers: {
           Accept: 'application/json',
@@ -68,6 +68,33 @@ export default class Cliente extends Component<Props> {
       }).catch((err)=>{
         Alert.alert('Atenção', err);
       });
+  }
+
+  getClientesHasNotCont(){
+    fetch(API+'clientes/notcont/'+(this.state.input).toUpperCase(), {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    }).then((response)=> response.json())
+      .then((resp) => {
+        let aux = this.state.clientes;
+
+        for(let e in resp){
+          resp[e].tbcontasreceber.saldo_devedor = "0.00";
+          resp[e].tbcontasreceber.saldo_compra = resp[e].limite;
+          aux.push(resp[e]);
+        }
+
+        aux.sort();
+        
+        this.setState({clientes: aux});
+
+    }).catch(e => {
+      Alert.alert('Atenção', err);
+    });
+      
   }
 
   render() {
@@ -121,7 +148,7 @@ export default class Cliente extends Component<Props> {
 
                         <View style={{flex: 0, flexDirection: 'row'}}>
                           <Text style={{fontWeight: '600'}}>Endereço: </Text>
-                          <Text style={styles.endereco}>{item.endereco}</Text>
+                          <Text style={{}}>{item.endereco}</Text>
                         </View>
                         
                         <View style={{flex: 0, flexDirection: 'row', borderBottomWidth: 0.5,borderBottomColor: '#000000'}}>
@@ -135,11 +162,11 @@ export default class Cliente extends Component<Props> {
                         </View>
                         <View style={{flex: 0, flexDirection: 'row'}}>
                           <Text style={{fontWeight: '600', fontSize: 13, color: 'black'}}>Saldo devedor: </Text>
-                          <Text style={styles.endereco}>${item['tbcontasreceber.saldo_devedor']}</Text>
+                          <Text style={{color: 'red'}}>${item['tbcontasreceber.saldo_devedor']}</Text>
                         </View>
                         <View style={{flex: 0, flexDirection: 'row'}}>
                           <Text style={{fontWeight: '600', fontSize: 13, color: 'black'}}>Saldo de compra: </Text>
-                          <Text style={styles.endereco}>${item['tbcontasreceber.saldo_compra']}</Text>
+                          <Text style={{color: 'green'}}>${item['tbcontasreceber.saldo_compra']}</Text>
                         </View>
                         
                       </View>

@@ -7,7 +7,7 @@ import {
    FlatList, TouchableNativeFeedback} from 'react-native';
 
 
-const API = "http://177.42.56.208:3000/";
+const API = "http://189.58.85.181:3000/";
 
 
 export default class ClienteContas extends Component<Props> {
@@ -57,7 +57,7 @@ export default class ClienteContas extends Component<Props> {
 
 
   getClientes(){
-      fetch(API+'clientes/'+(this.state.input).toUpperCase(), {
+      fetch(API+'clientes/byname/'+(this.state.input).toUpperCase(), {
         method: 'GET',
         headers: {
           Accept: 'application/json',
@@ -109,7 +109,6 @@ export default class ClienteContas extends Component<Props> {
                 <TouchableNativeFeedback>
                   <View style={styles.cardContent}>
                             <View>
-
                                 <Text>{item.documento}</Text>
                                 <Text>{item.valor}</Text>
                             </View>

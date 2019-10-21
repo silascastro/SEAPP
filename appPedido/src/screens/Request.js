@@ -52,7 +52,9 @@ export default class Request extends Component<Props> {
       >
         
       <View style={{flex: 1, alignItems: 'center'}}>
-        <Button title="teste" onPress={()=>{this.refs['DRAWER'].openDrawer();}}/>
+        <Button title="teste" onPress={()=>{
+          this.refs['DRAWER'].openDrawer();
+        }}/>
       </View>
     </DrawerLayoutAndroid>
     );

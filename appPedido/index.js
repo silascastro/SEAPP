@@ -7,8 +7,9 @@ import Cliente from './src/screens/Cliente';
 import Login from './src/screens/Login';
 import {name as appName} from './app.json';
 import Routes from './src/Routes';
+import Teste from './src/screens/Teste'
 import ClienteContas from './src/screens/ClienteContas';
 
-
-AppRegistry.registerComponent(appName, () => Routes/*Cliente*/);
+AppRegistry.registerComponent(appName, ()=>Teste);
+//AppRegistry.registerComponent(appName, () => Routes);
 //AppRegistry.registerComponent(appName, () => ClienteContas);
