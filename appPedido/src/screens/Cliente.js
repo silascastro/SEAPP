@@ -107,6 +107,15 @@ export default class Cliente extends Component<Props> {
       
   }
 
+  formatCurrency(value){
+    var tmp = value+'';
+    tmp = tmp.replace(/([0-9]{2})$/g, ",$1");
+    if(tmp.length > 6){
+      tmp = tmp.replace(/([0-9]{3}),([0-9]{2}$)/g, ".$1,$2");
+    }
+    return tmp;
+  }
+
   render() {
     var navigationView = (
       <View><Text>Teste</Text></View>
@@ -180,21 +189,23 @@ export default class Cliente extends Component<Props> {
                         </View>
 
                         <View style={{flex: 0, flexDirection: 'row', borderBottomWidth: 0.5,borderBottomColor: '#000000'}}>
-                          <Text style={{fontWeight: '600', color: '#ff8d00'}}>Observação: </Text>
-                          <Text style={{color :'#ff8d00', flex: 1}}>{item.observacao}</Text>
+                          <Text style={{fontWeight: '600', color: 'red'}}>Observação: </Text>
+                          <Text style={{color :'red', flex: 1}}>{item.observacao}</Text>
                         </View>
 
-                        <View style={{flex: 0, flexDirection: 'row', }}>
-                          <Text style={{fontWeight: '600',fontSize: 13, color: 'black'}}>Limite de compra: </Text>
-                          <Text style={{alignContent: "center"}}>${item.limite}</Text>
-                        </View>
                         <View style={{flex: 0, flexDirection: 'row'}}>
-                          <Text style={{fontWeight: '600', fontSize: 13, color: 'black'}}>Saldo devedor: </Text>
-                          <Text style={{color: 'red'}}>{item['tbcontasreceber.saldo_devedor']}</Text>
-                        </View>
-                        <View style={{flex: 0, flexDirection: 'row'}}>
-                          <Text style={{fontWeight: '600', fontSize: 13, color: 'black'}}>Saldo de compra: </Text>
-                          <Text style={{color: 'green'}}>{item['tbcontasreceber.saldo_compra']}</Text>
+                            <View style={{flex: 2}}>
+                              <Text style={{fontWeight: '600',fontSize: 13, color: 'black'}}>Limite de compra: </Text>
+                              <Text style={{fontWeight: '600', fontSize: 13, color: 'black'}}>Saldo devedor: </Text>
+                              <Text style={{fontWeight: '600', fontSize: 13, color: 'black'}}>Saldo de compra: </Text>
+                            </View>
+                            <View style={{flex: 1, alignContent: 'center', alignItems: 'flex-start'}}>
+                              <Text style={{alignContent: "center", color: 'black', fontWeight: '600',fontSize: 13,}}>
+                              {this.formatCurrency((item.limite).replace(".",""))}</Text>
+                              <Text style={{color: 'red'}}>{this.formatCurrency(item['tbcontasreceber.saldo_devedor'].replace(".",""))}</Text>
+                              <Text style={{color: item['tbcontasreceber.saldo_compra']<0?'red':'green'}}>{this.formatCurrency(item['tbcontasreceber.saldo_compra'].replace(".",""))}</Text>
+                            </View>
+
                         </View>
                         
                       </View>

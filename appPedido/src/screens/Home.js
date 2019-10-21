@@ -31,8 +31,20 @@ export default class Home extends Component<Props> {
             </View>*/null
   });
 
+  formatCurrency(value){
+    var tmp = value+'';
+    tmp = tmp.replace(/([0-9]{2})$/g, ",$1");
+    if(tmp.length > 6){
+      tmp = tmp.replace(/([0-9]{3}),([0-9]{2}$)/g, ".$1,$2");
+    }
+    return tmp;
+  }
+
+
   componentDidMount(){
-    
+    //alert(this.formatCurrency(1000000000.00));
+   //var atual = 600000.00;
+   //alert(atual.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'}));
   }
 
   render() {
