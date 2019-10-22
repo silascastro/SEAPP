@@ -11,5 +11,5 @@ import Routes from '../src/Routes';
 import renderer from 'react-test-renderer';
 
 it('renders correctly', () => {
-  renderer.create(<Home/>);
+  renderer.create(<Routes/>);
 });

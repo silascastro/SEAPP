@@ -6,9 +6,9 @@ import {
    Button,
    ActivityIndicator,  
    FlatList, TouchableNativeFeedback} from 'react-native';
+   import AntDesign from 'react-native-vector-icons/AntDesign'
 
-
-   const API = "http://189.58.85.181:3000/";
+   const API = "http://177.16.53.198:3000/";
 
 
 export default class ClienteContas extends Component<Props> {
@@ -106,49 +106,95 @@ export default class ClienteContas extends Component<Props> {
       </View>
       :
       <FlatList
-        style={styles.list}
+        style={{}}
         ListHeaderComponent={()=>
-          <View style={{flexDirection: 'row', marginBottom: 3}}>
-            <Text style={{fontWeight: '800',color: 'black'}}>Cliente: </Text>
-            <Text>{this.props.navigation.getParam('nome')}</Text>
+          <View style={{marginLeft: 10, marginRight: 10, paddingTop: 20, paddingBottom: 15}}>
+                
+                <View style={{marginLeft: 20,elevation: 2,}}>
+                  <View style={{flexDirection: 'row'}}>
+                    <Text style={{fontWeight: '500'}}>Cliente: </Text>
+                    <Text>{this.props.navigation.getParam('nome')}</Text>
+                  </View>
+                  <View style={{flex: 0 ,flexDirection: 'row',marginBottom: 15}}>
+                    <View style={{flex: 1}}>
+                      <View style={{flexDirection: 'row'}}>
+                        <Text style={{fontWeight: '500'}}>Endereço: </Text>
+                        <Text>{this.props.navigation.getParam('endereco')}</Text>
+                      </View>
+                    </View>
+                    <View style={{flex: 1}}>
+                      <View style={{flexDirection: 'row'}}>
+                        <Text style={{fontWeight: '500'}}>Telefone: </Text>
+                        <Text>{this.props.navigation.getParam('telefone')}</Text>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+                <View style={{flexDirection: 'row', marginLeft: 15, borderBottomWidth: 0.5, borderColor: 'gray'}}>
+                  <View style={{flex: 1, alignContent: 'center'}}>
+                    <Text style={{fontWeight: '600'}}>Documento</Text>
+                  </View>
+                  <View style={{flex: 1, alignItems: 'center'}}>
+                    <Text style={{fontWeight: '600'}}>Vencimento</Text>
+                  </View>
+                  <View style={{flex: 1, alignItems: 'center'}}>
+                    <Text style={{fontWeight: '600'}}>Valor</Text>
+                  </View>
+                  <View style={{flex: 1, alignItems: 'center'}}>
+                    <Text style={{fontWeight: '600'}}>Recebido</Text>
+                  </View>
+                </View>
+              </View>
+        }
+        ListFooterComponent={()=>
+          <View style={{marginLeft: 10, marginRight: 10, paddingTop: 10, paddingBottom: 15, borderTopWidth: 0.5, borderColor: 'gray'}}>
+            <View style={{marginLeft: 20}}>
+              <View style={{flexDirection: 'row'}}>
+                <Text style={{fontWeight: '600'}}>Total a Receber: </Text>
+                <Text>10000,00</Text>
+              </View>
+              <View style={{flexDirection: 'row'}}>
+                <Text style={{fontWeight: '600'}}>Total a Recebido: </Text>
+                <Text>0,00</Text>
+              </View>
+            </View>
+
+            
           </View>
         }
         data={this.state.contasareceber}
         renderItem={({item, index})=>
-            <View style={styles.card}>
-                <TouchableNativeFeedback>
-                <View style={styles.cardContent}>
-                      <View style={{flex: 0, flexDirection: 'row'}}>
-                            <View style={{flex: 2,}}>
-                                <View style={{flex: 0, flexDirection: 'row'}}>
-                                    <Text style={{fontWeight: '600', fontSize: 13, color: 'black'}}>Documento: </Text>
-                                    <Text>{item.documento}</Text>
-                                </View>
-                                <View style={{flex: 0, flexDirection: 'row'}}>
-                                    <Text style={{fontWeight: '600', fontSize: 13, color: 'black'}}>Valor: </Text>
-                                    <Text style={{color: 'green'}}>R${item.valor}</Text>
-                                </View>
-                            </View>
-                            <View style={{ padding: 20,flex: 1, alignContent: 'center'}}>
-                                <View style={{width: 80}}>
-                                    <Button  
-                                    color={this.state.contasareceber[index].status == 'aberto'? 'green': 'red'} 
-                                    title={this.state.contasareceber[index].status}  
-                                    onPress={()=>{
-                                        if(this.state.contasareceber[index].status == 'aberto')
-                                        this.changeState(index,'fechado');
-                                        else
-                                        this.changeState(index,'aberto'); 
-                                        
-                                    }}/>
-                                </View>
-                            </View>
-                        </View>
-                  </View>
-                </TouchableNativeFeedback>
+        <TouchableNativeFeedback >
+        <View style={{elevation: 5,paddingTop: 10, paddingBottom: 10, paddingLeft: 10, paddingRight: 10}}>
+          <View style={{flexDirection: 'row', marginLeft: 15}}>
+            <View style={{flex: 1, alignContent: 'center', alignItems: 'center'}}>
+              <Text style={{}}>{item.documento}</Text>
             </View>
-        }
-      />
+            <View style={{flex: 1, alignContent: 'center', alignItems: 'center'}}> 
+              <Text style={{}}>{item.dt_vencimento}</Text>
+            </View>
+            <View style={{flex: 1, alignContent: 'center', alignItems: 'center'}}>
+              <Text style={{}}>{item.valor}</Text>
+            </View>
+            <View style={{flex: 1, alignContent: 'center', alignItems: 'center'}}>
+              <AntDesign name={this.state.contasareceber[index].status == 'aberto' ? 'close' : 'check'} 
+              size={25} 
+              color={this.state.contasareceber[index].status == 'aberto' ? 'red' : 'green'}
+              title={this.state.contasareceber[index].status}
+              style={{}} onPress={()=>{
+                if(this.state.contasareceber[index].status == 'aberto')
+                  this.changeState(index,'fechado');
+                else
+                  this.changeState(index,'aberto'); 
+              }}/>
+            </View>
+
+          </View>
+        </View>
+
+      </TouchableNativeFeedback>
+    }
+  />
     );
   }
 }

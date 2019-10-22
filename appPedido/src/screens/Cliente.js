@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {DrawerLayoutAndroid,Alert,StyleSheet, Text, View, TextInput, ActivityIndicator, FlatList, TouchableNativeFeedback} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const API = "http://189.58.85.181:3000/";
+const API = "http://177.16.53.198:3000/";
 
 export default class Cliente extends Component<Props> {
   constructor(props){
@@ -116,6 +116,12 @@ export default class Cliente extends Component<Props> {
     return tmp;
   }
 
+  removerPonto(campo)
+	{	
+		campo = campo.split(".").join("");
+		return campo;
+	}
+
   render() {
     var navigationView = (
       <View><Text>Teste</Text></View>
@@ -153,7 +159,9 @@ export default class Cliente extends Component<Props> {
                       //this.getContasAReceber(item.cod_cliente);
                       this.props.navigation.navigate('ClienteContas',{
                         cod_cliente: item.cod_cliente,
-                        nome: item.nome
+                        nome: item.nome,
+                        endereco: item.endereco,
+                        telefone: item.telefone
                       });
                       }}>
                       <View style={styles.cardContent}>
@@ -199,11 +207,13 @@ export default class Cliente extends Component<Props> {
                               <Text style={{fontWeight: '600', fontSize: 13, color: 'black'}}>Saldo devedor: </Text>
                               <Text style={{fontWeight: '600', fontSize: 13, color: 'black'}}>Saldo de compra: </Text>
                             </View>
-                            <View style={{flex: 1, alignContent: 'center', alignItems: 'flex-start'}}>
+                            <View style={{flex: 1, alignContent: 'center', alignItems: 'flex-end'}}>
                               <Text style={{alignContent: "center", color: 'black', fontWeight: '600',fontSize: 13,}}>
                               {this.formatCurrency((item.limite).replace(".",""))}</Text>
                               <Text style={{color: 'red'}}>{this.formatCurrency(item['tbcontasreceber.saldo_devedor'].replace(".",""))}</Text>
-                              <Text style={{color: item['tbcontasreceber.saldo_compra']<0?'red':'green'}}>{this.formatCurrency(item['tbcontasreceber.saldo_compra'].replace(".",""))}</Text>
+                              <Text style={{color: item['tbcontasreceber.saldo_compra']<0?'red':'green'}}>{/*this.formatCurrency(item['tbcontasreceber.saldo_compra'].replace(".",""))*/
+                                Number(this.removerPonto(item['tbcontasreceber.saldo_compra'])).toLocaleString('pt-BR')
+                              }</Text>
                             </View>
 
                         </View>
