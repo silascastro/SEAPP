@@ -107,13 +107,10 @@ export default class Cliente extends Component<Props> {
       
   }
 
-  formatCurrency(value){
-    var tmp = value+'';
-    tmp = tmp.replace(/([0-9]{2})$/g, ",$1");
-    if(tmp.length > 6){
-      tmp = tmp.replace(/([0-9]{3}),([0-9]{2}$)/g, ".$1,$2");
-    }
-    return tmp;
+  numberToReal(numero) {
+    var numero = numero.toFixed(2).split('.');
+    numero[0] = "" + numero[0].split(/(?=(?:...)*$)/).join('.');
+    return numero.join(',');
   }
 
   removerPonto(campo)
@@ -209,11 +206,9 @@ export default class Cliente extends Component<Props> {
                             </View>
                             <View style={{flex: 1, alignContent: 'center', alignItems: 'flex-end'}}>
                               <Text style={{alignContent: "center", color: 'black', fontWeight: '600',fontSize: 13,}}>
-                              {this.formatCurrency((item.limite).replace(".",""))}</Text>
-                              <Text style={{color: 'red'}}>{this.formatCurrency(item['tbcontasreceber.saldo_devedor'].replace(".",""))}</Text>
-                              <Text style={{color: item['tbcontasreceber.saldo_compra']<0?'red':'green'}}>{/*this.formatCurrency(item['tbcontasreceber.saldo_compra'].replace(".",""))*/
-                                Number(this.removerPonto(item['tbcontasreceber.saldo_compra'])).toLocaleString('pt-BR')
-                              }</Text>
+                              {this.numberToReal(Number(item.limite))}</Text>
+                              <Text style={{color: 'red'}}>{this.numberToReal(Number(item['tbcontasreceber.saldo_devedor']))}</Text>
+                              <Text style={{color: item['tbcontasreceber.saldo_compra']<0?'red':'green'}}>{this.numberToReal(Number(item['tbcontasreceber.saldo_compra'])).replace("-.","-")}</Text>
                             </View>
 
                         </View>

@@ -14,7 +14,11 @@ import {
 export default class ClienteContas extends Component<Props> {
   constructor(props){
     super(props);
-    this.state = {loading: true, clientes: [], pesquisado: false, input: '', contasareceber: []};
+    this.state = {loading: true, 
+      contasareceber: [], 
+      totalReceber: '',
+      totalRecebido: '', 
+      saldoPendente: ''};
   }
 
   static navigationOptions = ({navigation}) => ({
@@ -45,12 +49,18 @@ export default class ClienteContas extends Component<Props> {
       }).then((response)=> response.json()).then((resp) => {
         console.log(resp);
         let aux = [];
+        let _totalReceber = 0;
+
         for(e in resp){
           aux.push(resp[e]);
+          _totalReceber+=Number(resp[e].valor);
         }
+
         for(let e in aux){
           aux[e].status = "aberto";
         }
+
+        this.setState({totalReceber: _totalReceber});
         this.setState({contasareceber: aux});
         this.setState({loading: false});
         
@@ -59,6 +69,11 @@ export default class ClienteContas extends Component<Props> {
       });
   }
 
+  numberToReal(numero) {
+    var numero = numero.toFixed(2).split('.');
+    numero[0] = "" + numero[0].split(/(?=(?:...)*$)/).join('.');
+    return numero.join(',');
+  }
 
   getClientes(){
       fetch(API+'clientes/byname/'+(this.state.input).toUpperCase(), {
@@ -110,24 +125,11 @@ export default class ClienteContas extends Component<Props> {
         ListHeaderComponent={()=>
           <View style={{marginLeft: 10, marginRight: 10, paddingTop: 20, paddingBottom: 15}}>
                 
-                <View style={{marginLeft: 20,elevation: 2,}}>
+                <View style={{marginLeft: 15, borderBottomWidth: 0.5, borderBottomColor: 'gray', paddingBottom: 5}}>
                   <View style={{flexDirection: 'row'}}>
                     <Text style={{fontWeight: '500'}}>Cliente: </Text>
+                    <Text>{this.props.navigation.getParam('cod_cliente')+'-'}</Text>
                     <Text>{this.props.navigation.getParam('nome')}</Text>
-                  </View>
-                  <View style={{flex: 0 ,flexDirection: 'row',marginBottom: 15}}>
-                    <View style={{flex: 1}}>
-                      <View style={{flexDirection: 'row'}}>
-                        <Text style={{fontWeight: '500'}}>Endereço: </Text>
-                        <Text>{this.props.navigation.getParam('endereco')}</Text>
-                      </View>
-                    </View>
-                    <View style={{flex: 1}}>
-                      <View style={{flexDirection: 'row'}}>
-                        <Text style={{fontWeight: '500'}}>Telefone: </Text>
-                        <Text>{this.props.navigation.getParam('telefone')}</Text>
-                      </View>
-                    </View>
                   </View>
                 </View>
                 <View style={{flexDirection: 'row', marginLeft: 15, borderBottomWidth: 0.5, borderColor: 'gray'}}>
@@ -147,19 +149,40 @@ export default class ClienteContas extends Component<Props> {
               </View>
         }
         ListFooterComponent={()=>
-          <View style={{marginLeft: 10, marginRight: 10, paddingTop: 10, paddingBottom: 15, borderTopWidth: 0.5, borderColor: 'gray'}}>
-            <View style={{marginLeft: 20}}>
-              <View style={{flexDirection: 'row'}}>
+          <View style={{marginLeft: 10, marginRight: 10, paddingTop: 10, paddingBottom: 15,}}>
+            <View style={{marginLeft: 15, flexDirection: 'row',  borderTopWidth: 0.5, borderColor: 'gray'}}>
+              <View style={{flex: 2}}>
                 <Text style={{fontWeight: '600'}}>Total a Receber: </Text>
-                <Text>10000,00</Text>
-              </View>
-              <View style={{flexDirection: 'row'}}>
                 <Text style={{fontWeight: '600'}}>Total a Recebido: </Text>
-                <Text>0,00</Text>
+                <Text style={{fontWeight: '600'}}>Saldo Pendente: </Text>
+                
               </View>
+              <View style={{flex: 1, alignContent: 'center', alignItems: 'flex-end'}}>
+                <Text style={{}}>{this.numberToReal(Number(this.state.totalReceber))}</Text>
+                <Text>{this.numberToReal(Number(this.state.totalRecebido))}</Text>
+                <Text>{this.numberToReal(Number(this.state.saldoPendente))}</Text>
+              </View>
+              
             </View>
 
-            
+            <Button disabled={this.state.totalRecebido > 0 ? false: true} title='confirmar'
+              onPress={()=> {
+                Alert.alert('Atenção', 'confirma a sua ação?',
+                [
+                  {
+                    text: 'Cancelar',
+                    onPress: () => console.log('cancel'),
+                    style: 'cancel',
+                  },
+                  {
+                    text: 'Confimar',
+                    onPress: () => this.props.navigation.goBack(),
+                    
+                  }
+                ]
+                )
+              }}
+            />
           </View>
         }
         data={this.state.contasareceber}
@@ -171,10 +194,10 @@ export default class ClienteContas extends Component<Props> {
               <Text style={{}}>{item.documento}</Text>
             </View>
             <View style={{flex: 1, alignContent: 'center', alignItems: 'center'}}> 
-              <Text style={{}}>{item.dt_vencimento}</Text>
+              <Text style={{}}>{item.dt_vencimento.split('-')[2]+'/'+item.dt_vencimento.split('-')[1]+'/'+item.dt_vencimento.split('-')[0]}</Text>
             </View>
             <View style={{flex: 1, alignContent: 'center', alignItems: 'center'}}>
-              <Text style={{}}>{item.valor}</Text>
+              <Text style={{}}>{this.numberToReal(Number(item.valor))}</Text>
             </View>
             <View style={{flex: 1, alignContent: 'center', alignItems: 'center'}}>
               <AntDesign name={this.state.contasareceber[index].status == 'aberto' ? 'close' : 'check'} 
@@ -182,10 +205,22 @@ export default class ClienteContas extends Component<Props> {
               color={this.state.contasareceber[index].status == 'aberto' ? 'red' : 'green'}
               title={this.state.contasareceber[index].status}
               style={{}} onPress={()=>{
-                if(this.state.contasareceber[index].status == 'aberto')
+                let n = Number(this.state.totalRecebido);  
+                if(this.state.contasareceber[index].status == 'aberto'){
+                  
+                  n += Number(this.state.contasareceber[index].valor);
+                  this.setState({totalRecebido: n});
+                  //alert(this.state.totalReceber);
+                  let pendente = this.state.totalReceber - n;
+                  this.setState({saldoPendente: pendente});
                   this.changeState(index,'fechado');
-                else
+                }else{
+                  n-= Number(this.state.contasareceber[index].valor);
+                  this.setState({totalRecebido: n});
+                  let pendente = this.state.totalReceber-n;
+                  this.setState({saldoPendente: pendente});
                   this.changeState(index,'aberto'); 
+                }
               }}/>
             </View>
 
