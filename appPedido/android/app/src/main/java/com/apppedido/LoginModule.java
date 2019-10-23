@@ -43,7 +43,7 @@ public class LoginModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void login(String name, String password) {
+    public void login(int name, String password) {
         SharedPreferences.Editor editor = login.edit();
         editor.putInt("login_app_pedidos", 1);
         editor.apply();
@@ -58,15 +58,19 @@ public class LoginModule extends ReactContextBaseJavaModule {
         SharedPreferences.Editor editor = login.edit();
         editor.putInt("login_app_pedidos", 0);
         editor.apply();
-
         removelogin();
     }
 
     @ReactMethod
-    public void setUser(String name) {
+    public void setUser(int name) {
         SharedPreferences.Editor editor = user.edit();
-        editor.putString("user_app_pedidos", name);
+        editor.putInt("user_app_pedidos", name);
         editor.apply();
+
+    }
+
+    public int getUserFromShared(){
+        return user.getInt("user_app_pedidos", Context.MODE_PRIVATE);
     }
 
     @ReactMethod
@@ -78,11 +82,11 @@ public class LoginModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void setPermission(){
-
+/*
         WritableMap params = Arguments.createMap();
-        //params.putInt("login",loginStatus);
+        params.putInt("login",loginStatus);
         ReactApplicationContext mContext = getReactApplicationContext();
-        sendLoginStatus(mContext,"permissionStatus", params);
+        sendLoginStatus(mContext,"permissionStatus", params);*/
     }
 
 
@@ -107,13 +111,12 @@ public class LoginModule extends ReactContextBaseJavaModule {
         reactContext.
                 getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                 .emit(eventName, params);
-
     }
 
 
     public void removelogin(){
         SharedPreferences.Editor editor = user.edit();
-        editor.putString("login_app_pedidos",null);
+        editor.putInt("login_app_pedidos",0);
         editor.apply();
 
         SharedPreferences.Editor editor2 = password.edit();
@@ -138,6 +141,20 @@ public class LoginModule extends ReactContextBaseJavaModule {
                 .emit(eventName, params);
     }
 
+     @ReactMethod
+    public void getUser(){
+        int user = getUserFromShared();
+         WritableMap params = Arguments.createMap();
+        params.putInt("user",user);
+        ReactApplicationContext mContext = getReactApplicationContext();
+        sendUser(mContext,"userData", params);
+    }
+
+    public void sendUser(ReactContext reactContext, String eventName, @Nullable WritableMap params){
+        reactContext.
+            getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+            .emit(eventName, params);
+    }
 
 
 }

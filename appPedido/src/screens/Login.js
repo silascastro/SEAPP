@@ -89,13 +89,15 @@ export default class Login extends Component {
         this.setState({loading: false});
         if(this.state.password == resp.senha){
           if(this.state.imei == resp.codigo1){
-            LoginModule.login(this.state.user,this.state.password);
+            console.log(resp.id_funcionario);
+            LoginModule.login(/*this.state.userSelect*/(resp.id_funcionario),this.state.password);
             let {dispatch} = this.props.navigation;
             dispatch(resetActionHome);
             //this.props.navigation.navigate('Home');
           }else{
+            console.log(resp.id_funcionario);
             //até resolver permissões do imei
-            LoginModule.login(this.state.user,this.state.password);
+            LoginModule.login(/*this.state.userSelect*/(resp.id_funcionario),this.state.password);
             let {dispatch} = this.props.navigation;
             dispatch(resetActionHome);
             //Alert.alert('Atenção', 'dispositivo não autorizado!');

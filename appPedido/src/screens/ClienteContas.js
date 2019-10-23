@@ -5,20 +5,26 @@ import {
    TextInput, 
    Button,
    ActivityIndicator,  
-   FlatList, TouchableNativeFeedback} from 'react-native';
-   import AntDesign from 'react-native-vector-icons/AntDesign'
+   FlatList, TouchableNativeFeedback,
+   NativeModules, 
+DeviceEventEmitter,NativeEventEmitter} from 'react-native';
+   import AntDesign from 'react-native-vector-icons/AntDesign';
 
-   const API = "http://177.16.53.198:3000/";
-
+const API = "http://177.16.53.198:3000/";
+const LoginModule = NativeModules.LoginModule;
+const eventEmitter = new NativeEventEmitter(NativeModules.LoginModule);
 
 export default class ClienteContas extends Component<Props> {
   constructor(props){
     super(props);
-    this.state = {loading: true, 
+    this.state = {
+      loading: true, 
       contasareceber: [], 
       totalReceber: '',
       totalRecebido: '', 
-      saldoPendente: ''};
+      saldoPendente: '',
+      cod_vendedor: ''
+    };
   }
 
   static navigationOptions = ({navigation}) => ({
@@ -37,6 +43,14 @@ export default class ClienteContas extends Component<Props> {
   componentDidMount(){
     this.getContasAReceber(this.props.navigation.getParam('cod_cliente'));
     //this.getContasAReceber(608);
+    eventEmitter.addListener(
+      'userData', (e) =>{
+        console.log(e.user);
+        this.setState({cod_vendedor: e.user});       
+      }
+    );
+    LoginModule.getUser();
+    //LoginModule.logoff();
   }
 
   getContasAReceber(id){
@@ -113,6 +127,47 @@ export default class ClienteContas extends Component<Props> {
     return number;
   }
 
+  sendData(data){
+    fetch(API+'recebimentoexterno/', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    }).then().then((resp) => {
+      console.log(resp);
+    }).catch((err)=>{
+      Alert.alert('Atenção', 'erro');
+      console.log(err);
+    });
+  }
+
+  fechaConta(data, cod_vendedor){
+    //alert('entrou');
+    let aux = data;
+    console.log(this.state.contasreceber);
+    for(let e in aux){
+      if(aux[e].status == "fechado"){
+        const data = {
+          sequencia: aux[e].sequencia,
+          cod_vendedor: cod_vendedor,
+          cod_cliente: this.props.navigation.getParam('cod_cliente'),
+          nome_cliente: this.props.navigation.getParam('nome'),
+          numero_documento: aux[e].documento,
+          data_vencimento: aux[e].dt_vencimento,
+          valor_documento: aux[e].valor,
+          valor_recebido: aux[e].valor
+        };
+        console.log(data);
+        this.sendData(data);
+        
+      }
+      //console.log(aux[e]);
+    }
+    
+  }
+
   render() {
     return (
       this.state.loading?
@@ -176,7 +231,7 @@ export default class ClienteContas extends Component<Props> {
                   },
                   {
                     text: 'Confimar',
-                    onPress: () => this.props.navigation.goBack(),
+                    onPress: () => {this.fechaConta(this.state.contasareceber, this.state.cod_vendedor);},
                     
                   }
                 ]

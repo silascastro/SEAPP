@@ -48,28 +48,27 @@ export default class Cliente extends Component<Props> {
       });
   }
 
-  getClientes(){
+  getClientes(){ 
+    fetch(API+'clientes/byname/'+(this.state.input).toUpperCase(), {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    }).then((response)=> response.json()).then((resp) => {
+      let aux = [];
       
-      fetch(API+'clientes/byname/'+(this.state.input).toUpperCase(), {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      }).then((response)=> response.json()).then((resp) => {
-        let aux = [];
-        
-        for(e in resp){
-          aux.push(resp[e]);
-        }
+      for(e in resp){
+        aux.push(resp[e]);
+      }
 
-        this.setState({clientes: aux});
-        this.setState({loading: false});
-        this.getClientesHasNotCont();
-        
-      }).catch((err)=>{
-        //Alert.alert('Atenção', 'erro');
-      });
+      this.setState({clientes: aux});
+      this.setState({loading: false});
+      this.getClientesHasNotCont();
+      
+    }).catch((err)=>{
+      //Alert.alert('Atenção', 'erro');
+    });
   }
 
   getClientesHasNotCont(){

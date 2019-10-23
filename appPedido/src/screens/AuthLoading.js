@@ -1,6 +1,10 @@
 import React, {Component}from 'react';
 
-import {ActivityIndicator,StatusBar,View,NativeModules, DeviceEventEmitter,NativeEventEmitter} from 'react-native';
+import {ActivityIndicator,
+StatusBar,
+View,
+NativeModules, 
+DeviceEventEmitter,NativeEventEmitter} from 'react-native';
 import { StackActions, NavigationActions, navigate } from 'react-navigation';
 import * as Permission from '../../Permissions';
 const LoginModule = NativeModules.LoginModule;
