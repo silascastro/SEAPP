@@ -8,6 +8,7 @@ import {
    FlatList, TouchableNativeFeedback,
    NativeModules, 
 DeviceEventEmitter,NativeEventEmitter} from 'react-native';
+import { StackActions, NavigationActions, navigate } from 'react-navigation';
    import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const API = "http://177.16.53.198:3000/";
@@ -23,7 +24,9 @@ export default class ClienteContas extends Component<Props> {
       totalReceber: '',
       totalRecebido: '', 
       saldoPendente: '',
-      cod_vendedor: ''
+      cod_vendedor: '',
+      nome_vendedor: '',
+      cod_celular: '',
     };
   }
 
@@ -51,6 +54,7 @@ export default class ClienteContas extends Component<Props> {
     );
     LoginModule.getUser();
     //LoginModule.logoff();
+    this.getVendedor();
   }
 
   getContasAReceber(id){
@@ -117,17 +121,34 @@ export default class ClienteContas extends Component<Props> {
     
   }
 
+  getVendedor(){
+    fetch(API+'funcionarios/byid/'+this.state.cod_vendedor, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      }).then((response)=> response.json())
+      .then((resp) => {
+        this.setState({nome_vendedor: resp.nome,cod_celular: resp.codigo1});
+      }).catch((err)=>{
+        //this.setState({loading: false});
+        
+      });
+  }
+
   changeState(index, _status){
     let aux = this.state.contasareceber;
     aux[index].status = _status;
     this.setState({contasareceber: aux});
-}
+  }
 
   format(number){
     return number;
   }
 
   sendData(data){
+
     fetch(API+'recebimentoexterno/', {
       method: 'POST',
       headers: {
@@ -135,16 +156,29 @@ export default class ClienteContas extends Component<Props> {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
-    }).then().then((resp) => {
+      
+    }).then((response) => response.json()).then((resp) => {
+      const {dispatch} = this.props.navigation;
+      const resetActionHome = StackActions.reset({
+        index: 0,
+        actions: [
+          NavigationActions.navigate({ routeName: 'Home' }),
+        ],
+      });
+      this.setState({loading: false});
+      dispatch(resetActionHome,{});
+      
       console.log(resp);
     }).catch((err)=>{
       Alert.alert('Atenção', 'erro');
+      this.setState({loading: false});
       console.log(err);
     });
   }
 
-  fechaConta(data, cod_vendedor){
+  fechaConta(data, cod_vendedor, nome_vendedor, cod_celular){
     //alert('entrou');
+    this.setState({loading: true});
     let aux = data;
     console.log(this.state.contasreceber);
     for(let e in aux){
@@ -153,6 +187,8 @@ export default class ClienteContas extends Component<Props> {
           sequencia: aux[e].sequencia,
           cod_vendedor: cod_vendedor,
           cod_cliente: this.props.navigation.getParam('cod_cliente'),
+          nome_vendedor: nome_vendedor,
+          codigo_celular: cod_celular,
           nome_cliente: this.props.navigation.getParam('nome'),
           numero_documento: aux[e].documento,
           data_vencimento: aux[e].dt_vencimento,
@@ -213,9 +249,9 @@ export default class ClienteContas extends Component<Props> {
                 
               </View>
               <View style={{flex: 1, alignContent: 'center', alignItems: 'flex-end'}}>
-                <Text style={{}}>{this.numberToReal(Number(this.state.totalReceber))}</Text>
-                <Text>{this.numberToReal(Number(this.state.totalRecebido))}</Text>
-                <Text>{this.numberToReal(Number(this.state.saldoPendente))}</Text>
+                <Text style={{fontWeight: '500'}}>{this.numberToReal(Number(this.state.totalReceber))}</Text>
+                <Text style={{fontWeight: '500'}}>{this.numberToReal(Number(this.state.totalRecebido))}</Text>
+                <Text style={{fontWeight: '500'}}>{this.numberToReal(Number(this.state.saldoPendente))}</Text>
               </View>
               
             </View>
@@ -231,7 +267,12 @@ export default class ClienteContas extends Component<Props> {
                   },
                   {
                     text: 'Confimar',
-                    onPress: () => {this.fechaConta(this.state.contasareceber, this.state.cod_vendedor);},
+                    onPress: () => {this.fechaConta(
+                      this.state.contasareceber, 
+                      this.state.cod_vendedor,
+                      this.state.nome_vendedor,
+                      this.state.cod_celular
+                      );},
                     
                   }
                 ]
@@ -251,7 +292,7 @@ export default class ClienteContas extends Component<Props> {
             <View style={{flex: 1, alignContent: 'center', alignItems: 'center'}}> 
               <Text style={{}}>{item.dt_vencimento.split('-')[2]+'/'+item.dt_vencimento.split('-')[1]+'/'+item.dt_vencimento.split('-')[0]}</Text>
             </View>
-            <View style={{flex: 1, alignContent: 'center', alignItems: 'center'}}>
+            <View style={{flex: 1, alignContent: 'center', alignItems: 'flex-end'}}>
               <Text style={{}}>{this.numberToReal(Number(item.valor))}</Text>
             </View>
             <View style={{flex: 1, alignContent: 'center', alignItems: 'center'}}>

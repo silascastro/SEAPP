@@ -22,3 +22,15 @@ exports.getOne = async(req, res, next) => {
         res.status(500).send(e);
     })
 }
+
+exports.getById = async(req, res, next) => {
+	var id = req.params.id;
+	tbfuncionario.findByPk(id).then(resp => {
+		if(resp)
+		  res.status(200).send(resp);
+		res.status(404).send({msg: 'Funcionário não encontrado!'});
+	}).catch((e)=>{
+		res.status(500).send(e);
+	});
+		
+}
