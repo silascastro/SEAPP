@@ -180,7 +180,8 @@ export default class ClienteContas extends Component<Props> {
     //alert('entrou');
     this.setState({loading: true});
     let aux = data;
-    console.log(this.state.contasreceber);
+    console.log(nome_vendedor);
+    console.log(cod_celular);
     for(let e in aux){
       if(aux[e].status == "fechado"){
         const data = {
