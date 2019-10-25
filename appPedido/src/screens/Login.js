@@ -3,11 +3,11 @@ import {ActivityIndicator,StyleSheet, Text, View, TextInput, Button,Alert ,Statu
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { StackActions, NavigationActions, navigate } from 'react-navigation';
 import * as Permission from '../../Permissions';
-
+import * as config from '../../config';
 const eventEmitter = new NativeEventEmitter(NativeModules.LoginModule);
 const LoginModule = NativeModules.LoginModule;
 
-const API = "http://177.16.53.198:3000/";
+//const API = "http://177.16.53.198:3000/";
 
 const resetActionHome = StackActions.reset({
   index: 0,
@@ -34,7 +34,7 @@ export default class Login extends Component {
 
   componentDidMount(){
     this. getUsers();
-
+    //alert(config.url);
   }
 
   async getImei(){
@@ -48,7 +48,7 @@ export default class Login extends Component {
   }
 
   getUsers(){
-    fetch(API+'funcionarios', {
+    fetch(config.url+'funcionarios', {
       method: 'GET',
       headers: {
         Accept: 'application/json',
@@ -75,7 +75,7 @@ export default class Login extends Component {
       Alert.alert('Atenção', 'nenhum usuário selecionado!');
     }else{
       this.setState({loading: true});
-      fetch(API+'funcionarios/'+user, {
+      fetch(config.url+'funcionarios/'+user, {
         method: 'GET',
         headers: {
           Accept: 'application/json',

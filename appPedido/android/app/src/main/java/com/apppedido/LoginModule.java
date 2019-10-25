@@ -144,7 +144,7 @@ public class LoginModule extends ReactContextBaseJavaModule {
      @ReactMethod
     public void getUser(){
         int user = getUserFromShared();
-         WritableMap params = Arguments.createMap();
+        WritableMap params = Arguments.createMap();
         params.putInt("user",user);
         ReactApplicationContext mContext = getReactApplicationContext();
         sendUser(mContext,"userData", params);

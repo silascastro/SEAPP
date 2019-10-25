@@ -3,14 +3,12 @@ const {tbcontasreceber} = require('../../app/models');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op; 
 
-exports.get = async(req, res, next) => {
-    
+exports.get = async(req, res, next) => {  
     tbcliente.findAll({order:[['nome','ASC']]}).then((resp) => {
         res.status(200).send(resp);
     }).catch((e)=> {
         res.status(500).send(e);
     });
-
 }
 
 exports.getOnClienteById = async(req, res, next) => {

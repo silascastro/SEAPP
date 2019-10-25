@@ -8,12 +8,16 @@ import {
    FlatList, TouchableNativeFeedback,
    NativeModules, 
 DeviceEventEmitter,NativeEventEmitter} from 'react-native';
+import * as config from '../../config';
 import { StackActions, NavigationActions, navigate } from 'react-navigation';
    import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const API = "http://177.16.53.198:3000/";
 const LoginModule = NativeModules.LoginModule;
 const eventEmitter = new NativeEventEmitter(NativeModules.LoginModule);
+let _cod_vendedor;
+let _nome_vendedor;
+let _cod_celular;
 
 export default class ClienteContas extends Component<Props> {
   constructor(props){
@@ -49,16 +53,18 @@ export default class ClienteContas extends Component<Props> {
     eventEmitter.addListener(
       'userData', (e) =>{
         console.log(e.user);
-        this.setState({cod_vendedor: e.user});       
+        //alert(e.user);
+        _cod_vendedor = e.user; 
       }
     );
     LoginModule.getUser();
-    //LoginModule.logoff();
+    //alert(_cod_vendedor);
     this.getVendedor();
+    this.setState({cod_celular: _cod_celular, nome_vendedor: _nome_vendedor, cod_vendedor: _cod_vendedor});
   }
 
   getContasAReceber(id){
-    fetch(API+"contasreceber/"+id, {
+    fetch(config.url+"contasreceber/"+id, {
         method: 'GET',
         headers: {
           Accept: 'application/json',
@@ -94,7 +100,7 @@ export default class ClienteContas extends Component<Props> {
   }
 
   getClientes(){
-      fetch(API+'clientes/byname/'+(this.state.input).toUpperCase(), {
+      fetch(config.url+'clientes/byname/'+(this.state.input).toUpperCase(), {
         method: 'GET',
         headers: {
           Accept: 'application/json',
@@ -122,7 +128,8 @@ export default class ClienteContas extends Component<Props> {
   }
 
   getVendedor(){
-    fetch(API+'funcionarios/byid/'+this.state.cod_vendedor, {
+    
+    fetch(config.url+'funcionarios/byid/'+_cod_vendedor, {
         method: 'GET',
         headers: {
           Accept: 'application/json',
@@ -130,11 +137,14 @@ export default class ClienteContas extends Component<Props> {
         },
       }).then((response)=> response.json())
       .then((resp) => {
-        this.setState({nome_vendedor: resp.nome,cod_celular: resp.codigo1});
+          _nome_vendedor = resp.nome;
+          _cod_celular = resp.codigo1;
+          
       }).catch((err)=>{
         //this.setState({loading: false});
         
       });
+      
   }
 
   changeState(index, _status){
@@ -149,7 +159,7 @@ export default class ClienteContas extends Component<Props> {
 
   sendData(data){
 
-    fetch(API+'recebimentoexterno/', {
+    fetch(config.url+'recebimentoexterno/', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -162,11 +172,11 @@ export default class ClienteContas extends Component<Props> {
       const resetActionHome = StackActions.reset({
         index: 0,
         actions: [
-          NavigationActions.navigate({ routeName: 'Home' }),
+          NavigationActions.navigate({ routeName: 'Home', params: {message: 'contas recebidas com sucesso!'} }),
         ],
       });
       this.setState({loading: false});
-      dispatch(resetActionHome,{});
+      dispatch(resetActionHome);
       
       console.log(resp);
     }).catch((err)=>{
@@ -178,6 +188,7 @@ export default class ClienteContas extends Component<Props> {
 
   fechaConta(data, cod_vendedor, nome_vendedor, cod_celular){
     //alert('entrou');
+    //alert('nome: '+_nome_vendedor+'cod_celular'+_cod_celular+'cod_vendedor'+_cod_vendedor);
     this.setState({loading: true});
     let aux = data;
     console.log(nome_vendedor);
@@ -186,10 +197,10 @@ export default class ClienteContas extends Component<Props> {
       if(aux[e].status == "fechado"){
         const data = {
           sequencia: aux[e].sequencia,
-          cod_vendedor: cod_vendedor,
+          cod_vendedor: _cod_vendedor,
           cod_cliente: this.props.navigation.getParam('cod_cliente'),
-          nome_vendedor: nome_vendedor,
-          codigo_celular: cod_celular,
+          nome_vendedor: _nome_vendedor,
+          codigo_celular: _cod_celular,
           nome_cliente: this.props.navigation.getParam('nome'),
           numero_documento: aux[e].documento,
           data_vencimento: aux[e].dt_vencimento,
@@ -244,15 +255,15 @@ export default class ClienteContas extends Component<Props> {
           <View style={{marginLeft: 10, marginRight: 10, paddingTop: 10, paddingBottom: 15,}}>
             <View style={{marginLeft: 15, flexDirection: 'row',  borderTopWidth: 0.5, borderColor: 'gray'}}>
               <View style={{flex: 2}}>
-                <Text style={{fontWeight: '600'}}>Total a Receber: </Text>
-                <Text style={{fontWeight: '600'}}>Total a Recebido: </Text>
-                <Text style={{fontWeight: '600'}}>Saldo Pendente: </Text>
+                <Text style={{fontWeight: '600', color: 'black'}}>Total a Receber: </Text>
+                <Text style={{fontWeight: '600', color: 'black'}}>Total a Recebido: </Text>
+                <Text style={{fontWeight: '600', color: 'black'}}>Saldo Pendente: </Text>
                 
               </View>
               <View style={{flex: 1, alignContent: 'center', alignItems: 'flex-end'}}>
-                <Text style={{fontWeight: '500'}}>{this.numberToReal(Number(this.state.totalReceber))}</Text>
-                <Text style={{fontWeight: '500'}}>{this.numberToReal(Number(this.state.totalRecebido))}</Text>
-                <Text style={{fontWeight: '500'}}>{this.numberToReal(Number(this.state.saldoPendente))}</Text>
+                <Text style={{fontWeight: '500', color: 'black'}}>{this.numberToReal(Number(this.state.totalReceber))}</Text>
+                <Text style={{fontWeight: '500', color: 'black'}}>{this.numberToReal(Number(this.state.totalRecebido))}</Text>
+                <Text style={{fontWeight: '500', color: 'black'}}>{this.numberToReal(Number(this.state.saldoPendente))}</Text>
               </View>
               
             </View>
@@ -268,12 +279,15 @@ export default class ClienteContas extends Component<Props> {
                   },
                   {
                     text: 'Confimar',
-                    onPress: () => {this.fechaConta(
-                      this.state.contasareceber, 
-                      this.state.cod_vendedor,
-                      this.state.nome_vendedor,
-                      this.state.cod_celular
-                      );},
+                    onPress: () => {
+                      
+                      this.fechaConta(
+                        this.state.contasareceber, 
+                        this.state.cod_vendedor,
+                        this.state.nome_vendedor,
+                        this.state.cod_celular
+                      );
+                  },
                     
                   }
                 ]

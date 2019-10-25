@@ -1,13 +1,14 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, FlatList, TouchableNativeFeedback,StatusBar} from 'react-native';
+import {StyleSheet, Text, View, FlatList, 
+TouchableNativeFeedback,StatusBar, NativeModules} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import CheckBox from '../components/CheckBox';
 
 const DATA = [
-  {title: 'Pedidos', subtitle: 'Crie e gerencie os pedidos', icon: 'local-offer', type: Icon}, {title: 'Clientes', subtitle: 'Analise e gerencie seus clientes', icon: 'people', type: Icon},{title: 'Produtos', subtitle: 'Analise e gerencie seus produtos', icon: 'md-cube' , type: Ionicons},
+  {title: 'Pedidos', subtitle: 'Crie e gerencie os pedidos', icon: 'local-offer', type: Icon}, 
+  {title: 'Clientes', subtitle: 'Analise e gerencie seus clientes', icon: 'people', type: Icon}
 ];
+
+const ToastModule = NativeModules.ToastModule;
 
 export default class Home extends Component<Props> {
   constructor(props){
@@ -42,9 +43,10 @@ export default class Home extends Component<Props> {
 
 
   componentDidMount(){
-    //alert(this.formatCurrency(1000000000.00));
-   //var atual = 600000.00;
-   //alert(atual.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'}));
+   let e = this.props.navigation.getParam('message')
+   if(e!=null)
+    ToastModule.show(e,3000);
+   
   }
 
   render() {
@@ -60,6 +62,9 @@ export default class Home extends Component<Props> {
               <TouchableNativeFeedback onPress={()=>{
                 if(item.title == "Clientes"){
                   this.props.navigation.push('Cliente');
+                }
+                if(item.title == "Pedidos"){
+                  this.props.navigation.push('Pedido');
                 }
               }}>
 
@@ -79,12 +84,6 @@ export default class Home extends Component<Props> {
           }
         />
         
-        
-        <View style={styles.float}>
-          <AntDesign name={'plus'} size={25} color="#ffffff" onPress={()=>{
-            this.props.navigation.push('Request');
-          }}/>
-        </View>
       </View>
     );
   }

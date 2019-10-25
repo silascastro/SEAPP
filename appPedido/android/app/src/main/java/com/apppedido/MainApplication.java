@@ -2,6 +2,7 @@ package com.apppedido;
 
 import android.app.Application;
 
+import com.apppedido.nativeModules.ToastPackage;
 import com.apppedido.ui.CheckBoxPackage;
 import com.facebook.react.ReactApplication;
 import com.swmansion.rnscreens.RNScreensPackage;
@@ -29,12 +30,13 @@ public class MainApplication extends Application implements ReactApplication {
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
-          new MainReactPackage(),
+                                                                                                                                                                                                                                              new MainReactPackage(),
             new RNScreensPackage(),
-            new RNGestureHandlerPackage(),
+            new RNGestureHandlerPackage(                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ),
             new ReanimatedPackage(),
             new LoginPackage(),
             new CheckBoxPackage(),
+          new ToastPackage(),
           new VectorIconsPackage()
       );
     }
@@ -53,6 +55,6 @@ public class MainApplication extends Application implements ReactApplication {
   @Override
   public void onCreate() {
     super.onCreate();
-    SoLoader.init(this, /* native exopackage */ false);
+    SoLoader.init(this, /* native e                                                                                                   xopackage */ false);
   }
 }

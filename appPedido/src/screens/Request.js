@@ -1,14 +1,7 @@
 import React, {Component} from 'react';
-import {DrawerLayoutAndroid,Platform, StyleSheet, Text, View,Button, FlatList, TouchableNativeFeedback, ActivityIndicator} from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons'
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import {DrawerLayoutAndroid,Platform, StyleSheet, Text ,View,Button, FlatList, TouchableNativeFeedback, ActivityIndicator} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
-
-const DATA = [
-  {title: 'Pedidos', subtitle: 'Crie e gerencie os pedidos', icon: 'local-offer', type: Icon}, {title: 'Clientes', subtitle: 'Analise e gerencie seus clientes', icon: 'people', type: Icon},{title: 'Produtos', subtitle: 'Analise e gerencie seus produtos', icon: 'md-cube' , type: Ionicons},{title: 'Financeiro', subtitle: 'Posição financeira dos clientes', icon: 'finance',type: MaterialCommunityIcons}
-];
 
 export default class Request extends Component<Props> {
   constructor(props){
@@ -35,29 +28,72 @@ export default class Request extends Component<Props> {
   }
 
   render(){
-
-    var navigationView = (
-      <View style={{flex: 1, backgroundColor: '#fff'}}>
-        <Text style={{margin: 10, fontSize: 15, textAlign: 'left'}}>I'm in the Drawer!</Text>
-      </View>
-    );
     return (
-      <DrawerLayoutAndroid
-        drawerWidth={300}
-        ref={'DRAWER'}
-        drawerPosition={DrawerLayoutAndroid.positions.Right}
-        renderNavigationView={() => navigationView}
-        drawerLockMode="locked-closed"
-       
-      >
-        
-      <View style={{flex: 1, alignItems: 'center'}}>
-        <Button title="teste" onPress={()=>{
-          this.refs['DRAWER'].openDrawer();
-        }}/>
+      <View style={styles.container}>
+          <TouchableNativeFeedback  onPress={()=>{}}>
+              <View style={styles.cardContent}>
+                <View style={{ flex: 1}}>
+                  <Text style={{fontWeight: '600', color: 'black', fontSize: 15}}>Cliente</Text>
+                  <Text>Selecione um cliente</Text>
+                </View>
+                <View>
+                  <Button title="Procurar"/>
+                </View>
+              </View>
+          </TouchableNativeFeedback>
+          <TouchableNativeFeedback style={styles.card} onPress={()=>{}}>
+              <View style={styles.cardContent}>
+                <View style={{ flex: 1}}>
+                  <Text style={{fontWeight: '600', color: 'black', fontSize: 15}}>Data do pedido</Text>
+                  <Text>04/10/2019</Text>
+                </View>
+                <View style={{flex: 1}}>
+                <Text style={{fontWeight: '600', color: 'black', fontSize: 15}}>Hora do pedido</Text>
+                  <Text>19:05</Text>
+                </View>
+              </View>
+          </TouchableNativeFeedback>      
+          <TouchableNativeFeedback style={styles.card} onPress={()=>{}}>
+              <View style={styles.cardContentOneRow}>
+                  <Text style={{fontWeight: '600', color: 'black', fontSize: 15}}>
+                    Forma de pagamento
+                  </Text>
+                  <Text>DINHEIRO</Text>
+              </View>
+          </TouchableNativeFeedback>    
+        <View style={{backgroundColor: "#E0E0E0", padding: 10,flex: 1}}>
+            <Text>Itens do pedido</Text>
+            <View style={{backgroundColor: '#E0E0E0',
+              borderWidth: 0.4, borderColor: 'gray',
+              alignItems: 'center', paddingTop: 10,paddingBottom: 10
+              }}>
+              <Text>Nenhum item no pedido</Text>
+            </View>
+            
+            <View style={styles.float}>
+              <AntDesign name={'plus'} size={25} color="#ffffff" onPress={()=>{
+                this.props.navigation.navigate('Produto');
+              }}/>
+            </View>
+            
+        </View>
+
+        <View style={{ flexDirection: 'row',}}>
+          <View style={{flex: 1, padding: 5,  elevation: 5}}>
+            <TouchableNativeFeedback style={{}}>
+              <View style={{alignItems: 'center', justifyContent: 'center',
+              flex: 1, borderColor: 'green', borderWidth: 2,}}>
+              <Text style={{color: 'green', fontWeight: 'bold'}}>SARVAR ORÇAMENTO</Text>
+              </View>
+            </TouchableNativeFeedback>
+          </View>
+          <View style={{flex: 1, padding: 5}}>
+            <Button title="salvar pedido"/>
+          </View>
+        </View>
+
       </View>
-    </DrawerLayoutAndroid>
-    );
+    );                                                                                                                                    
   }
 }
 
@@ -69,22 +105,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
   },
   card: {
-    textAlign: 'center',
-    borderBottomWidth: 0.3,
-    borderColor: 'gray',
-    textDecorationStyle: "solid",
+    //textAlign: 'center',
+    //borderBottomWidth: 2,
+   // borderColor: 'black',
+    //textDecorationStyle: "solid",
   },
   cardContent:{
-    paddingTop: 50,
-    paddingBottom: 50,
-    justifyContent: "center",
-    alignItems: "center",
-    flex: 0,
-    flexDirection: "row",
-    
-    //alignSelf: 'center',
-   // flex: 0
-   
+    flex: 0, flexDirection: 'row', paddingTop: 25, 
+    paddingBottom:25, borderBottomColor: 'gray', borderBottomWidth: 0.65,
+    paddingLeft: 10,paddingRight: 10
+  },
+  cardContentOneRow: {
+    paddingLeft: 10,paddingRight: 10,
+    paddingTop: 25, paddingBottom:25,borderBottomColor: 'gray', borderBottomWidth: 0.65,
   },
   float: {
     width: 60,  

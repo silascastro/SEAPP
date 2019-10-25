@@ -2,16 +2,16 @@ import React, {Component} from 'react';
 import {DrawerLayoutAndroid,Alert,StyleSheet, Text, View, TextInput, ActivityIndicator, FlatList, TouchableNativeFeedback} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import * as config from '../../config';
-const API = "http://179.177.126.10:3000/";
 
-export default class Cliente extends Component<Props> {
+
+export default class Produto extends Component<Props> {
   constructor(props){
     super(props);
     this.state = {loading: false, clientes: [], pesquisado: false, input: '', contasareceber: []};
   }
 
   static navigationOptions = ({navigation}) => ({
-    title: 'Clientes',
+    title: 'Produto',
     headerTintColor: '#ffffff',
     headerStyle: {
       backgroundColor: '#247869',
@@ -46,6 +46,7 @@ export default class Cliente extends Component<Props> {
         this.getClientesHasNotCont();
         
       }).catch((err)=>{
+        this.setState({loading: false});
         //Alert.alert('Atenção', 'erro');
       });
   }
@@ -67,7 +68,7 @@ export default class Cliente extends Component<Props> {
         //this.setState({loading: false});
         
       }).catch((err)=>{
-        Alert.alert('Atenção', 'erro ao conectar-se com o servidor!');
+        //Alert.alert('Atenção', 'erro ao conectar-se com o servidor!');
       });
   }
 
@@ -119,9 +120,6 @@ export default class Cliente extends Component<Props> {
 	}
 
   render() {
-    var navigationView = (
-      <View><Text>Teste</Text></View>
-    );
     return (
       <View style={styles.container}>
         <View style={styles.input}>
@@ -135,7 +133,8 @@ export default class Cliente extends Component<Props> {
             }
             
           }}/>
-          {this.state.input != '' ?<Icon name='close' size={25} color="black"  style={{flex: 1,alignSelf: 'center', textAlign: 'right', paddingRight: 5}}
+          {this.state.input != '' ?<Icon name='close' size={25} color="black"  
+          style={{flex: 1,alignSelf: 'center', textAlign: 'right', paddingRight: 5}}
             onPress={()=> {
               this.setState({input: ''});
             }}
@@ -151,14 +150,13 @@ export default class Cliente extends Component<Props> {
               renderItem={({item}) => 
                 <View style={styles.card} >
                     <TouchableNativeFeedback  onPress={()=>{
-                      //this.refs['DRAWER'].openDrawer();
-                      //this.getContasAReceber(item.cod_cliente);
-                      this.props.navigation.navigate('ClienteContas',{
+                      /*this.props.navigation.navigate('ClienteContas',{
                         cod_cliente: item.cod_cliente,
                         nome: item.nome,
                         endereco: item.endereco,
                         telefone: item.telefone
-                      });
+                      });*/
+                      this.props.navigation.navigate('Request');
                       }}>
                       <View style={styles.cardContent}>
                         <View style={{flex: 0, flexDirection: 'row'}}>
