@@ -1,17 +1,18 @@
 import React, {Component} from 'react';
-import {DrawerLayoutAndroid,Alert,StyleSheet, Text, View, TextInput, ActivityIndicator, FlatList, TouchableNativeFeedback} from 'react-native';
+import {Alert,StyleSheet, Text, Button,View, TextInput, ActivityIndicator, FlatList, TouchableNativeFeedback} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import * as config from '../../config';
 
 
 export default class Produto extends Component<Props> {
   constructor(props){
     super(props);
-    this.state = {loading: false, clientes: [], pesquisado: false, input: '', contasareceber: []};
+    this.state = {loading: false, pesquisado: false, input: '', produtos: []};
   }
 
   static navigationOptions = ({navigation}) => ({
-    title: 'Produto',
+    title: 'Produtos',
     headerTintColor: '#ffffff',
     headerStyle: {
       backgroundColor: '#247869',
@@ -25,6 +26,36 @@ export default class Produto extends Component<Props> {
 
   componentDidMount(){
     
+  }
+
+  getProdutos(){ 
+    fetch(config.url+'produtos/'+(this.state.input).toUpperCase(), {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    }).then((response)=> response.json()).then((resp) => {
+      let aux = [];
+      
+      for(e in resp){
+        //aux.push(resp[e]);
+        let item = {cod_produto: resp[e].cod_produto,
+        descricao: resp[e].descricao, marca: resp[e].marca,
+        preco_venda: resp[e].preco_venda, qtd: resp[e].qtd,
+        qtd_selec: '1'
+        };
+        aux.push(item);
+      }
+
+      this.setState({produtos: aux});
+      this.setState({loading: false});
+      console.log(aux);
+      
+    }).catch((err)=>{
+      this.setState({loading: false});
+      //Alert.alert('Atenção', 'erro');
+    });
   }
 
     getClientes(){ 
@@ -51,6 +82,7 @@ export default class Produto extends Component<Props> {
       });
   }
 
+
   getContasAReceber(id){
     fetch(config.url+'contasreceber/'+id, {
         method: 'GET',
@@ -70,6 +102,36 @@ export default class Produto extends Component<Props> {
       }).catch((err)=>{
         //Alert.alert('Atenção', 'erro ao conectar-se com o servidor!');
       });
+  }
+
+  changeText(index, value){
+
+    let aux = this.state.produtos;
+    if(aux==[]){
+      aux[index].qtd_selec = value;
+      this.setState({produtos: aux});
+    }
+    
+  }
+  addValue(index){
+    let aux = this.state.produtos;
+    let currentlyValue=aux[index].qtd_selec;
+    let newValue = Number(currentlyValue)+1;
+    aux[index].qtd_selec = newValue.toString();
+  
+    
+    this.setState({produtos: aux});
+  }
+
+  minusValue(index){
+    
+    let aux = this.state.produtos;
+    let currentlyValue=aux[index].qtd_selec;
+    if(currentlyValue!='1'){
+      let newValue = Number(currentlyValue)-1;
+    aux[index].qtd_selec = newValue.toString();
+    this.setState({produtos: aux});
+    }
   }
 
   getClientesHasNotCont(){
@@ -123,13 +185,13 @@ export default class Produto extends Component<Props> {
     return (
       <View style={styles.container}>
         <View style={styles.input}>
-          <TextInput placeholder="Digite o nome do cliente" style={{flex: 4}} value={this.state.input} 
+          <TextInput placeholder="Digite o nome do produto" style={{flex: 4}} value={this.state.input} 
           onChangeText={(value)=>{
             if(value != ''){
               this.setState({loading: true});
               this.setState({pesquisado: true});
               this.setState({input: value});
-              this.getClientes();
+              this.getProdutos();
             }
             
           }}/>
@@ -142,12 +204,12 @@ export default class Produto extends Component<Props> {
         </View>
         {this.state.loading? <ActivityIndicator size="large"/>:null}
         {
-          this.state.clientes.length>0 && this.state.loading==false?
+          this.state.produtos.length>0 && this.state.loading==false?
             <FlatList
               style={styles.list}
-              data={this.state.clientes}
+              data={this.state.produtos}
               numColumns={1}
-              renderItem={({item}) => 
+              renderItem={({item, index}) => 
                 <View style={styles.card} >
                     <TouchableNativeFeedback  onPress={()=>{
                       /*this.props.navigation.navigate('ClienteContas',{
@@ -156,60 +218,61 @@ export default class Produto extends Component<Props> {
                         endereco: item.endereco,
                         telefone: item.telefone
                       });*/
-                      this.props.navigation.navigate('Request');
+                      //this.props.navigation.navigate('Request');
                       }}>
                       <View style={styles.cardContent}>
-                        <View style={{flex: 0, flexDirection: 'row'}}>
-                          <Text style={styles.title}>{item.cod_cliente}</Text>
-                          <Text style={{  fontWeight: '600', fontSize: 15, color: 'black'}}>-</Text>
-                          <Text style={{  fontWeight: '600', fontSize: 15, color: 'black', flex: 1}}>{item.nome}</Text>
-                          
+                        <View style={{borderBottomColor: 'gray', borderBottomWidth: 0.65,
+                      paddingLeft: 10}}>
+                          <Text style={{  fontWeight: '600', 
+                          fontSize: 15, color: 'black',}}>{item.cod_produto}</Text>
+                          <Text>{item.descricao}</Text> 
                         </View>
-                        <View style={{flex: 0, flexDirection: 'row'}}>
-                          <Text style={{fontWeight: '600'}}>Telefone: </Text>
-                          <Text>{item.telefone}</Text>
+                        <View style={{paddingLeft: 10}}>
+                          <Text>Marca</Text>
+                          <Text style={{fontWeight: '800'}}>{item.marca!=''?item.marca: 'S/N'}</Text>
                         </View>
-
-                        <View style={{flex: 0, flexDirection: 'row'}}>
-                          <Text style={{fontWeight: '600'}}>Endereço: </Text>
-                          <Text style={{flex: 1}}>{item.endereco}</Text>
-                        </View>
-                        
-                        <View style={{flex: 0, flexDirection: 'row'}}>
-                          <View style={{flex: 2}}>
-                            <View style={{flexDirection: 'row'}}>
-                              <Text style={{fontWeight: '600'}}>Cidade: </Text>
-                              <Text>{item.cidade}</Text>
-                            </View>
+                        <View style={{backgroundColor: '#EEEEEE', flex: 0, 
+                        flexDirection: 'row', paddingLeft: 10, borderBottomColor: 'gray',
+                         borderBottomWidth: 0.65}}>
+                          <View style={{flex: 1}}>
+                            <Text>Valor</Text>
+                            <Text style={{fontWeight: '700', color: 'black'}}>{this.numberToReal(Number(item.preco_venda))}</Text>
                           </View>
                           <View style={{flex: 1}}>
-                            <View style={{flexDirection: 'row'}}>
-                              <Text style={{fontWeight: '600'}}>Estado: </Text>
-                              <Text>{item.estado}</Text>
+                            <Text>Estoque</Text>
+                            <Text style={{fontWeight: '700', color: 'black'}}>{Number(item.qtd)}</Text>
+                          </View>
+                        </View>
+                        <View style={{flexDirection: 'row',flex: 0, paddingLeft: 10, backgroundColor: '#EEEEEE'}}>
+                          <View style={{flex: 1,}}>
+                            <View style={{flex: 0, flexDirection: 'row', flex: 1}}>
+                              <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>  
+                                <View style={styles.float}>
+                                  <AntDesign name='minus' size={25} color="black" style={{}}
+                                  onPress={()=>this.minusValue(index)}
+                                  />
+                                </View>
+                              </View>
+                              <View style={{alignItems: 'center', flex: 1}}>
+                                  
+                                  <TextInput value={this.state.produtos[index].qtd_selec} 
+                                  keyboardType="number-pad"
+                                  onChangeText={(value)=>this.changeText(value)}/>
+                              </View>
+                              <View style={{alignItems: 'center', justifyContent: 'center',flex: 1}}>
+                                <View style={styles.float}>
+                                  <AntDesign name='plus' size={25} color="black" style={{}}
+                                  onPress={()=>this.addValue(index)}
+                                  />
+                                </View>
+                              </View>
                             </View>
+                          </View>
+                          <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                            <Button title="adicionar"/>
                           </View>
                         </View>
 
-                        <View style={{flex: 0, flexDirection: 'row', borderBottomWidth: 0.5,borderBottomColor: '#000000'}}>
-                          <Text style={{fontWeight: '600', color: 'red'}}>Observação: </Text>
-                          <Text style={{color :'red', flex: 1}}>{item.observacao}</Text>
-                        </View>
-
-                        <View style={{flex: 0, flexDirection: 'row'}}>
-                            <View style={{flex: 2}}>
-                              <Text style={{fontWeight: '600',fontSize: 13, color: 'black'}}>Limite de compra: </Text>
-                              <Text style={{fontWeight: '600', fontSize: 13, color: 'black'}}>Saldo devedor: </Text>
-                              <Text style={{fontWeight: '600', fontSize: 13, color: 'black'}}>Saldo de compra: </Text>
-                            </View>
-                            <View style={{flex: 1, alignContent: 'center', alignItems: 'flex-end'}}>
-                              <Text style={{alignContent: "center", color: 'black', fontWeight: '600',fontSize: 13,}}>
-                              {this.numberToReal(Number(item.limite))}</Text>
-                              <Text style={{color: 'red'}}>{this.numberToReal(Number(item['tbcontasreceber.saldo_devedor']))}</Text>
-                              <Text style={{color: item['tbcontasreceber.saldo_compra']<0?'red':'green'}}>{this.numberToReal(Number(item['tbcontasreceber.saldo_compra'])).replace("-.","-")}</Text>
-                            </View>
-
-                        </View>
-                        
                       </View>
 
                     </TouchableNativeFeedback>
@@ -219,9 +282,9 @@ export default class Produto extends Component<Props> {
         />:null
           
         }
-        {(this.state.clientes.length==0 && this.state.loading==false) && this.state.pesquisado?
+        {(this.state.produtos.length==0 && this.state.loading==false) && this.state.pesquisado?
           <View style={{textAlign: 'center', justifyContent: 'center', alignItems: 'center'}}>
-            <Text>Cliente não encontrado!</Text>
+            <Text>Produto não encontrado!</Text>
           </View>
           : null
         }
@@ -252,6 +315,18 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     paddingBottom: 10
 },
+float: {
+  width: 25,  
+  height: 25,   
+  borderRadius: 12,            
+  backgroundColor: '#30dac5',                                    
+  //position: 'absolute', 
+  justifyContent: "center",
+  alignItems: "center",                                     
+  //bottom: 10,                                                    
+  //right: 15,
+  elevation: 3
+},
   card: {
     //paddingLeft: 10,
     marginRight: 2,
@@ -266,7 +341,7 @@ const styles = StyleSheet.create({
     
 },
 cardContent: {
-  padding: 10,
+  //padding: 10,
   flex: 1,
   //flexDirection: 'row'  
 },
