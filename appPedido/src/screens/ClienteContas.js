@@ -1,15 +1,14 @@
 import React, {Component} from 'react';
 import {
   Alert,StyleSheet, 
-  Text, View,
-   TextInput, 
+  Text, View, 
    Button,
    ActivityIndicator,  
    FlatList, TouchableNativeFeedback,
    NativeModules, 
-DeviceEventEmitter,NativeEventEmitter} from 'react-native';
+NativeEventEmitter} from 'react-native';
 import * as config from '../../config';
-import { StackActions, NavigationActions, navigate } from 'react-navigation';
+import { StackActions, NavigationActions} from 'react-navigation';
    import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const API = "http://177.16.53.198:3000/";

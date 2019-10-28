@@ -146,16 +146,24 @@ export default class Pedido extends Component<Props> {
               style={styles.list}
               data={this.state.clientes}
               numColumns={1}
-              renderItem={({item}) => 
+              renderItem={({item, index}) => 
                 <View style={styles.card} >
                     <TouchableNativeFeedback  onPress={()=>{
-                      /*this.props.navigation.navigate('ClienteContas',{
+                      
+                      this.props.navigation.navigate('Request',
+                      {
                         cod_cliente: item.cod_cliente,
-                        nome: item.nome,
+                        nome: this.state.clientes[index].nome,
+                        telefone: item.telefone,
                         endereco: item.endereco,
-                        telefone: item.telefone
-                      });*/
-                      this.props.navigation.navigate('Request');
+                        cidade: item.cidade,
+                        estado: item.estado,
+                        observacao: item.observacao,
+                        limite: item.limite,
+                        saldo_devedor: item['tbcontasreceber.saldo_devedor'],
+                        saldo_compra: item['tbcontasreceber.saldo_compra']
+
+                      });
                       }}>
                       <View style={styles.cardContent}>
                         <View style={{flex: 0, flexDirection: 'row'}}>

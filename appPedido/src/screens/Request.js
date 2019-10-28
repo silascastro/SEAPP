@@ -1,12 +1,45 @@
 import React, {Component} from 'react';
-import {DrawerLayoutAndroid,Platform, StyleSheet, Text ,View,Button, FlatList, TouchableNativeFeedback, ActivityIndicator} from 'react-native';
+import {StyleSheet, Text ,View,Button, FlatList, TouchableNativeFeedback} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import * as config from '../../config';
 
+//const cod_cliente = this.props.navigation.getParam('cod_cliente');
+/*
+const nome = this.props.navigation.getParam('nome');
+const telefone= this.props.navigation.getParam('telefone');
+const endereco= this.props.navigation.getParam('endereco');
+const observacao= this.props.navigation.getParam('observacao');
+const cidade= this.props.navigation.getParam('cidade');
+const estado = this.props.navigation.getParam('estado');
+const limite = this.props.navigation.getParam('limite');
+const saldo_devedor= this.props.navigation.getParam('saldo_devedor');
+const saldo_compra= this.props.navigation.getParam('saldo_compra');*/
+let dados;
 
 export default class Request extends Component<Props> {
   constructor(props){
     super(props);
-    this.state = {loading: true};
+    this.state = {
+      loading: true,
+      cod_cliente: '',
+      nome: '',
+      telefone: '',
+      endereco: '',
+      observacao: '',
+      cidade: '',
+      estado: '',
+      limite: '',
+      saldo_devedor: '',
+      saldo_compra: '',
+      data: ''
+    };
+    const { navigation } = this.props;
+    //this.aysncData();
+  }
+
+  componentDidMount(){
+    dados = this.props.navigation.getParam('endereco');
+    console.log(dados);
   }
 
   static navigationOptions = ({navigation}) => ({
@@ -23,24 +56,66 @@ export default class Request extends Component<Props> {
         headerRight: null
   });
 
-  componentDidMount(){
-
+  
+  numberToReal(numero) {
+    var numero = numero.toFixed(2).split('.');
+    numero[0] = "" + numero[0].split(/(?=(?:...)*$)/).join('.');
+    return numero.join(',');
   }
 
   render(){
+    const { navigation } = this.props;
     return (
       <View style={styles.container}>
-          <TouchableNativeFeedback  onPress={()=>{}}>
-              <View style={styles.cardContent}>
-                <View style={{ flex: 1}}>
-                  <Text style={{fontWeight: '600', color: 'black', fontSize: 15}}>Cliente</Text>
-                  <Text>Selecione um cliente</Text>
+          <View style={styles.cardContentOneRow}>
+                <View style={{flex: 0, flexDirection: 'row'}}>
+                    <Text style={styles.title}>{this.props.navigation.getParam('cod_cliente')}</Text>
+                    <Text style={{  fontWeight: '600', fontSize: 15, color: 'black'}}>-</Text>
+                    <Text style={{  fontWeight: '600', fontSize: 15, color: 'black', flex: 1}}>{this.props.navigation.getParam('nome')}</Text>    
                 </View>
-                <View>
-                  <Button title="Procurar"/>
+                <View style={{flex: 0, flexDirection: 'row'}}>
+                  <Text style={{fontWeight: '600'}}>Telefone: </Text>
+                  <Text>{this.props.navigation.getParam('telefone')}</Text>
                 </View>
-              </View>
-          </TouchableNativeFeedback>
+                <View style={{flex: 0, flexDirection: 'row'}}>
+                    <Text style={{fontWeight: '600'}}>Endereço: </Text>
+                    <Text style={{flex: 1}}>{this.props.navigation.getParam('endereco')}</Text>
+                </View>
+                        
+                <View style={{flex: 0, flexDirection: 'row'}}>
+                  <View style={{flex: 2}}>
+                    <View style={{flexDirection: 'row'}}>
+                      <Text style={{fontWeight: '600'}}>Cidade: </Text>
+                      <Text>{this.props.navigation.getParam('cidade')}</Text>
+                    </View>
+                  </View>
+                  <View style={{flex: 1}}>
+                    <View style={{flexDirection: 'row'}}>
+                      <Text style={{fontWeight: '600'}}>Estado: </Text>
+                      <Text>{this.props.navigation.getParam('estado')}</Text>
+                    </View>
+                  </View>
+                </View>
+
+                <View style={{flex: 0, flexDirection: 'row'}}>
+                  <Text style={{fontWeight: '600', color: 'red'}}>Observação: </Text>
+                  <Text style={{color :'red', flex: 1}}>{this.props.navigation.getParam('observacao')}</Text>
+                </View>
+                <View style={{flex: 0, flexDirection: 'row'}}>
+                  <View style={{flex: 2}}>
+                    <Text style={{fontWeight: '600',fontSize: 13, color: 'black'}}>Limite de compra: </Text>
+                    <Text style={{fontWeight: '600', fontSize: 13, color: 'black'}}>Saldo devedor: </Text>
+                    <Text style={{fontWeight: '600', fontSize: 13, color: 'black'}}>Saldo de compra: </Text>
+                  </View>
+                  <View style={{flex: 1, alignContent: 'center', alignItems: 'flex-end'}}>
+                    <Text style={{alignContent: "center", color: 'black', fontWeight: '600',fontSize: 13,}}>
+                    {this.numberToReal(Number(this.props.navigation.getParam('limite')))}</Text>
+                    <Text style={{color: 'red'}}>{this.numberToReal(Number(this.props.navigation.getParam('saldo_devedor')))}</Text>
+                    <Text style={{color: this.props.navigation.getParam('saldo_compra')<0?'red':'green'}}>{this.numberToReal(Number(this.props.navigation.getParam('saldo_compra'))).replace("-.","-")}</Text>
+                  </View>
+
+                </View>
+          </View>
           <TouchableNativeFeedback style={styles.card} onPress={()=>{}}>
               <View style={styles.cardContent}>
                 <View style={{ flex: 1}}>
