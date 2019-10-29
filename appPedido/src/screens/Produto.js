@@ -1,14 +1,18 @@
 import React, {Component} from 'react';
-import {Alert,StyleSheet, Text, Button,View, TextInput, ActivityIndicator, FlatList, TouchableNativeFeedback} from 'react-native';
+import {Alert,DrawerLayoutAndroid,StyleSheet, Text, Button,View, TextInput, ActivityIndicator, FlatList, TouchableNativeFeedback} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import * as config from '../../config';
 
 
+
 export default class Produto extends Component<Props> {
   constructor(props){
     super(props);
-    this.state = {loading: false, pesquisado: false, input: '', produtos: []};
+    this.state = {loading: false, 
+      pesquisado: false, input: '', produtos: [],
+    qtds: [], 
+    produtoSelecionado: '', select_qtd: ''};
   }
 
   static navigationOptions = ({navigation}) => ({
@@ -43,130 +47,41 @@ export default class Produto extends Component<Props> {
         let item = {cod_produto: resp[e].cod_produto,
         descricao: resp[e].descricao, marca: resp[e].marca,
         preco_venda: resp[e].preco_venda, qtd: resp[e].qtd,
-        qtd_selec: '1'
+        qtd_selec: "1",
         };
         aux.push(item);
       }
 
       this.setState({produtos: aux});
       this.setState({loading: false});
-      console.log(aux);
+      //console.log(aux);
       
     }).catch((err)=>{
       this.setState({loading: false});
       //Alert.alert('Atenção', 'erro');
     });
   }
-
-    getClientes(){ 
-      fetch(config.url+'clientes/byname/'+(this.state.input).toUpperCase(), {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      }).then((response)=> response.json()).then((resp) => {
-        let aux = [];
-        
-        for(e in resp){
-          aux.push(resp[e]);
-        }
-
-        this.setState({clientes: aux});
-        this.setState({loading: false});
-        this.getClientesHasNotCont();
-        
-      }).catch((err)=>{
-        this.setState({loading: false});
-        //Alert.alert('Atenção', 'erro');
-      });
-  }
-
-
-  getContasAReceber(id){
-    fetch(config.url+'contasreceber/'+id, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      }).then((response)=> response.json()).then((resp) => {
-        console.log(resp);
-        let aux = [];
-        for(e in resp){
-          aux.push(resp[e]);
-        }
-        this.setState({contasareceber: aux});
-        //this.setState({loading: false});
-        
-      }).catch((err)=>{
-        //Alert.alert('Atenção', 'erro ao conectar-se com o servidor!');
-      });
-  }
-
-  changeText(index, value){
-
-    let aux = this.state.produtos;
-    if(aux==[]){
-      aux[index].qtd_selec = value;
-      this.setState({produtos: aux});
-    }
     
+  changeText(value, index){
+    alert(index);
+    let aux = this.state.produtos;
+    aux[index].qtd_selec = value;
+    alert(aux[index].qtd_selec);
+    this.setState({produtos: aux});
   }
+
+
   addValue(index){
     let aux = this.state.produtos;
-    let currentlyValue=aux[index].qtd_selec;
-    let newValue = Number(currentlyValue)+1;
-    aux[index].qtd_selec = newValue.toString();
-  
-    
+    aux[index].qtd_selec=(Number(aux[index].qtd_selec)+1).toString();
     this.setState({produtos: aux});
   }
 
   minusValue(index){
-    
     let aux = this.state.produtos;
-    let currentlyValue=aux[index].qtd_selec;
-    if(currentlyValue!='1'){
-      let newValue = Number(currentlyValue)-1;
-    aux[index].qtd_selec = newValue.toString();
+    aux[index].qtd_selec=(Number(aux[index].qtd_selec)-1).toString();
     this.setState({produtos: aux});
-    }
-  }
-
-  getClientesHasNotCont(){
-    fetch(config.url+'clientes/notcont/'+(this.state.input).toUpperCase(), {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    }).then((response)=> response.json())
-      .then((resp) => {
-        let aux = this.state.clientes;
-
-        for(let e in resp){
-          //resp[e].tbcontasreceber.saldo_devedor = "0.00";
-          //resp[e].tbcontasreceber.saldo_compra = resp[e].limite;
-          let aux2 = {limite: resp[e].limite, cod_cliente: resp[e].cod_cliente,
-            nome: resp[e].nome, endereco: resp[e].endereco,
-            bairro: resp[e].bairro, telefone: resp[e].telefone, cidade: resp[e].cidade,
-            estado: resp[e].estado, cep: resp[e].cep, observacao: resp[e].observacao,
-            ["tbcontasreceber.saldo_devedor"]: '0.00',
-            ["tbcontasreceber.saldo_compra"]: resp[e].limite
-          }
-          //alert(resp[e].nome);
-          aux.push(aux2);
-        }
-
-        aux.sort();
-        
-        this.setState({clientes: aux});
-
-    }).catch(e => {
-      //Alert.alert('Atenção', 'erro nos clientes que não tem contas');
-    });
-      
+    
   }
 
   numberToReal(numero) {
@@ -182,19 +97,133 @@ export default class Produto extends Component<Props> {
 	}
 
   render() {
+    var navigationView = (
+      <View style={{flex: 1, backgroundColor: '#fff'}}>
+        <View style={{backgroundColor: '#EEEEEE',padding: 10 }}>
+          <View style={{flexDirection: 'row'}}>
+            <View style={{flex: 1}}>
+              <Text style={{fontSize: 15, fontWeight: '600', color: 'black'}}>Produto: </Text> 
+            </View>
+            <View style={{flex: 3, alignItems: 'flex-end', textAlign: 'right'}}>
+              <Text>
+                {this.state.produtoSelecionado.cod_produto}-{this.state.produtoSelecionado.descricao}
+              </Text>              
+            </View>
+          </View>
+          <View style={{flexDirection: 'row'}}>
+            <View style={{flex: 1}}>
+              <Text style={{fontSize: 15, fontWeight: '600', color: 'black'}}>Preço: </Text>
+            </View>
+            <View style={{flex: 1, alignItems: 'flex-end'}}>
+              <Text style={{alignSelf: 'flex-end'}}>{this.numberToReal(Number(this.state.produtoSelecionado.preco_venda))}</Text>
+            </View>
+          </View>
+          <View style={{flexDirection: 'row'}}>
+            <View style={{flex: 1}}>
+              <Text style={{fontSize: 15, fontWeight: '600', color: 'black'}}>Total: </Text>
+            </View>
+            <View style={{flex: 1, alignItems: 'flex-end'}}>
+              <Text style={{alignSelf: 'flex-end'}}>{
+                Number(this.state.select_qtd)>0?
+                this.numberToReal(Number(Number(this.state.select_qtd)*Number(this.state.produtoSelecionado.preco_venda))):
+                '0,00'
+              }</Text>
+            </View>
+          </View>
+        </View>
+        
+        <Text style={{margin: 10, fontSize: 15, textAlign: 'center'}}>Selecione a quantidade</Text>
+          
+            <View style={{flex: 2,}}>
+              <View style={{flex: 0, flexDirection: 'row', flex: 1}}>
+                <View style={{alignItems: 'center',flex: 1,}}>  
+                  <View style={styles.float}>
+                    <AntDesign name='minus' size={25} color="black" style={{}}
+                    onPress={()=>{
+                      let {select_qtd} = this.state;
+                      
+                      select_qtd = Number(select_qtd)-1;
+                      //alert(qtds[index]);
+                      this.setState({
+                        select_qtd: select_qtd.toString()
+                      });
+                    }}
+                    />
+                  </View>
+                </View>
+                <View style={{alignItems: 'center' ,flex: 1,}}>
+
+                  <TextInput /*value={this.state.produtos[index].qtd_selec} */
+                    value={this.state.select_qtd}
+                    //editable={true}
+                    placeholder="qtd"
+                    keyboardType="numeric"
+                    
+                    onChangeText={(value)=>{
+                      
+                      this.setState({
+                        select_qtd: value,
+                      });
+                    
+                  }}
+                  
+                  />
+                  
+                </View>
+                <View style={{alignItems: 'center', 
+                flex: 1}}>
+                  <View style={styles.float}>
+                    <AntDesign name='plus' size={25} 
+                      color="black" style={{}}
+                      onPress={()=>{
+                        let {select_qtd} = this.state;
+                        let aux = select_qtd;
+                        
+                        aux = Number(aux)+1;
+                        
+                        this.setState({select_qtd: aux.toString()});
+                      }
+                      /*this.state.produtos[index].qtd_selec+=1*/}
+                    />
+                  </View>
+                </View>
+              </View>
+            </View>
+            <View>
+                <Button title="confirmar" onPress={()=>{
+                  this.props.navigation.navigate('Request', {
+                    cod_produto: this.state.produtoSelecionado.cod_produto,
+                    descricao: this.state.produtoSelecionado.descricao, 
+                    marca: this.state.produtoSelecionado.marca,
+                    preco_venda: this.numberToReal(Number(Number(this.state.select_qtd)*Number(this.state.produtoSelecionado.preco_venda))), 
+                    qtd_selec: this.state.select_qtd,
+                  })
+                }}/>
+            </View>
+
+      </View>
+    );
     return (
+      <DrawerLayoutAndroid
+      drawerWidth={300}
+      ref={'DRAWER'}
+      drawerLockMode="locked-closed"      
+      drawerPosition={DrawerLayoutAndroid.positions.Right}
+      renderNavigationView={() => navigationView}>
       <View style={styles.container}>
         <View style={styles.input}>
-          <TextInput placeholder="Digite o nome do produto" style={{flex: 4}} value={this.state.input} 
-          onChangeText={(value)=>{
-            if(value != ''){
-              this.setState({loading: true});
-              this.setState({pesquisado: true});
-              this.setState({input: value});
-              this.getProdutos();
-            }
-            
-          }}/>
+          <TextInput placeholder="Digite o nome do produto" 
+            style={{flex: 4}} 
+            value={this.state.input} 
+            onChangeText={(value)=>{
+              if(value != ''){
+                this.setState({loading: true});
+                this.setState({pesquisado: true});
+                this.setState({input: value});
+                this.getProdutos();
+              }
+            }}
+          />
           {this.state.input != '' ?<Icon name='close' size={25} color="black"  
           style={{flex: 1,alignSelf: 'center', textAlign: 'right', paddingRight: 5}}
             onPress={()=> {
@@ -212,64 +241,40 @@ export default class Produto extends Component<Props> {
               renderItem={({item, index}) => 
                 <View style={styles.card} >
                     <TouchableNativeFeedback  onPress={()=>{
-                      /*this.props.navigation.navigate('ClienteContas',{
-                        cod_cliente: item.cod_cliente,
-                        nome: item.nome,
-                        endereco: item.endereco,
-                        telefone: item.telefone
-                      });*/
-                      //this.props.navigation.navigate('Request');
+
                       }}>
                       <View style={styles.cardContent}>
-                        <View style={{borderBottomColor: 'gray', borderBottomWidth: 0.65,
-                      paddingLeft: 10}}>
+                        <View style={styles.name}>
                           <Text style={{  fontWeight: '600', 
-                          fontSize: 15, color: 'black',}}>{item.cod_produto}</Text>
-                          <Text>{item.descricao}</Text> 
+                          fontSize: 15, color: 'black',flex: 1}}>{item.cod_produto}</Text>
+                          <Text style={{flex: 3}}>{item.descricao}</Text> 
                         </View>
-                        <View style={{paddingLeft: 10}}>
-                          <Text>Marca</Text>
-                          <Text style={{fontWeight: '800'}}>{item.marca!=''?item.marca: 'S/N'}</Text>
-                        </View>
-                        <View style={{backgroundColor: '#EEEEEE', flex: 0, 
-                        flexDirection: 'row', paddingLeft: 10, borderBottomColor: 'gray',
-                         borderBottomWidth: 0.65}}>
-                          <View style={{flex: 1}}>
-                            <Text>Valor</Text>
-                            <Text style={{fontWeight: '700', color: 'black'}}>{this.numberToReal(Number(item.preco_venda))}</Text>
-                          </View>
-                          <View style={{flex: 1}}>
-                            <Text>Estoque</Text>
-                            <Text style={{fontWeight: '700', color: 'black'}}>{Number(item.qtd)}</Text>
-                          </View>
-                        </View>
-                        <View style={{flexDirection: 'row',flex: 0, paddingLeft: 10, backgroundColor: '#EEEEEE'}}>
-                          <View style={{flex: 1,}}>
-                            <View style={{flex: 0, flexDirection: 'row', flex: 1}}>
-                              <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>  
-                                <View style={styles.float}>
-                                  <AntDesign name='minus' size={25} color="black" style={{}}
-                                  onPress={()=>this.minusValue(index)}
-                                  />
-                                </View>
-                              </View>
-                              <View style={{alignItems: 'center', flex: 1}}>
-                                  
-                                  <TextInput value={this.state.produtos[index].qtd_selec} 
-                                  keyboardType="number-pad"
-                                  onChangeText={(value)=>this.changeText(value)}/>
-                              </View>
-                              <View style={{alignItems: 'center', justifyContent: 'center',flex: 1}}>
-                                <View style={styles.float}>
-                                  <AntDesign name='plus' size={25} color="black" style={{}}
-                                  onPress={()=>this.addValue(index)}
-                                  />
-                                </View>
-                              </View>
+                        <View style={{paddingLeft: 10, paddingRight: 10,
+                          paddingBottom: 5, paddingTop: 5, flex: 0, flexDirection: 'row'}}>
+                            <View style={{flex: 1, alignItems: 'flex-start'}}>
+                              <Text>Marca</Text>
+                              <Text style={{fontWeight: '800'}}>{item.marca!=''?item.marca: 'S/N'}</Text>
                             </View>
-                          </View>
+                            <View style={{flex: 1, alignItems: 'center'}}>
+                              <Text>Quantidade</Text>
+                              <Text style={{fontWeight: '700', color: 'black'}}>{Number(item.qtd)}</Text>
+                            </View>
+                            <View style={{flex: 1, alignItems: 'flex-end'}}>
+                              <Text>Valor</Text>
+                              <Text style={{fontWeight: '700', color: 'black'}}>
+                              {this.numberToReal(Number(item.preco_venda))}</Text>
+                            </View>
+                        </View>
+                      
+                        <View style={{paddingLeft: 10, 
+                        backgroundColor: '#EEEEEE'}}>
                           <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-                            <Button title="adicionar"/>
+                            <Button title="adicionar ao pedido" color="green"
+                              onPress={()=>{
+                                this.setState({produtoSelecionado: item});
+                                this.refs['DRAWER'].openDrawer();
+                              }}
+                            />
                           </View>
                         </View>
 
@@ -288,7 +293,9 @@ export default class Produto extends Component<Props> {
           </View>
           : null
         }
+        
       </View>
+      </DrawerLayoutAndroid>
     );
   }
 }
@@ -309,7 +316,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   list:{
-
+    opacity: 1.65,
     paddingTop: 10,
     paddingLeft: 10,
     paddingRight: 10,
@@ -344,6 +351,13 @@ cardContent: {
   //padding: 10,
   flex: 1,
   //flexDirection: 'row'  
+},
+name : {
+  borderBottomColor: 'gray', 
+  borderBottomWidth: 0.65,
+  paddingLeft: 10,paddingRight:10,
+  paddingTop: 5,paddingBottom: 5 
+  ,flex: 0, flexDirection: 'row'
 },
 menu: {
   padding: 10,

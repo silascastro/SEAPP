@@ -3,25 +3,13 @@ import {StyleSheet, Text ,View,Button, FlatList, TouchableNativeFeedback} from '
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import * as config from '../../config';
 
-//const cod_cliente = this.props.navigation.getParam('cod_cliente');
-/*
-const nome = this.props.navigation.getParam('nome');
-const telefone= this.props.navigation.getParam('telefone');
-const endereco= this.props.navigation.getParam('endereco');
-const observacao= this.props.navigation.getParam('observacao');
-const cidade= this.props.navigation.getParam('cidade');
-const estado = this.props.navigation.getParam('estado');
-const limite = this.props.navigation.getParam('limite');
-const saldo_devedor= this.props.navigation.getParam('saldo_devedor');
-const saldo_compra= this.props.navigation.getParam('saldo_compra');*/
-let dados;
 
 export default class Request extends Component<Props> {
   constructor(props){
     super(props);
     this.state = {
       loading: true,
-      cod_cliente: '',
+      /*cod_cliente: '',
       nome: '',
       telefone: '',
       endereco: '',
@@ -31,16 +19,75 @@ export default class Request extends Component<Props> {
       limite: '',
       saldo_devedor: '',
       saldo_compra: '',
-      data: ''
+      data: ''*/
+      pedido: [],
     };
     const { navigation } = this.props;
     //this.aysncData();
+    //this.teste();
+    this.willFocuSub={};
+    this.willFocuSub = this.props.navigation.addListener(
+      'willFocus',
+      ()=>{
+        alert('voltando');
+        this.contabilizaProdutos();
+      }
+    );
   }
 
-  componentDidMount(){
-    dados = this.props.navigation.getParam('endereco');
-    console.log(dados);
+  contabilizaProdutos(){
+    //console.log('teste carregando');
+    let aux = this.state.pedido.length!=0? this.state.pedido: [];
+    let cod_produto;
+    let descricao;
+    let marca;
+    let preco_venda;
+    let qtd_selec;
+    let first_time = true;
+    
+
+    if(this.props.navigation.getParam("cod_produto")){
+     cod_produto = this.props.navigation.getParam('cod_produto');
+     first_time = false;
+    }
+
+    if(this.props.navigation.getParam('descricao')){
+      descricao = this.props.navigation.getParam('descricao');
+    }
+
+    if(this.props.navigation.getParam('marca')){
+      marca = this.props.navigation.getParam('marca');
+    }
+
+    
+    if(this.props.navigation.getParam('preco_venda')){
+      preco_venda = this.props.navigation.getParam('preco_venda');
+    }
+
+
+    if(this.props.navigation.getParam('qtd_selec')){
+      qtd_selec = this.props.navigation.getParam('qtd_selec');
+    }
+
+    if(!first_time){
+      aux.push({
+          cod_produto,
+          descricao,
+          marca,
+          preco_venda,
+          qtd_selec});
+      this.setState({pedido: aux});
+    }
+    //alert(this.state.pedido.length);
   }
+  
+
+  componentDidMount(){
+    
+    
+  }
+
+  
 
   static navigationOptions = ({navigation}) => ({
       title: 'Novo Pedido',
@@ -97,7 +144,7 @@ export default class Request extends Component<Props> {
                   </View>
                 </View>
 
-                <View style={{flex: 0, flexDirection: 'row'}}>
+                <View style={{flex: 0, flexDirection: 'row', borderBottomWidth: 0.5,borderBottomColor: '#000000'}}>
                   <Text style={{fontWeight: '600', color: 'red'}}>Observação: </Text>
                   <Text style={{color :'red', flex: 1}}>{this.props.navigation.getParam('observacao')}</Text>
                 </View>
@@ -119,31 +166,50 @@ export default class Request extends Component<Props> {
           <TouchableNativeFeedback style={styles.card} onPress={()=>{}}>
               <View style={styles.cardContent}>
                 <View style={{ flex: 1}}>
-                  <Text style={{fontWeight: '600', color: 'black', fontSize: 15}}>Data do pedido</Text>
-                  <Text>04/10/2019</Text>
+                  <Text style={{fontWeight: '600', color: 'black', fontSize: 15}}>Data/Hora</Text>
+                  <View style={{flex: 0, flexDirection: 'row'}}>
+                    <Text style={{marginRight: 10}}>04/10/2019</Text>
+                    <Text>19:05</Text>
+                  </View>
+                 
                 </View>
                 <View style={{flex: 1}}>
-                <Text style={{fontWeight: '600', color: 'black', fontSize: 15}}>Hora do pedido</Text>
-                  <Text>19:05</Text>
-                </View>
-              </View>
-          </TouchableNativeFeedback>      
-          <TouchableNativeFeedback style={styles.card} onPress={()=>{}}>
-              <View style={styles.cardContentOneRow}>
                   <Text style={{fontWeight: '600', color: 'black', fontSize: 15}}>
                     Forma de pagamento
                   </Text>
                   <Text>DINHEIRO</Text>
+                </View>
               </View>
-          </TouchableNativeFeedback>    
+          </TouchableNativeFeedback>      
+ 
         <View style={{backgroundColor: "#E0E0E0", padding: 10,flex: 1}}>
             <Text>Itens do pedido</Text>
-            <View style={{backgroundColor: '#E0E0E0',
+            {this.state.pedido.length==0?<View style={{backgroundColor: '#E0E0E0',
               borderWidth: 0.4, borderColor: 'gray',
               alignItems: 'center', paddingTop: 10,paddingBottom: 10
               }}>
               <Text>Nenhum item no pedido</Text>
             </View>
+            :
+            <FlatList
+            data={this.state.pedido}
+            numColumns={1}
+            renderItem={({item, index}) =>
+
+                <View style={{
+                  borderRadius: 2,
+                  borderWidth: 0.6,
+                  borderColor: '#EEEEEE',
+                  padding: 10,
+                }}>
+                  <Text>{item.descricao}</Text>
+                </View>
+            }
+          
+            
+            />
+          }
+          
             
             <View style={styles.float}>
               <AntDesign name={'plus'} size={25} color="#ffffff" onPress={()=>{
@@ -153,18 +219,8 @@ export default class Request extends Component<Props> {
             
         </View>
 
-        <View style={{ flexDirection: 'row',}}>
-          <View style={{flex: 1, padding: 5,  elevation: 5}}>
-            <TouchableNativeFeedback style={{}}>
-              <View style={{alignItems: 'center', justifyContent: 'center',
-              flex: 1, borderColor: 'green', borderWidth: 2,}}>
-              <Text style={{color: 'green', fontWeight: 'bold'}}>SARVAR ORÇAMENTO</Text>
-              </View>
-            </TouchableNativeFeedback>
-          </View>
-          <View style={{flex: 1, padding: 5}}>
-            <Button title="salvar pedido"/>
-          </View>
+        <View >
+           <Button title="confirmar pedido"/> 
         </View>
 
       </View>
