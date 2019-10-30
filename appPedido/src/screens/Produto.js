@@ -103,12 +103,14 @@ export default class Produto extends Component<Props> {
     AsyncStorage.getItem(_request,(error,result) => {
       if(result){
         //alert(result);
-        let aux = [];
-        aux.push(JSON.parse(result));
+        let aux = JSON.parse(result);
         aux.push(newItem);
+        
         AsyncStorage.setItem(_request,JSON.stringify(aux));
       }else{
-        AsyncStorage.setItem(_request,JSON.stringify(newItem));
+        let aux = [];
+        aux.push(newItem);
+        AsyncStorage.setItem(_request,JSON.stringify(aux));
       }
     });
   }
@@ -208,7 +210,14 @@ export default class Produto extends Component<Props> {
             </View>
             <View>
                 <Button title="confirmar" onPress={()=>{
-                  this.addItemToRequest(this.state.produtoSelecionado);
+                  this.addItemToRequest({
+                    cod_produto: this.state.produtoSelecionado.cod_produto,
+                    descricao: this.state.produtoSelecionado.descricao, 
+                    marca: this.state.produtoSelecionado.marca,
+                    preco_venda: this.numberToReal(Number(Number(this.state.select_qtd)*Number(this.state.produtoSelecionado.preco_venda))), 
+                    qtd: this.state.select_qtd,
+                    preco_uni: this.numberToReal(Number(this.state.produtoSelecionado.preco_venda))
+                  });
                   this.setState({loadingAsync: true});
                   setTimeout(() => {
                     this.refs['DRAWER'].closeDrawer();
@@ -220,7 +229,7 @@ export default class Produto extends Component<Props> {
                       preco_venda: this.numberToReal(Number(Number(this.state.select_qtd)*Number(this.state.produtoSelecionado.preco_venda))), 
                       qtd_selec: this.state.select_qtd,
                     })
-                  }, 1000);
+                  }, 2000);
                   
                 }}/>
             </View>

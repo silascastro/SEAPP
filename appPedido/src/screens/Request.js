@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text ,View,Button, FlatList, TouchableNativeFeedback} from 'react-native';
+import {StyleSheet, Text ,View,Button, FlatList, TouchableNativeFeedback, TouchableHighlight} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-community/async-storage';
 import * as config from '../../config';
@@ -32,7 +32,7 @@ export default class Request extends Component<Props> {
     this.willFocuSub = this.props.navigation.addListener(
       'willFocus',
       ()=>{
-        alert('voltando');
+        console.log('voltando');
         this.contabilizaProdutos();
       }
     );
@@ -85,7 +85,8 @@ export default class Request extends Component<Props> {
     
     AsyncStorage.getItem(_request,(error,result) => {
       if(result){
-        alert(result);
+        //console.log(result);
+        //console.log(JSON.parse(result));
         this.setState({pedido: JSON.parse(result)});
       }else{
        //alert('não tem nada');
@@ -97,7 +98,7 @@ export default class Request extends Component<Props> {
 
   componentDidMount(){
     
-    
+    //AsyncStorage.removeItem(_request)
   }
 
   
@@ -181,13 +182,14 @@ export default class Request extends Component<Props> {
                 <View style={{ flex: 1}}>
                   <Text style={{fontWeight: '600', color: 'black', fontSize: 15}}>Data/Hora</Text>
                   <View style={{flex: 0, flexDirection: 'row'}}>
-                    <Text style={{marginRight: 10}}>04/10/2019</Text>
-                    <Text>19:05</Text>
+                    <Text style={{marginRight: 10}}>{new Date().getDate()}/{new Date().getMonth()+1}/{new Date().getFullYear()}</Text>
+                    <Text>{new Date().getHours()}:{new Date().getMinutes()<10?'0'+new Date().getMinutes(): new Date().getMinutes()}</Text>
                   </View>
                  
                 </View>
                 <View style={{flex: 1}}>
-                  <Text style={{fontWeight: '600', color: 'black', fontSize: 15}}>
+                  <Text style={{fontWeight: '600', 
+                  color: 'black', fontSize: 15}}>
                     Forma de pagamento
                   </Text>
                   <Text>DINHEIRO</Text>
@@ -197,9 +199,11 @@ export default class Request extends Component<Props> {
  
         <View style={{backgroundColor: "#E0E0E0", padding: 10,flex: 1}}>
             <Text>Itens do pedido</Text>
-            {this.state.pedido.length==0?<View style={{backgroundColor: '#E0E0E0',
+            {this.state.pedido.length==0
+            ?<View style={{backgroundColor: '#E0E0E0',
               borderWidth: 0.4, borderColor: 'gray',
-              alignItems: 'center', paddingTop: 10,paddingBottom: 10
+              alignItems: 'center', paddingTop: 10,
+              paddingBottom: 10
               }}>
               <Text>Nenhum item no pedido</Text>
             </View>
@@ -210,12 +214,31 @@ export default class Request extends Component<Props> {
             renderItem={({item, index}) =>
 
                 <View style={{
-                  borderRadius: 2,
+                  borderRadius: 5,
                   borderWidth: 0.6,
                   borderColor: '#EEEEEE',
-                  padding: 10,
+                  elevation: 2,
                 }}>
-                  <Text>{item.descricao}</Text>
+                  <TouchableHighlight>
+                    <View style={{flex: 0, padding: 10, flexDirection: 'row'}}>
+                      <View style={{flex: 1}}>
+                        <Text style={{
+                          fontWeight: '800', color: 'black'
+                        }}>
+                        {item.cod_produto}</Text>
+                        
+                        <Text>Quantidade: {Number(item.qtd)} |</Text>
+                        <Text>Preço: {item.preco_uni} </Text>
+                        
+                        
+                      </View>
+                      <View style={{flex: 1, alignItems: 'flex-end'}}>
+                        <Text>Total: {item.preco_venda}</Text>
+                      </View>
+
+
+                    </View>
+                  </TouchableHighlight>
                 </View>
             }
           
@@ -223,13 +246,13 @@ export default class Request extends Component<Props> {
             />
           }
           
-            
+          <View style={{alignItems: 'flex-end'}}>
             <View style={styles.float}>
               <AntDesign name={'plus'} size={25} color="#ffffff" onPress={()=>{
                 this.props.navigation.navigate('Produto');
               }}/>
             </View>
-            
+            </View> 
         </View>
 
         <View >
@@ -257,24 +280,25 @@ const styles = StyleSheet.create({
     //textDecorationStyle: "solid",
   },
   cardContent:{
-    flex: 0, flexDirection: 'row', paddingTop: 25, 
-    paddingBottom:25, borderBottomColor: 'gray', borderBottomWidth: 0.65,
+    flex: 0, flexDirection: 'row', paddingTop: 15, 
+    paddingBottom:15, borderBottomColor: 'gray', borderBottomWidth: 0.65,
     paddingLeft: 10,paddingRight: 10
   },
   cardContentOneRow: {
     paddingLeft: 10,paddingRight: 10,
-    paddingTop: 25, paddingBottom:25,borderBottomColor: 'gray', borderBottomWidth: 0.65,
+    paddingTop: 15, paddingBottom:15,borderBottomColor: 'gray', borderBottomWidth: 0.65,
   },
   float: {
     width: 60,  
     height: 60,   
     borderRadius: 30,            
-    backgroundColor: '#30dac5',                                    
-    position: 'absolute', 
+    backgroundColor: '#30dac5',
+    marginTop: 2,                                   
+   // position: 'absolute', 
     justifyContent: "center",
     alignItems: "center",                                     
-    bottom: 10,                                                    
-    right: 15,
+    //bottom: 10,                                                    
+    //right: 15,
     elevation: 3
   }
   
