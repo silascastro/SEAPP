@@ -1,8 +1,11 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text ,View,Button, FlatList, TouchableNativeFeedback} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import AsyncStorage from '@react-native-community/async-storage';
 import * as config from '../../config';
 
+
+const _request ="PEDIDO";
 
 export default class Request extends Component<Props> {
   constructor(props){
@@ -37,7 +40,7 @@ export default class Request extends Component<Props> {
 
   contabilizaProdutos(){
     //console.log('teste carregando');
-    let aux = this.state.pedido.length!=0? this.state.pedido: [];
+    /*let aux = this.state.pedido.length!=0? this.state.pedido: [];
     let cod_produto;
     let descricao;
     let marca;
@@ -78,7 +81,17 @@ export default class Request extends Component<Props> {
           qtd_selec});
       this.setState({pedido: aux});
     }
-    //alert(this.state.pedido.length);
+    //alert(this.state.pedido.length);*/
+    
+    AsyncStorage.getItem(_request,(error,result) => {
+      if(result){
+        alert(result);
+        this.setState({pedido: JSON.parse(result)});
+      }else{
+       //alert('não tem nada');
+      }
+    });
+    
   }
   
 
@@ -220,7 +233,9 @@ export default class Request extends Component<Props> {
         </View>
 
         <View >
-           <Button title="confirmar pedido"/> 
+           <Button title="confirmar pedido" onPress={
+             ()=> AsyncStorage.removeItem(_request)
+           }/> 
         </View>
 
       </View>

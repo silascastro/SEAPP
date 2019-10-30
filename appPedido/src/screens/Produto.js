@@ -2,9 +2,10 @@ import React, {Component} from 'react';
 import {Alert,DrawerLayoutAndroid,StyleSheet, Text, Button,View, TextInput, ActivityIndicator, FlatList, TouchableNativeFeedback} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import AsyncStorage from '@react-native-community/async-storage';
 import * as config from '../../config';
 
-
+const _request ="PEDIDO";
 
 export default class Produto extends Component<Props> {
   constructor(props){
@@ -12,7 +13,9 @@ export default class Produto extends Component<Props> {
     this.state = {loading: false, 
       pesquisado: false, input: '', produtos: [],
     qtds: [], 
-    produtoSelecionado: '', select_qtd: ''};
+    produtoSelecionado: '', select_qtd: '',
+    loadingAsync: false,
+  };
   }
 
   static navigationOptions = ({navigation}) => ({
@@ -94,7 +97,21 @@ export default class Produto extends Component<Props> {
 	{	
 		campo = campo.split(".").join("");
 		return campo;
-	}
+  }
+  
+  addItemToRequest(newItem){
+    AsyncStorage.getItem(_request,(error,result) => {
+      if(result){
+        //alert(result);
+        let aux = [];
+        aux.push(JSON.parse(result));
+        aux.push(newItem);
+        AsyncStorage.setItem(_request,JSON.stringify(aux));
+      }else{
+        AsyncStorage.setItem(_request,JSON.stringify(newItem));
+      }
+    });
+  }
 
   render() {
     var navigationView = (
@@ -191,25 +208,41 @@ export default class Produto extends Component<Props> {
             </View>
             <View>
                 <Button title="confirmar" onPress={()=>{
-                  this.props.navigation.navigate('Request', {
-                    cod_produto: this.state.produtoSelecionado.cod_produto,
-                    descricao: this.state.produtoSelecionado.descricao, 
-                    marca: this.state.produtoSelecionado.marca,
-                    preco_venda: this.numberToReal(Number(Number(this.state.select_qtd)*Number(this.state.produtoSelecionado.preco_venda))), 
-                    qtd_selec: this.state.select_qtd,
-                  })
+                  this.addItemToRequest(this.state.produtoSelecionado);
+                  this.setState({loadingAsync: true});
+                  setTimeout(() => {
+                    this.refs['DRAWER'].closeDrawer();
+                    this.setState({loadingAsync: false});
+                    this.props.navigation.navigate('Request', {
+                      cod_produto: this.state.produtoSelecionado.cod_produto,
+                      descricao: this.state.produtoSelecionado.descricao, 
+                      marca: this.state.produtoSelecionado.marca,
+                      preco_venda: this.numberToReal(Number(Number(this.state.select_qtd)*Number(this.state.produtoSelecionado.preco_venda))), 
+                      qtd_selec: this.state.select_qtd,
+                    })
+                  }, 1000);
+                  
                 }}/>
             </View>
 
       </View>
     );
     return (
+      
       <DrawerLayoutAndroid
       drawerWidth={300}
       ref={'DRAWER'}
       drawerLockMode="locked-closed"      
       drawerPosition={DrawerLayoutAndroid.positions.Right}
       renderNavigationView={() => navigationView}>
+        {this.state.loadingAsync? 
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        
+          <ActivityIndicator size="large"/>
+          
+        </View>
+        
+        :
       <View style={styles.container}>
         <View style={styles.input}>
           <TextInput placeholder="Digite o nome do produto" 
@@ -295,6 +328,7 @@ export default class Produto extends Component<Props> {
         }
         
       </View>
+        }
       </DrawerLayoutAndroid>
     );
   }
