@@ -223,11 +223,7 @@ export default class ClienteContas extends Component<Props> {
       </View>
       :
     <View style={{flex: 1}}>
-      
-      <FlatList
-        style={{}}
-        ListHeaderComponent={()=>
-          <View style={{marginLeft: 10, marginRight: 10, paddingTop: 20, paddingBottom: 15}}>
+    <View style={{marginLeft: 10, marginRight: 10, paddingTop: 20, paddingBottom: 15}}>
                 
                 <View style={{marginLeft: 15, borderBottomWidth: 0.5, borderBottomColor: 'gray', paddingBottom: 5}}>
                   <View style={{flexDirection: 'row'}}>
@@ -250,8 +246,11 @@ export default class ClienteContas extends Component<Props> {
                     <Text style={{fontWeight: '600'}}>Recebido</Text>
                   </View>
                 </View>
-              </View>
-        }
+      </View>
+      
+      <FlatList
+        style={{}}
+        //ListHeaderComponent={()=>}
         //ListFooterComponent={()=>{}}
         data={this.state.contasareceber}
         renderItem={({item, index})=>

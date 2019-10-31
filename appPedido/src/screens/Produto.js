@@ -13,7 +13,7 @@ export default class Produto extends Component<Props> {
     this.state = {loading: false, 
       pesquisado: false, input: '', produtos: [],
     qtds: [], 
-    produtoSelecionado: '', select_qtd: '',
+    produtoSelecionado: '', select_qtd: '1',
     loadingAsync: false,
   };
   }
@@ -144,13 +144,13 @@ export default class Produto extends Component<Props> {
             style={{flex: 4}} 
             value={this.state.input} 
             onChangeText={(value)=>{
-              if(value != ''){
+              
                 this.setState({produtoSelecionado: ''});
                 this.setState({loading: true});
                 this.setState({pesquisado: true});
                 this.setState({input: value});
                 this.getProdutos();
-              }
+             
             }}
           />
           {this.state.input != '' ?<Icon name='close' size={25} color="black"  
@@ -265,13 +265,16 @@ export default class Produto extends Component<Props> {
                   <View style={styles.float}>
                     <AntDesign name='minus' size={25} color="black" style={{}}
                     onPress={()=>{
+
                       let {select_qtd} = this.state;
+                      if(Number(select_qtd != '1')){
                       
                       select_qtd = Number(select_qtd)-1;
                       //alert(qtds[index]);
                       this.setState({
                         select_qtd: select_qtd.toString()
                       });
+                    }
                     }}
                     />
                   </View>

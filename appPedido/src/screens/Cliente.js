@@ -127,12 +127,10 @@ export default class Cliente extends Component<Props> {
         <View style={styles.input}>
           <TextInput placeholder="Digite o nome do cliente" style={{flex: 4}} value={this.state.input} 
           onChangeText={(value)=>{
-            if(value != ''){
               this.setState({loading: true});
               this.setState({pesquisado: true});
               this.setState({input: value});
               this.getClientes();
-            }
             
           }}/>
           {this.state.input != '' ?<Icon name='close' size={25} color="black"  style={{flex: 1,alignSelf: 'center', textAlign: 'right', paddingRight: 5}}

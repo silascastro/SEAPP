@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, FlatList, 
 TouchableNativeFeedback,StatusBar, 
-NativeModules,
+NativeModules, ImageBackground, Image
 } from 'react-native';
 import { StackActions, NavigationActions, navigate } from 'react-navigation';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -68,55 +68,65 @@ export default class Home extends Component<Props> {
   render() {
 
     return (
-      <View style={styles.container}>
-        <StatusBar backgroundColor="#194c40" barStyle="light-content" />
-        <FlatList
-          style={{}}
-          data={DATA}
-          renderItem={({item})=>
-            <View style={styles.card} >
-              <TouchableNativeFeedback onPress={()=>{
-                if(item.title == "Clientes"){
-                  this.props.navigation.push('Cliente');
-                }
-                if(item.title == "Pedidos"){
-                  this.props.navigation.push('Pedido');
-                }
+      <ImageBackground style={styles.backgroundImage}
+      resizeMode='cover'
+      source={require('../assets/background.jpeg')}
+      imageStyle= {{opacity:0.7}}
+      >
+        <View style={styles.container}>
+          <StatusBar backgroundColor="#194c40" barStyle="light-content" />
+          <FlatList
+            style={{}}
+            data={DATA}
+            renderItem={({item})=>
+              <View style={styles.card} >
+                <TouchableNativeFeedback onPress={()=>{
+                  if(item.title == "Clientes"){
+                    this.props.navigation.push('Cliente');
+                  }
+                  if(item.title == "Pedidos"){
+                    this.props.navigation.push('Pedido');
+                  }
 
-                if(item.title == "Sair"){
-                  LoginModule.logoff();
-                  let {dispatch} = this.props.navigation;
-                  dispatch(resetActionLogin);
-                }
-              }}>
+                  if(item.title == "Sair"){
+                    LoginModule.logoff();
+                    let {dispatch} = this.props.navigation;
+                    dispatch(resetActionLogin);
+                  }
+                }}>
 
-                <View style={styles.cardContent}>
-                  <View style={{flex: 1,alignItems: 'center'}}>
-                    <item.type name={item.icon} size={25} color="black"/> 
+                  <View style={styles.cardContent}>
+                    <View style={{flex: 1,alignItems: 'center'}}>
+                      <item.type name={item.icon} size={25} color="black"/> 
+                    </View>
+                    <View style={{flex: 6, textDecorationStyle: 'solid', textDecorationColor: 'red'}}>
+                      <Text style={{fontWeight: '700', fontSize: 15, color: 'black'}}>{item.title}</Text>
+                      
+                    </View>
                   </View>
-                  <View style={{flex: 6, textDecorationStyle: 'solid', textDecorationColor: 'red'}}>
-                    <Text style={{fontWeight: '700', fontSize: 15}}>{item.title}</Text>
-                    
-                  </View>
-                </View>
+                  
+                </TouchableNativeFeedback>
                 
-              </TouchableNativeFeedback>
-              
-            </View>
-          }
-        />
-        
-      </View>
+              </View>
+            }
+          />
+        </View>
+      </ImageBackground>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    width: '100%', height: '100%',
+  },
   container: {
     flex: 1,
     //justifyContent: 'center',
     //alignItems: 'center',
-    backgroundColor: '#ffffff',
+    
+    //backgroundColor: '#ffffff',
+    //backgroundColor:'rgba(255,0,0,0.5)',
   },
   card: {
     textAlign: 'center',
@@ -131,7 +141,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flex: 0,
     flexDirection: "row",
-    
+    //color: '#ffffff'
     //alignSelf: 'center',
    // flex: 0
    
