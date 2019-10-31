@@ -1,14 +1,30 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, FlatList, 
-TouchableNativeFeedback,StatusBar, NativeModules} from 'react-native';
+TouchableNativeFeedback,StatusBar, 
+NativeModules,
+} from 'react-native';
+import { StackActions, NavigationActions, navigate } from 'react-navigation';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const DATA = [
   {title: 'Pedidos', subtitle: 'Crie e gerencie os pedidos', icon: 'local-offer', type: Icon}, 
-  {title: 'Clientes', subtitle: 'Analise e gerencie seus clientes', icon: 'people', type: Icon}
+  {title: 'Clientes', subtitle: 'Analise e gerencie seus clientes', icon: 'people', type: Icon},
+  {title: 'Configurações', subtitle: 'Analise e gerencie seus clientes', icon: 'md-settings', type: Ionicons},
+  {title: 'Sair', subtitle: 'Analise e gerencie seus clientes', icon: 'md-exit', type: Ionicons},
 ];
 
+const LoginModule = NativeModules.LoginModule;
 const ToastModule = NativeModules.ToastModule;
+const resetActionLogin = StackActions.reset({
+  index: 0,
+  actions: [
+    NavigationActions.navigate({ routeName: 'Login' }),
+    NavigationActions.navigate({ routeName: 'Home' }),
+    //NavigationActions.navigate({ routeName: 'Cliente' }),
+    //NavigationActions.navigate({ routeName: 'Request' }),
+  ],
+});
 
 export default class Home extends Component<Props> {
   constructor(props){
@@ -65,6 +81,12 @@ export default class Home extends Component<Props> {
                 }
                 if(item.title == "Pedidos"){
                   this.props.navigation.push('Pedido');
+                }
+
+                if(item.title == "Sair"){
+                  LoginModule.logoff();
+                  let {dispatch} = this.props.navigation;
+                  dispatch(resetActionLogin);
                 }
               }}>
 

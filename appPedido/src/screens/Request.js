@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text ,View,Button, FlatList, TouchableNativeFeedback, TouchableHighlight} from 'react-native';
+import {StyleSheet, Text ,View,Button, FlatList, TouchableNativeFeedback, TouchableHighlight, BackHandler} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-community/async-storage';
+import {SwipeListView} from 'react-native-swipe-list-view';
 import * as config from '../../config';
 
 
@@ -39,49 +40,6 @@ export default class Request extends Component<Props> {
   }
 
   contabilizaProdutos(){
-    //console.log('teste carregando');
-    /*let aux = this.state.pedido.length!=0? this.state.pedido: [];
-    let cod_produto;
-    let descricao;
-    let marca;
-    let preco_venda;
-    let qtd_selec;
-    let first_time = true;
-    
-
-    if(this.props.navigation.getParam("cod_produto")){
-     cod_produto = this.props.navigation.getParam('cod_produto');
-     first_time = false;
-    }
-
-    if(this.props.navigation.getParam('descricao')){
-      descricao = this.props.navigation.getParam('descricao');
-    }
-
-    if(this.props.navigation.getParam('marca')){
-      marca = this.props.navigation.getParam('marca');
-    }
-
-    
-    if(this.props.navigation.getParam('preco_venda')){
-      preco_venda = this.props.navigation.getParam('preco_venda');
-    }
-
-
-    if(this.props.navigation.getParam('qtd_selec')){
-      qtd_selec = this.props.navigation.getParam('qtd_selec');
-    }
-
-    if(!first_time){
-      aux.push({
-          cod_produto,
-          descricao,
-          marca,
-          preco_venda,
-          qtd_selec});
-      this.setState({pedido: aux});
-    }
-    //alert(this.state.pedido.length);*/
     
     AsyncStorage.getItem(_request,(error,result) => {
       if(result){
@@ -101,6 +59,9 @@ export default class Request extends Component<Props> {
     //AsyncStorage.removeItem(_request)
   }
 
+  componentWillUnmount(){
+    
+  }
   
 
   static navigationOptions = ({navigation}) => ({
@@ -177,9 +138,9 @@ export default class Request extends Component<Props> {
 
                 </View>
           </View>
-          <TouchableNativeFeedback style={styles.card} onPress={()=>{}}>
+          <View style={styles.card} onPress={()=>{}}>
               <View style={styles.cardContent}>
-                <View style={{ flex: 1}}>
+                <View style={{ flex: 2}}>
                   <Text style={{fontWeight: '600', color: 'black', fontSize: 15}}>Data/Hora</Text>
                   <View style={{flex: 0, flexDirection: 'row'}}>
                     <Text style={{marginRight: 10}}>{new Date().getDate()}/{new Date().getMonth()+1}/{new Date().getFullYear()}</Text>
@@ -187,15 +148,22 @@ export default class Request extends Component<Props> {
                   </View>
                  
                 </View>
-                <View style={{flex: 1}}>
+                <View style={{flex: 2}}>
                   <Text style={{fontWeight: '600', 
                   color: 'black', fontSize: 15}}>
                     Forma de pagamento
                   </Text>
                   <Text>DINHEIRO</Text>
                 </View>
+                <View style={{flex: 1}}>
+                  <View style={styles.float}>
+                    <AntDesign name={'plus'} size={25} color="#ffffff" onPress={()=>{
+                      this.props.navigation.navigate('Produto');
+                    }}/>
+                  </View>
+                </View>
               </View>
-          </TouchableNativeFeedback>      
+          </View>      
  
         <View style={{backgroundColor: "#E0E0E0", padding: 10,flex: 1}}>
             <Text>Itens do pedido</Text>
@@ -208,7 +176,7 @@ export default class Request extends Component<Props> {
               <Text>Nenhum item no pedido</Text>
             </View>
             :
-            <FlatList
+           /* <FlatList
             data={this.state.pedido}
             numColumns={1}
             renderItem={({item, index}) =>
@@ -241,18 +209,90 @@ export default class Request extends Component<Props> {
                   </TouchableHighlight>
                 </View>
             }
-          
-            
+            />*/
+            <SwipeListView
+              data={this.state.pedido}
+              renderItem={(data, rowMap) => (
+                <View style={{
+                  borderRadius: 5,
+                  borderWidth: 0.6,
+                  backgroundColor: '#ccc',
+                  borderColor: '#EEEEEE',
+                  elevation: 2,
+                }}>
+                      <View style={{flex: 0, padding: 10}}>
+                        <View style={{flexDirection: 'row'}}>
+                          <Text style={{fontWeight: '800', color: 'black', flex: 1}}>
+                            {data.item.cod_produto}
+                          </Text>
+                          <Text style={{flex: 5}}>
+                            {data.item.descricao}
+                          </Text>
+                        </View>
+                        <View style={{flexDirection: 'row'}}>
+                          <View style={{flex: 1}}>
+                           <Text>Quantidade:</Text> 
+                          </View>
+                          <View style={{flex: 1, alignItems: 'center'}}>
+                            <Text >Preço: </Text>
+                          </View>
+                          <View style={{flex: 1, alignItems: 'center'}}>
+                            <Text >Total: </Text>
+                          </View>
+                        </View>
+                        <View style={{flexDirection: 'row'}}>
+
+                          <View style={{flex: 1, alignItems: 'stretch'}}>
+                            <Text >{Number(data.item.qtd)} </Text>
+                          </View>
+                          <View style={{flex: 1, alignItems: 'flex-end'}}>
+                            <Text >{data.item.preco_uni} </Text> 
+                          </View>
+                          <View style={{flex: 1, alignItems: 'flex-end'}}>
+                            <Text>{data.item.preco_venda}</Text>
+                          </View>
+ 
+                        </View>
+                      </View>
+                      
+                                      
+                </View>
+              )}
+              renderHiddenItem={({data, index}, rowMap) => (
+                <View style={styles.rowBack}>
+                  <Text style={{flex: 1}}></Text>
+                  <TouchableNativeFeedback style={{paddingTop: 5, paddingBottom:5, 
+                  backgroundColor: 'red'}} 
+                  onPress={()=> {
+                    
+                    let aux = this.state.pedido;
+                    let newAux = [];
+
+                    for(let e in aux){
+                      if(e!=index){
+                        console.log(e);
+                        newAux.push(aux[e]);
+                      }
+                      
+                    }
+                    console.log(newAux);
+                    AsyncStorage.setItem(_request,JSON.stringify(newAux));
+                    this.setState({pedido: newAux});
+
+                  }}
+                  >
+                    
+                    <Text style={{color: 'white'}}>Remover</Text>
+                   
+                  </TouchableNativeFeedback>
+                </View>
+              )}
+              leftOpenValue={75}
+              rightOpenValue={-75}
             />
           }
           
-          <View style={{alignItems: 'flex-end'}}>
-            <View style={styles.float}>
-              <AntDesign name={'plus'} size={25} color="#ffffff" onPress={()=>{
-                this.props.navigation.navigate('Produto');
-              }}/>
-            </View>
-            </View> 
+          
         </View>
 
         <View >
@@ -288,6 +328,22 @@ const styles = StyleSheet.create({
     paddingLeft: 10,paddingRight: 10,
     paddingTop: 15, paddingBottom:15,borderBottomColor: 'gray', borderBottomWidth: 0.65,
   },
+  rowFront: {
+    alignItems: 'center',
+    backgroundColor: '#CCC',
+    justifyContent: 'center',
+    //height: 50,
+},
+rowBack: {
+  alignItems: 'center',
+  backgroundColor: 'red',
+  flex: 1,
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  padding: 15,
+  borderWidth: 0.6,
+  borderColor: '#eeeeee'
+},
   float: {
     width: 60,  
     height: 60,   

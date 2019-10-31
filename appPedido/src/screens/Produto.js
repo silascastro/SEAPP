@@ -105,7 +105,7 @@ export default class Produto extends Component<Props> {
         //alert(result);
         let aux = JSON.parse(result);
         aux.push(newItem);
-        
+        console.log(aux);
         AsyncStorage.setItem(_request,JSON.stringify(aux));
       }else{
         let aux = [];
@@ -117,7 +117,113 @@ export default class Produto extends Component<Props> {
 
   render() {
     var navigationView = (
-      <View style={{flex: 1, backgroundColor: '#fff'}}>
+      <View>
+        <Text>drawer</Text>
+      </View>
+
+    );
+    return (
+      
+      <DrawerLayoutAndroid
+      drawerWidth={300}
+      ref={'DRAWER'}
+      drawerLockMode="locked-closed"      
+      drawerPosition={DrawerLayoutAndroid.positions.Right}
+      renderNavigationView={() => navigationView}>
+        {this.state.loadingAsync? 
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        
+          <ActivityIndicator size="large"/>
+          
+        </View>
+        
+        :
+      <View style={styles.container}>
+        <View style={styles.input}>
+          <TextInput placeholder="Digite o nome do produto" 
+            style={{flex: 4}} 
+            value={this.state.input} 
+            onChangeText={(value)=>{
+              if(value != ''){
+                this.setState({produtoSelecionado: ''});
+                this.setState({loading: true});
+                this.setState({pesquisado: true});
+                this.setState({input: value});
+                this.getProdutos();
+              }
+            }}
+          />
+          {this.state.input != '' ?<Icon name='close' size={25} color="black"  
+          style={{flex: 1,alignSelf: 'center', textAlign: 'right', paddingRight: 5}}
+            onPress={()=> {
+              this.setState({input: ''});
+            }}
+          />:null}
+        </View>
+        {this.state.loading? <ActivityIndicator size="large"/>:null}
+        {
+          this.state.produtos.length>0 && this.state.loading==false?
+            <FlatList
+              style={styles.list}
+              data={this.state.produtos}
+              numColumns={1}
+              renderItem={({item, index}) => 
+                <View style={styles.card} >
+                    <TouchableNativeFeedback  onPress={()=>{
+
+                      }}>
+                      <View style={styles.cardContent}>
+                        <View style={styles.name}>
+                          <Text style={{  fontWeight: '600', 
+                          fontSize: 15, color: 'black',flex: 1}}>{item.cod_produto}</Text>
+                          <Text style={{flex: 3}}>{item.descricao}</Text> 
+                        </View>
+                        <View style={{paddingLeft: 10, paddingRight: 10,
+                          paddingBottom: 5, paddingTop: 5, flex: 0, flexDirection: 'row'}}>
+                            <View style={{flex: 1, alignItems: 'flex-start'}}>
+                              <Text>Marca</Text>
+                              <Text style={{fontWeight: '800'}}>{item.marca!=''?item.marca: 'S/N'}</Text>
+                            </View>
+                            <View style={{flex: 1, alignItems: 'center'}}>
+                              <Text>Quantidade</Text>
+                              <Text style={{fontWeight: '700', color: Number(item.qtd)<=0 ? 'red': 'black'}}>{Number(item.qtd)}</Text>
+                            </View>
+                            <View style={{flex: 1, alignItems: 'flex-end'}}>
+                              <Text>Valor</Text>
+                              <Text style={{fontWeight: '700', color: 'black'}}>
+                              {this.numberToReal(Number(item.preco_venda))}</Text>
+                            </View>
+                        </View>
+                      
+                        <View style={{paddingLeft: 10, 
+                        backgroundColor: '#EEEEEE'}}>
+                          <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                            <Button title="adicionar ao pedido" color="green"
+                              onPress={()=>{
+                                this.setState({produtoSelecionado: item});
+                                //this.refs['DRAWER'].openDrawer();
+                              }}
+                            />
+                          </View>
+                        </View>
+
+                      </View>
+
+                    </TouchableNativeFeedback>
+                </View>
+            }
+              keyExtractor={({id},index)=>id}
+        />:null
+          
+        }
+        {(this.state.produtos.length==0 && this.state.loading==false) && this.state.pesquisado?
+          <View style={{textAlign: 'center', justifyContent: 'center', alignItems: 'center'}}>
+            <Text>Produto não encontrado!</Text>
+          </View>
+          : null
+        }  
+      {this.state.produtoSelecionado!=''?
+      <View style={{flex: 1, backgroundColor: '#fff', elevation: 5}}>
         <View style={{backgroundColor: '#EEEEEE',padding: 10 }}>
           <View style={{flexDirection: 'row'}}>
             <View style={{flex: 1}}>
@@ -210,6 +316,16 @@ export default class Produto extends Component<Props> {
             </View>
             <View>
                 <Button title="confirmar" onPress={()=>{
+                  if(this.state.select_qtd == '' || this.state.select_qtd.startsWith('-')){
+                    Alert.alert('Atenção', 'quantidade inválida!',
+                            [
+                              {
+                                text: 'ok',
+                                onPress: () => console.log('quantidade inválida'),
+                                style: 'cancel',
+                              }, 
+                            ])
+                  }else{
                   this.addItemToRequest({
                     cod_produto: this.state.produtoSelecionado.cod_produto,
                     descricao: this.state.produtoSelecionado.descricao, 
@@ -220,7 +336,7 @@ export default class Produto extends Component<Props> {
                   });
                   this.setState({loadingAsync: true});
                   setTimeout(() => {
-                    this.refs['DRAWER'].closeDrawer();
+                    //this.refs['DRAWER'].closeDrawer();
                     this.setState({loadingAsync: false});
                     this.props.navigation.navigate('Request', {
                       cod_produto: this.state.produtoSelecionado.cod_produto,
@@ -230,112 +346,14 @@ export default class Produto extends Component<Props> {
                       qtd_selec: this.state.select_qtd,
                     })
                   }, 2000);
-                  
+                }
                 }}/>
             </View>
 
       </View>
-    );
-    return (
-      
-      <DrawerLayoutAndroid
-      drawerWidth={300}
-      ref={'DRAWER'}
-      drawerLockMode="locked-closed"      
-      drawerPosition={DrawerLayoutAndroid.positions.Right}
-      renderNavigationView={() => navigationView}>
-        {this.state.loadingAsync? 
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        
-          <ActivityIndicator size="large"/>
-          
-        </View>
-        
-        :
-      <View style={styles.container}>
-        <View style={styles.input}>
-          <TextInput placeholder="Digite o nome do produto" 
-            style={{flex: 4}} 
-            value={this.state.input} 
-            onChangeText={(value)=>{
-              if(value != ''){
-                this.setState({loading: true});
-                this.setState({pesquisado: true});
-                this.setState({input: value});
-                this.getProdutos();
-              }
-            }}
-          />
-          {this.state.input != '' ?<Icon name='close' size={25} color="black"  
-          style={{flex: 1,alignSelf: 'center', textAlign: 'right', paddingRight: 5}}
-            onPress={()=> {
-              this.setState({input: ''});
-            }}
-          />:null}
-        </View>
-        {this.state.loading? <ActivityIndicator size="large"/>:null}
-        {
-          this.state.produtos.length>0 && this.state.loading==false?
-            <FlatList
-              style={styles.list}
-              data={this.state.produtos}
-              numColumns={1}
-              renderItem={({item, index}) => 
-                <View style={styles.card} >
-                    <TouchableNativeFeedback  onPress={()=>{
-
-                      }}>
-                      <View style={styles.cardContent}>
-                        <View style={styles.name}>
-                          <Text style={{  fontWeight: '600', 
-                          fontSize: 15, color: 'black',flex: 1}}>{item.cod_produto}</Text>
-                          <Text style={{flex: 3}}>{item.descricao}</Text> 
-                        </View>
-                        <View style={{paddingLeft: 10, paddingRight: 10,
-                          paddingBottom: 5, paddingTop: 5, flex: 0, flexDirection: 'row'}}>
-                            <View style={{flex: 1, alignItems: 'flex-start'}}>
-                              <Text>Marca</Text>
-                              <Text style={{fontWeight: '800'}}>{item.marca!=''?item.marca: 'S/N'}</Text>
-                            </View>
-                            <View style={{flex: 1, alignItems: 'center'}}>
-                              <Text>Quantidade</Text>
-                              <Text style={{fontWeight: '700', color: 'black'}}>{Number(item.qtd)}</Text>
-                            </View>
-                            <View style={{flex: 1, alignItems: 'flex-end'}}>
-                              <Text>Valor</Text>
-                              <Text style={{fontWeight: '700', color: 'black'}}>
-                              {this.numberToReal(Number(item.preco_venda))}</Text>
-                            </View>
-                        </View>
-                      
-                        <View style={{paddingLeft: 10, 
-                        backgroundColor: '#EEEEEE'}}>
-                          <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-                            <Button title="adicionar ao pedido" color="green"
-                              onPress={()=>{
-                                this.setState({produtoSelecionado: item});
-                                this.refs['DRAWER'].openDrawer();
-                              }}
-                            />
-                          </View>
-                        </View>
-
-                      </View>
-
-                    </TouchableNativeFeedback>
-                </View>
-            }
-              keyExtractor={({id},index)=>id}
-        />:null
-          
-        }
-        {(this.state.produtos.length==0 && this.state.loading==false) && this.state.pesquisado?
-          <View style={{textAlign: 'center', justifyContent: 'center', alignItems: 'center'}}>
-            <Text>Produto não encontrado!</Text>
-          </View>
-          : null
-        }
-        
+      :
+      null
+      }
       </View>
         }
       </DrawerLayoutAndroid>
@@ -363,7 +381,8 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingLeft: 10,
     paddingRight: 10,
-    paddingBottom: 10
+    paddingBottom: 10,
+    flex: 1,
 },
 float: {
   width: 25,  

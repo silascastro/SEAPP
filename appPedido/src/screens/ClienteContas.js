@@ -222,6 +222,8 @@ export default class ClienteContas extends Component<Props> {
           <ActivityIndicator size="large"/>
       </View>
       :
+    <View style={{flex: 1}}>
+      
       <FlatList
         style={{}}
         ListHeaderComponent={()=>
@@ -250,51 +252,7 @@ export default class ClienteContas extends Component<Props> {
                 </View>
               </View>
         }
-        ListFooterComponent={()=>
-          <View style={{marginLeft: 10, marginRight: 10, paddingTop: 10, paddingBottom: 15,}}>
-            <View style={{marginLeft: 15, flexDirection: 'row',  borderTopWidth: 0.5, borderColor: 'gray'}}>
-              <View style={{flex: 2}}>
-                <Text style={{fontWeight: '600', color: 'black'}}>Total a Receber: </Text>
-                <Text style={{fontWeight: '600', color: 'black'}}>Total a Recebido: </Text>
-                <Text style={{fontWeight: '600', color: 'black'}}>Saldo Pendente: </Text>
-                
-              </View>
-              <View style={{flex: 1, alignContent: 'center', alignItems: 'flex-end'}}>
-                <Text style={{fontWeight: '500', color: 'black'}}>{this.numberToReal(Number(this.state.totalReceber))}</Text>
-                <Text style={{fontWeight: '500', color: 'black'}}>{this.numberToReal(Number(this.state.totalRecebido))}</Text>
-                <Text style={{fontWeight: '500', color: 'black'}}>{this.numberToReal(Number(this.state.saldoPendente))}</Text>
-              </View>
-              
-            </View>
-
-            <Button disabled={this.state.totalRecebido > 0 ? false: true} title='confirmar'
-              onPress={()=> {
-                Alert.alert('Atenção', 'confirma a sua ação?',
-                [
-                  {
-                    text: 'Cancelar',
-                    onPress: () => console.log('cancel'),
-                    style: 'cancel',
-                  },
-                  {
-                    text: 'Confimar',
-                    onPress: () => {
-                      
-                      this.fechaConta(
-                        this.state.contasareceber, 
-                        this.state.cod_vendedor,
-                        this.state.nome_vendedor,
-                        this.state.cod_celular
-                      );
-                  },
-                    
-                  }
-                ]
-                )
-              }}
-            />
-          </View>
-        }
+        //ListFooterComponent={()=>{}}
         data={this.state.contasareceber}
         renderItem={({item, index})=>
         <TouchableNativeFeedback >
@@ -340,6 +298,52 @@ export default class ClienteContas extends Component<Props> {
       </TouchableNativeFeedback>
     }
   />
+  <View style={{marginLeft: 10, marginRight: 10, 
+    paddingTop: 10, paddingBottom: 15,}}>
+    <View style={{marginLeft: 15, flexDirection: 'row', 
+     borderTopWidth: 0.5, borderColor: 'gray'}}>
+      <View style={{flex: 2}}>
+        <Text style={{fontWeight: '600', color: 'black'}}>Total a Receber: </Text>
+        <Text style={{fontWeight: '600', color: 'black'}}>Total a Recebido: </Text>
+        <Text style={{fontWeight: '600', color: 'black'}}>Saldo Pendente: </Text>
+        
+      </View>
+      <View style={{flex: 1, alignContent: 'center', alignItems: 'flex-end'}}>
+        <Text style={{fontWeight: '500', color: 'black'}}>{this.numberToReal(Number(this.state.totalReceber))}</Text>
+        <Text style={{fontWeight: '500', color: 'black'}}>{this.numberToReal(Number(this.state.totalRecebido))}</Text>
+        <Text style={{fontWeight: '500', color: 'black'}}>{this.numberToReal(Number(this.state.saldoPendente))}</Text>
+      </View>
+      
+    </View>
+
+    <Button disabled={this.state.totalRecebido > 0 ? false: true} title='confirmar'
+      onPress={()=> {
+        Alert.alert('Atenção', 'confirma a sua ação?',
+        [
+          {
+            text: 'Cancelar',
+            onPress: () => console.log('cancel'),
+            style: 'cancel',
+          },
+          {
+            text: 'Confimar',
+            onPress: () => {
+              
+              this.fechaConta(
+                this.state.contasareceber, 
+                this.state.cod_vendedor,
+                this.state.nome_vendedor,
+                this.state.cod_celular
+              );
+          },
+            
+          }
+        ]
+        )
+      }}
+    />
+    </View>
+  </View>
     );
   }
 }

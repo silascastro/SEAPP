@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
-import {ActivityIndicator,StyleSheet, Text, View, TextInput, Button,Alert ,StatusBar, Switch, Picker, NativeModules, DeviceEventEmitter, NativeEventEmitter} from 'react-native';
+import {ActivityIndicator,StyleSheet, Text, View, TextInput, 
+  Button,Alert ,StatusBar, Switch, Picker, NativeModules, 
+  DeviceEventEmitter, NativeEventEmitter} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { StackActions, NavigationActions, navigate } from 'react-navigation';
 import * as Permission from '../../Permissions';
