@@ -1,11 +1,16 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, FlatList, 
 TouchableNativeFeedback,StatusBar, 
-NativeModules, ImageBackground, Image
+NativeModules, ImageBackground, Image,
+NativeEventEmitter
 } from 'react-native';
 import { StackActions, NavigationActions, navigate } from 'react-navigation';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import * as config from '../../config'; 
+import AsyncStorage from '@react-native-community/async-storage';
+
+const eventEmitter = new NativeEventEmitter(NativeModules.LoginModule);
 
 const DATA = [
   {title: 'Pedidos', subtitle: 'Crie e gerencie os pedidos', icon: 'local-offer', type: Icon}, 
@@ -29,11 +34,25 @@ const resetActionLogin = StackActions.reset({
 export default class Home extends Component<Props> {
   constructor(props){
     super(props);
-    this.state = {loading: true};
+    this.state = {loading: true, user: '',
+    empresa: '', empresa_cod: ''};
+
+    this.getEmpresaData();
   }
 
-  static navigationOptions = ({navigation}) => ({
-      title: 'Home',
+  getEmpresaData(){
+    AsyncStorage.getItem('empresa', (error,result) => {
+      if(result){
+        this.setState({empresa: result});
+
+      }
+    });
+  }
+
+  static navigationOptions = ({navigation}) => {
+    const {params={}} = navigation.state;
+    return {
+      title: params.empresa!=null?params.empresa: null,
       headerTintColor: '#ffffff',
       headerStyle: {
         backgroundColor: '#247869',
@@ -46,7 +65,8 @@ export default class Home extends Component<Props> {
         headerRight: /*<View style={{margin: 10}}>
               <Icon name={'search'} size={25} color="#ffffff" onPress={()=>navigation.navigate('Search')}/>
             </View>*/null
-  });
+      }
+    };
 
   formatCurrency(value){
     var tmp = value+'';
@@ -62,7 +82,36 @@ export default class Home extends Component<Props> {
    let e = this.props.navigation.getParam('message')
    if(e!=null)
     ToastModule.show(e,3000);
-   
+
+    this.getEmpresa();
+  }
+
+  getEmpresa(){
+      setTimeout(() => {
+        this.props.navigation.setParams({
+          empresa: this.state.empresa,
+        });
+        //alert(this.state.empresa);
+      }, 1000);
+  }
+
+  getEmpresaName(){
+    fetch(config.url+'empresas/byid/'+this.state.user, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      /*body: JSON.stringify({
+        firstParam: 'yourValue',
+        secondParam: 'yourOtherValue',
+      }),*/
+    }).then((response)=> response.json()).then((resp) => {
+      this.setState({usuarios: resp.nome_fantasia});
+      
+    }).catch((err)=>{
+      Alert.alert('Atenção', 'erro ao conectar-se com o servidor!');
+    });
   }
 
   render() {
@@ -92,6 +141,11 @@ export default class Home extends Component<Props> {
                     LoginModule.logoff();
                     let {dispatch} = this.props.navigation;
                     dispatch(resetActionLogin);
+                    AsyncStorage.removeItem('empresa');
+                  }
+
+                  if(item.title == 'Configurações'){
+                    //alert(this.state.empresa);
                   }
                 }}>
 

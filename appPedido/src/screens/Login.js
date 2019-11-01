@@ -8,6 +8,7 @@ import * as Permission from '../../Permissions';
 import * as config from '../../config';
 const eventEmitter = new NativeEventEmitter(NativeModules.LoginModule);
 const LoginModule = NativeModules.LoginModule;
+import AsyncStorage from '@react-native-community/async-storage';
 
 //const API = "http://177.16.53.198:3000/";
 
@@ -92,14 +93,18 @@ export default class Login extends Component {
         if(this.state.password == resp.senha){
           if(this.state.imei == resp.codigo1){
             console.log(resp.id_funcionario);
-            LoginModule.login(/*this.state.userSelect*/(resp.id_funcionario),this.state.password);
+            LoginModule.login((resp.id_funcionario),this.state.password);
             let {dispatch} = this.props.navigation;
             dispatch(resetActionHome);
             //this.props.navigation.navigate('Home');
           }else{
             console.log(resp.id_funcionario);
             //até resolver permissões do imei
-            LoginModule.login(/*this.state.userSelect*/(resp.id_funcionario),this.state.password);
+            this.setuser(resp.nome);
+            this.setuserCode(resp.id_funcionario);
+            
+            this.getEmpresaName(resp.id_empresa);
+            LoginModule.login((resp.id_funcionario),this.state.password);
             let {dispatch} = this.props.navigation;
             dispatch(resetActionHome);
             //Alert.alert('Atenção', 'dispositivo não autorizado!');
@@ -113,7 +118,35 @@ export default class Login extends Component {
       });
     }
   }
+
+  setuser(user){
+    
+    AsyncStorage.setItem('user',user.toString());
+  }
+
+  setuserCode(code){
+    AsyncStorage.setItem('user_cod',code.toString());
+  }
   
+  getEmpresaName(id){
+    fetch(config.url+'empresas/byid/'+id, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      /*body: JSON.stringify({
+        firstParam: 'yourValue',
+        secondParam: 'yourOtherValue',
+      }),*/
+    }).then((response)=> response.json()).then((resp) => {
+      //this.setState({usuarios: resp.nome_fantasia});
+      AsyncStorage.setItem('empresa',resp.codigo+"-"+resp.nome_fantasia);
+      //AsyncStorage.setItem('empresa_cod', resp.codigo);
+    }).catch((err)=>{
+      Alert.alert('Atenção', 'erro ao conectar-se com o servidor!');
+    });
+  }
 
   render() {
     let serviceItems = this.state.usuarios.map( (s, i) => {

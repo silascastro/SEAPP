@@ -9,6 +9,10 @@ const clienteRoute = require('./routes/cliente');
 const contasreceberRoute = require('./routes/contasreceber');
 const recebimentoexterno = require('./routes/recebimentoexterno');
 const produto = require('./routes/produto');
+const empresa = require('./routes/empresa');
+const pedidoexterno = require('./routes/pedidoexterno');
+const pedidoexternoitens = require('./routes/pedidoexternoItens');
+
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
@@ -19,5 +23,8 @@ app.use('/clientes', clienteRoute);
 app.use('/contasreceber',contasreceberRoute);
 app.use('/recebimentoexterno',recebimentoexterno);
 app.use('/produtos',produto);
+app.use('/empresas',empresa);
+app.use('/pedidoexterno',pedidoexterno);
+app.use('/pedidoitens',pedidoexternoitens);
 
 module.exports = app;

@@ -338,7 +338,7 @@ export default class ClienteContas extends Component<Props> {
             
           }
         ]
-        )
+        );
       }}
     />
     </View>

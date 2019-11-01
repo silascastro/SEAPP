@@ -1,5 +1,4 @@
 const {tbrecebimentoexterno} = require('../../app/models');
-//const {tbcontasreceber} = require('../../app/models');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op; 
 

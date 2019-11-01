@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text ,View,Button, FlatList, TouchableNativeFeedback, TouchableHighlight, BackHandler} from 'react-native';
+import {Alert,StyleSheet, Text ,View,Button, FlatList, TouchableNativeFeedback, TouchableHighlight, BackHandler} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-community/async-storage';
 import {SwipeListView} from 'react-native-swipe-list-view';
@@ -13,18 +13,10 @@ export default class Request extends Component<Props> {
     super(props);
     this.state = {
       loading: true,
-      /*cod_cliente: '',
-      nome: '',
-      telefone: '',
-      endereco: '',
-      observacao: '',
-      cidade: '',
-      estado: '',
-      limite: '',
-      saldo_devedor: '',
-      saldo_compra: '',
-      data: ''*/
       pedido: [],
+      totalPedido: '',
+      cod_vendedor: '',
+      nome_vendedor: ''
     };
     const { navigation } = this.props;
     //this.aysncData();
@@ -46,6 +38,7 @@ export default class Request extends Component<Props> {
         //console.log(result);
         //console.log(JSON.parse(result));
         this.setState({pedido: JSON.parse(result)});
+        this.contabilizaTotal();
       }else{
        //alert('não tem nada');
       }
@@ -55,12 +48,39 @@ export default class Request extends Component<Props> {
   
 
   componentDidMount(){
-    
+    this.getUser();
+    this.getUserCod();
     //AsyncStorage.removeItem(_request)
   }
 
   componentWillUnmount(){
     
+  }
+
+  getUser(){
+    AsyncStorage.getItem('user',(error,result) => {
+      if(result){
+        //console.log(result);
+        //console.log(JSON.parse(result));
+        this.setState({nome_vendedor: result});
+
+      }else{
+       //alert('não tem nada');
+      }
+    });
+  }
+
+  getUserCod(){
+    AsyncStorage.getItem('user_cod',(error,result) => {
+      if(result){
+        //console.log(result);
+        //console.log(JSON.parse(result));
+        this.setState({cod_vendedor: result});
+
+      }else{
+       //alert('não tem nada');
+      }
+    });
   }
   
 
@@ -83,6 +103,52 @@ export default class Request extends Component<Props> {
     var numero = numero.toFixed(2).split('.');
     numero[0] = "" + numero[0].split(/(?=(?:...)*$)/).join('.');
     return numero.join(',');
+  }
+
+  contabilizaTotal(){
+    let aux = this.state.pedido;
+    let total = 0;
+    for(let e in aux){
+      total+=Number(aux[e].preco_venda);
+     
+    }
+    this.setState({totalPedido: total});
+  }
+
+  fecharPedido(){
+    let data = {
+      cod_cliente: this.props.navigation.getParam('cod_cliente'),
+      nome_cliente: this.props.navigation.getParam('nome'),
+      cod_vendedor: Number(this.state.cod_vendedor),
+      nome_vendedor: this.state.nome_vendedor,
+      subtotal: Number(this.state.totalPedido),
+      total: Number(this.state.totalPedido),
+    };
+    fetch(config.url+'pedidoexterno/', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+      
+    }).then((response) => response.json()).then((resp) => {
+      const {dispatch} = this.props.navigation;
+      const resetActionHome = StackActions.reset({
+        index: 0,
+        actions: [
+          NavigationActions.navigate({ routeName: 'Home', params: {message: 'contas enviado com sucesso!'} }),
+        ],
+      });
+      this.setState({loading: false});
+      dispatch(resetActionHome);
+      
+      console.log(resp);
+    }).catch((err)=>{
+      Alert.alert('Atenção', 'erro');
+      this.setState({loading: false});
+      console.log(err);
+    });
   }
 
   render(){
@@ -176,40 +242,7 @@ export default class Request extends Component<Props> {
               <Text>Nenhum item no pedido</Text>
             </View>
             :
-           /* <FlatList
-            data={this.state.pedido}
-            numColumns={1}
-            renderItem={({item, index}) =>
-
-                <View style={{
-                  borderRadius: 5,
-                  borderWidth: 0.6,
-                  borderColor: '#EEEEEE',
-                  elevation: 2,
-                }}>
-                  <TouchableHighlight>
-                    <View style={{flex: 0, padding: 10, flexDirection: 'row'}}>
-                      <View style={{flex: 1}}>
-                        <Text style={{
-                          fontWeight: '800', color: 'black'
-                        }}>
-                        {item.cod_produto}</Text>
-                        
-                        <Text>Quantidade: {Number(item.qtd)} |</Text>
-                        <Text>Preço: {item.preco_uni} </Text>
-                        
-                        
-                      </View>
-                      <View style={{flex: 1, alignItems: 'flex-end'}}>
-                        <Text>Total: {item.preco_venda}</Text>
-                      </View>
-
-
-                    </View>
-                  </TouchableHighlight>
-                </View>
-            }
-            />*/
+        
             <SwipeListView
               data={this.state.pedido}
               renderItem={(data, rowMap) => (
@@ -267,17 +300,22 @@ export default class Request extends Component<Props> {
                     
                     let aux = this.state.pedido;
                     let newAux = [];
-
+                    let total = 0;
                     for(let e in aux){
                       if(e!=index){
                         console.log(e);
                         newAux.push(aux[e]);
+                        
                       }
-                      
+                    }
+
+                    for(let e in newAux){
+                      total+=Number(newAux[e].preco_venda);
                     }
                     console.log(newAux);
                     AsyncStorage.setItem(_request,JSON.stringify(newAux));
-                    this.setState({pedido: newAux});
+                    this.setState({pedido: newAux, totalPedido: total});
+                    //this.contabilizaTotal();
 
                   }}
                   >
@@ -294,10 +332,34 @@ export default class Request extends Component<Props> {
           
           
         </View>
+        <View style={{alignItems: 'center',padding: 10}}>
+          <Text>Total do pedido: {this.numberToReal(Number(this.state.totalPedido))}</Text>
+        </View>
 
         <View >
            <Button title="confirmar pedido" onPress={
-             ()=> AsyncStorage.removeItem(_request)
+             ()=> {
+               if(this.state.pedido.length>0){
+              Alert.alert('Atenção', 'confirma o lançamento do pedido?',
+              [
+                {
+                  text: 'Cancelar',
+                  onPress: () => console.log('cancel'),
+                  style: 'cancel',
+                },
+                {
+                  text: 'Confimar',
+                  onPress: () => {
+                    
+                    this.fecharPedido();
+                },
+                  
+                }
+              ]
+              )}else{
+                Alert.alert('Atenção', 'nenhum item no pedido!');
+              }
+             }
            }/> 
         </View>
 

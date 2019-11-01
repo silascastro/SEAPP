@@ -333,9 +333,9 @@ export default class Produto extends Component<Props> {
                     cod_produto: this.state.produtoSelecionado.cod_produto,
                     descricao: this.state.produtoSelecionado.descricao, 
                     marca: this.state.produtoSelecionado.marca,
-                    preco_venda: this.numberToReal(Number(Number(this.state.select_qtd)*Number(this.state.produtoSelecionado.preco_venda))), 
+                    preco_venda: Number(this.state.select_qtd)*Number(this.state.produtoSelecionado.preco_venda), 
                     qtd: this.state.select_qtd,
-                    preco_uni: this.numberToReal(Number(this.state.produtoSelecionado.preco_venda))
+                    preco_uni: this.state.produtoSelecionado.preco_venda
                   });
                   this.setState({loadingAsync: true});
                   setTimeout(() => {
