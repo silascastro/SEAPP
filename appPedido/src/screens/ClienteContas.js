@@ -179,7 +179,7 @@ export default class ClienteContas extends Component<Props> {
       
       console.log(resp);
     }).catch((err)=>{
-      Alert.alert('Atenção', 'erro');
+      Alert.alert('Atenção', JSON.stringify(err));
       this.setState({loading: false});
       console.log(err);
     });

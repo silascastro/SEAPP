@@ -3,6 +3,7 @@ import {Alert,StyleSheet, Text ,View,Button, FlatList, TouchableNativeFeedback, 
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-community/async-storage';
 import {SwipeListView} from 'react-native-swipe-list-view';
+import { StackActions, NavigationActions, navigate } from 'react-navigation';
 import * as config from '../../config';
 
 
@@ -114,6 +115,54 @@ export default class Request extends Component<Props> {
     }
     this.setState({totalPedido: total});
   }
+  sendItens(numero_pedido){
+    let aux = this.state.pedido;
+    for(let e in aux){
+      this.sendItensData(aux[e],numero_pedido);
+    }
+    
+  }
+
+  sendItensData(data, _numero_pedido){
+    let _data = {
+      numero_pedido: _numero_pedido,
+      id_produto: data.cod_produto,
+      cod_produto: data.cod_produto,
+      descricao: data.descricao,
+      marca: data.marca,
+      qtd_pedida: data.qtd,
+      preco_unitario: data.preco_uni,
+      preco_total: data.preco_venda,
+    }
+
+    fetch(config.url+'pedidoitens', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(_data),
+      
+    }).then((response) => response.json()).then((resp) => {
+      //this.sendItens();
+      AsyncStorage.removeItem(_request);
+      const {dispatch} = this.props.navigation;
+      const resetActionHome = StackActions.reset({
+        index: 0,
+        actions: [
+          NavigationActions.navigate({ routeName: 'Home', params: {message: 'contas enviado com sucesso!'} }),
+        ],
+      });
+      this.setState({loading: false});
+      dispatch(resetActionHome);
+      
+      console.log(resp);
+    }).catch((err)=>{
+      Alert.alert('Atenção', 'erro');
+      this.setState({loading: false});
+      console.log(err);
+    });
+  }
 
   fecharPedido(){
     let data = {
@@ -124,7 +173,7 @@ export default class Request extends Component<Props> {
       subtotal: Number(this.state.totalPedido),
       total: Number(this.state.totalPedido),
     };
-    fetch(config.url+'pedidoexterno/', {
+    fetch(config.url+'pedidoexterno', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -133,15 +182,7 @@ export default class Request extends Component<Props> {
       body: JSON.stringify(data),
       
     }).then((response) => response.json()).then((resp) => {
-      const {dispatch} = this.props.navigation;
-      const resetActionHome = StackActions.reset({
-        index: 0,
-        actions: [
-          NavigationActions.navigate({ routeName: 'Home', params: {message: 'contas enviado com sucesso!'} }),
-        ],
-      });
-      this.setState({loading: false});
-      dispatch(resetActionHome);
+      this.sendItens(resp.numero_pedido);
       
       console.log(resp);
     }).catch((err)=>{
@@ -258,7 +299,7 @@ export default class Request extends Component<Props> {
                           <Text style={{fontWeight: '800', color: 'black', flex: 1}}>
                             {data.item.cod_produto}
                           </Text>
-                          <Text style={{flex: 5}}>
+                          <Text style={{flex: 5,fontWeight: '600', color: 'black',}}>
                             {data.item.descricao}
                           </Text>
                         </View>
@@ -275,14 +316,14 @@ export default class Request extends Component<Props> {
                         </View>
                         <View style={{flexDirection: 'row'}}>
 
-                          <View style={{flex: 1, alignItems: 'stretch'}}>
-                            <Text >{Number(data.item.qtd)} </Text>
+                          <View style={{flex: 1, alignItems: 'stretch', }}>
+                            <Text style={{fontWeight: '600', color: 'black',}}>{data.item.qtd} </Text>
                           </View>
-                          <View style={{flex: 1, alignItems: 'flex-end'}}>
-                            <Text >{data.item.preco_uni} </Text> 
+                          <View style={{flex: 1, alignItems: 'flex-end',}}>
+                            <Text style={{fontWeight: '600', color: 'black',}}>{this.numberToReal(data.item.preco_uni)} </Text> 
                           </View>
-                          <View style={{flex: 1, alignItems: 'flex-end'}}>
-                            <Text>{data.item.preco_venda}</Text>
+                          <View style={{flex: 1, alignItems: 'flex-end',}}>
+                            <Text style={{fontWeight: '600', color: 'black',}}>{this.numberToReal(data.item.preco_venda)}</Text>
                           </View>
  
                         </View>
@@ -332,8 +373,11 @@ export default class Request extends Component<Props> {
           
           
         </View>
-        <View style={{alignItems: 'center',padding: 10}}>
-          <Text>Total do pedido: {this.numberToReal(Number(this.state.totalPedido))}</Text>
+        <View style={{alignItems: 'flex-end',padding: 10}}>
+          <View style={{flexDirection: 'row'}}>
+            <Text style={{  fontWeight: '600', fontSize: 13, color: 'black'}}>Total do pedido: </Text>
+            <Text style={{color: Number(this.state.totalPedido)>0? 'green' : 'red'}}>{this.numberToReal(Number(this.state.totalPedido))}</Text>
+          </View>
         </View>
 
         <View >
