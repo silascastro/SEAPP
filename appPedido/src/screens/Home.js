@@ -21,6 +21,7 @@ const DATA = [
 
 const LoginModule = NativeModules.LoginModule;
 const ToastModule = NativeModules.ToastModule;
+
 const resetActionLogin = StackActions.reset({
   index: 0,
   actions: [
@@ -34,16 +35,17 @@ const resetActionLogin = StackActions.reset({
 export default class Home extends Component<Props> {
   constructor(props){
     super(props);
-    this.state = {loading: true, user: '',
-    empresa: '', empresa_cod: ''};
-
+    this.state = {
+      loading: true, user: '',
+      empresa: '', empresa_cod: ''
+    };
     this.getEmpresaData();
   }
 
-  getEmpresaData(){
-    AsyncStorage.getItem('empresa', (error,result) => {
+  async getEmpresaData(){
+   await AsyncStorage.getItem('empresa', (error,result) => {
       if(result){
-        alert(result);
+        
         this.setState({empresa: result});
 
       }
@@ -110,7 +112,7 @@ export default class Home extends Component<Props> {
         });
         //alert(this.state.empresa);
       }, 1000);
-      alert(this.state.empresa);
+      //alert(this.state.empresa);
   }
 
   sair(){
@@ -184,6 +186,7 @@ export default class Home extends Component<Props> {
                   }
 
                   if(item.title == 'Configurações'){
+                    //alert(this.state.empresa);
                     //alert(this.state.empresa);
                     this.props.navigation.navigate('Settings');
                   }

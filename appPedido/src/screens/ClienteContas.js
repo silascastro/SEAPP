@@ -118,6 +118,43 @@ export default class ClienteContas extends Component<Props> {
     return numero.join(',');
   }
 
+  moeda(a, e, r, t) {
+    let n = ""
+      , h = j = 0
+      , u = tamanho2 = 0
+      , l = ajd2 = ""
+      , o = window.Event ? t.which : t.keyCode;
+    if (13 == o || 8 == o)
+        return !0;
+    if (n = String.fromCharCode(o),
+    -1 == "0123456789".indexOf(n))
+        return !1;
+    for (u = a.value.length,
+    h = 0; h < u && ("0" == a.value.charAt(h) || a.value.charAt(h) == r); h++)
+        ;
+    for (l = ""; h < u; h++)
+        -1 != "0123456789".indexOf(a.value.charAt(h)) && (l += a.value.charAt(h));
+    if (l += n,
+    0 == (u = l.length) && (a.value = ""),
+    1 == u && (a.value = "0" + r + "0" + l),
+    2 == u && (a.value = "0" + r + l),
+    u > 2) {
+        for (ajd2 = "",
+        j = 0,
+        h = u - 3; h >= 0; h--)
+            3 == j && (ajd2 += e,
+            j = 0),
+            ajd2 += l.charAt(h),
+            j++;
+        for (a.value = "",
+        tamanho2 = ajd2.length,
+        h = tamanho2 - 1; h >= 0; h--)
+            a.value += ajd2.charAt(h);
+        a.value += r + l.substr(u - 2, u)
+    }
+    return !1
+  }
+
   getClientes(){
       fetch(config.url+'clientes/byname/'+(this.state.input).toUpperCase(), {
         method: 'GET',
@@ -243,7 +280,8 @@ export default class ClienteContas extends Component<Props> {
       </View>
       :
     <View style={{flex: 1}}>
-    <View style={{marginLeft: 10, marginRight: 10, paddingTop: 20, paddingBottom: 15}}>
+    <View style={{marginLeft: 10, marginRight: 10, 
+      paddingTop: 10,}}>
                 
                 <View style={{marginLeft: 15, borderBottomWidth: 0.5, borderBottomColor: 'gray', paddingBottom: 5}}>
                   <View style={{flexDirection: 'row'}}>
@@ -278,27 +316,41 @@ export default class ClienteContas extends Component<Props> {
         data={this.state.contasareceber}
         renderItem={({item, index})=>
         <TouchableNativeFeedback >
-        <View style={{elevation: 5,paddingTop: 10, paddingBottom: 10, paddingLeft: 10, paddingRight: 10}}>
-          <View style={{flexDirection: 'row', marginLeft: 15}}>
-            <View style={{flex: 1, alignContent: 'center', alignItems: 'center'}}>
+        <View style={{elevation: 5,paddingTop: 5, 
+         paddingLeft: 10, 
+          paddingRight: 10}}>
+          <View style={{flexDirection: 'row', marginLeft: 5}}>
+            <View style={{flex: 1, alignContent: 'center', 
+            alignItems: 'center', justifyContent: 'center'}}>
               <Text style={{}}>{item.documento}</Text>
             </View>
-            <View style={{flex: 1, alignContent: 'center', alignItems: 'center'}}> 
+            <View style={{flex: 1, alignContent: 'center', 
+            alignItems: 'center', justifyContent: 'center'}}> 
               <Text style={{}}>{item.dt_vencimento.split('-')[2]+'/'+item.dt_vencimento.split('-')[1]+'/'+item.dt_vencimento.split('-')[0]}</Text>
             </View>
-            <View style={{flex: 1, alignContent: 'center', alignItems: 'flex-end'}}>
+            <View style={{flex: 1, 
+            alignContent: 'center', 
+            alignItems: 'flex-end', justifyContent: 'center'}}>
               <Text style={{}}>{this.numberToReal(Number(item.valor))}</Text>
             </View>
-            <View style={{flex: 1, alignContent: 'center', justifyContent: 'center', alignContent: 'center'}}>
-              <TextInput placeholder="valor parcial" onChangeText={
-                (value)=>{
-                  var {contasareceber} = this.state;
-                  contasareceber[index].valor_parcial = value;
-                  this.setState({contasareceber});
-                }
-              }/>
+            <View style={{flex: 1, justifyContent: 'flex-start'}}>
+              <View style={{flex: 1, alignContent: 'flex-start', 
+              alignItems: 'flex-start'}}>
+                <TextInput 
+                placeholder="valor parcial"
+                value={this.state.contasareceber[index].valor_parcial} 
+                keyboardType="number-pad"
+                onChangeText={
+                  (value)=>{
+                    var {contasareceber} = this.state;
+                    contasareceber[index].valor_parcial = this.numberToReal(Number(value));
+                    
+                    this.setState({contasareceber});
+                  }
+                }/>
+              </View>
             </View>
-            <View style={{flex: 1, alignContent: 'center', alignItems: 'center'}}>
+            <View style={{flex: 1, alignContent: 'center', alignItems: 'center', justifyContent: 'center'}}>
               <AntDesign name={this.state.contasareceber[index].status == 'aberto' ? 'close' : 'check'} 
               size={25} 
               color={this.state.contasareceber[index].status == 'aberto' ? 'red' : 'green'}

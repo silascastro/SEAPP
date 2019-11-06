@@ -151,9 +151,10 @@ export default class Login extends Component {
         firstParam: 'yourValue',
         secondParam: 'yourOtherValue',
       }),*/
-    }).then((response)=> response.json()).then((resp) => {
+    }).then((response)=> response.json()).then(async(resp) => {
       //this.setState({usuarios: resp.nome_fantasia});
-      AsyncStorage.setItem('empresa',resp.codigo+"-"+resp.nome_fantasia);
+      //alert(JSON.stringify(resp));
+      await AsyncStorage.setItem('empresa',resp.codigo+"-"+resp.nome_fantasia);
       //AsyncStorage.setItem('empresa_cod', resp.codigo);
     }).catch((err)=>{
       Alert.alert('Atenção', 'erro ao conectar-se com o servidor!');
