@@ -8,7 +8,13 @@ const API = "http://179.177.126.10:3000/";
 export default class Cliente extends Component<Props> {
   constructor(props){
     super(props);
-    this.state = {loading: false, clientes: [], pesquisado: false, input: '', contasareceber: []};
+    this.state = {loading: false, 
+      clientes: [], 
+      pesquisado: false, 
+      input: '', 
+      contasareceber: [],
+      moeda: ''
+    };
   }
 
   static navigationOptions = ({navigation}) => ({
@@ -26,6 +32,20 @@ export default class Cliente extends Component<Props> {
 
   componentDidMount(){
     this.getIp();
+    this.getTipoMoeda();
+  }
+
+  getTipoMoeda(){
+    AsyncStorage.getItem('moeda',(error,result)=> {
+      if(error){
+          //AsyncStorage.setItem('_ip',config.url);
+          //API = config.url;
+      }
+      if(result){
+        //API = result;
+        this.setState({moeda: result});
+      }
+    });
   }
 
   getIp(){
@@ -99,10 +119,12 @@ export default class Cliente extends Component<Props> {
         for(let e in resp){
           //resp[e].tbcontasreceber.saldo_devedor = "0.00";
           //resp[e].tbcontasreceber.saldo_compra = resp[e].limite;
-          let aux2 = {limite: resp[e].limite, cod_cliente: resp[e].cod_cliente,
+          let aux2 = {
+            limite: resp[e].limite, cod_cliente: resp[e].cod_cliente,
             nome: resp[e].nome, endereco: resp[e].endereco,
-            bairro: resp[e].bairro, telefone: resp[e].telefone, cidade: resp[e].cidade,
-            estado: resp[e].estado, cep: resp[e].cep, observacao: resp[e].observacao,
+            bairro: resp[e].bairro, telefone: resp[e].telefone, 
+            cidade: resp[e].cidade,estado: resp[e].estado, 
+            cep: resp[e].cep, observacao: resp[e].observacao,
             ["tbcontasreceber.saldo_devedor"]: '0.00',
             ["tbcontasreceber.saldo_compra"]: resp[e].limite
           }
@@ -217,9 +239,9 @@ export default class Cliente extends Component<Props> {
                             </View>
                             <View style={{flex: 1, alignContent: 'center', alignItems: 'flex-end'}}>
                               <Text style={{alignContent: "center", color: 'black', fontWeight: '600',fontSize: 13,}}>
-                              {this.numberToReal(Number(item.limite))}</Text>
-                              <Text style={{color: 'red'}}>{this.numberToReal(Number(item['tbcontasreceber.saldo_devedor']))}</Text>
-                              <Text style={{color: item['tbcontasreceber.saldo_compra']<0?'red':'green'}}>{this.numberToReal(Number(item['tbcontasreceber.saldo_compra'])).replace("-.","-")}</Text>
+                              {this.state.moeda == "G" ? this.numberToReal(Number(item.limite)).split(',')[0]:this.numberToReal(Number(item.limite))}</Text>
+                              <Text style={{color: 'red'}}>{this.state.moeda == "G" ? this.numberToReal(Number(item['tbcontasreceber.saldo_devedor'])).split(',')[0]:this.numberToReal(Number(item['tbcontasreceber.saldo_devedor']))}</Text>
+                              <Text style={{color: item['tbcontasreceber.saldo_compra']<0?'red':'green'}}>{this.state.moeda == "G" ? (this.numberToReal(Number(item['tbcontasreceber.saldo_compra'])).replace("-.","-")).split(',')[0]:this.numberToReal(Number(item['tbcontasreceber.saldo_compra'])).replace("-.","-")}</Text>
                             </View>
 
                         </View>

@@ -9,7 +9,12 @@ const API = "http://179.177.126.10:3000/";
 export default class Pedido extends Component<Props> {
   constructor(props){
     super(props);
-    this.state = {loading: false, clientes: [], pesquisado: false, input: '', contasareceber: []};
+    this.state = {loading: false, 
+      clientes: [], 
+      pesquisado: false, 
+      input: '', contasareceber: [],
+      moeda: '',
+    };
   }
 
   static navigationOptions = ({navigation}) => ({
@@ -27,6 +32,20 @@ export default class Pedido extends Component<Props> {
 
   componentDidMount(){
     this.getIp();
+    this.getTipoMoeda();
+  }
+
+  getTipoMoeda(){
+    AsyncStorage.getItem('moeda',(error,result)=> {
+      if(error){
+          //AsyncStorage.setItem('_ip',config.url);
+          //API = config.url;
+      }
+      if(result){
+        //API = result;
+        this.setState({moeda: result});
+      }
+    });
   }
 
   getIp(){

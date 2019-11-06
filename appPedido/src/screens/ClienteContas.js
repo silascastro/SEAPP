@@ -32,6 +32,7 @@ export default class ClienteContas extends Component<Props> {
       cod_vendedor: '',
       nome_vendedor: '',
       cod_celular: '',
+      moeda: '',
     };
   }
 
@@ -67,7 +68,23 @@ export default class ClienteContas extends Component<Props> {
       nome_vendedor: _nome_vendedor, 
       cod_vendedor: _cod_vendedor
     });
+
+    this.getTipoMoeda();
   }
+
+  getTipoMoeda(){
+    AsyncStorage.getItem('moeda',(error,result)=> {
+      if(error){
+          //AsyncStorage.setItem('_ip',config.url);
+          //API = config.url;
+      }
+      if(result){
+        //API = result;
+        this.setState({moeda: result});
+      }
+    });
+  }
+
 
   getIp(){
     AsyncStorage.getItem('_ip',(error,result)=> {
@@ -297,7 +314,7 @@ export default class ClienteContas extends Component<Props> {
             <View style={{flex: 1, 
             alignContent: 'center', 
             alignItems: 'flex-end', justifyContent: 'center'}}>
-              <Text style={{}}>{this.numberToReal(Number(item.valor))}</Text>
+              <Text style={{}}>{this.state.moeda == "G"? this.numberToReal(Number(item.valor)).split(',')[0] : this.numberToReal(Number(item.valor))}</Text>
             </View>
             <View style={{flex: 1, justifyContent: 'flex-start'}}>
               <View style={{flex: 1, alignContent: 'center', 
@@ -313,6 +330,7 @@ export default class ClienteContas extends Component<Props> {
                   underlineColorAndroid="blue"
                   onChangeText={text => {
                     let {contasareceber} = this.state;
+                                       
                     contasareceber[index].valor_parcial = text;
                     this.setState({
                       contasareceber
@@ -331,15 +349,24 @@ export default class ClienteContas extends Component<Props> {
               style={{}} onPress={()=>{
                 let n = Number(this.state.totalRecebido);  
                 if(this.state.contasareceber[index].status == 'aberto'){
-                  
-                  n += Number(this.state.contasareceber[index].valor);
-                  this.setState({totalRecebido: n});
+                  if(this.state.contasareceber[index].valor_parcial!=''){
+                    let _valor_parcial = this.state.contasareceber[index].valor_parcial.replace(".","");
+                    n+=parseFloat((_valor_parcial).replace(/,/g,'.'));
+                  }else{
+                    n += Number(this.state.contasareceber[index].valor);
+                  }
+                    this.setState({totalRecebido: n});
                   //alert(this.state.totalReceber);
                   let pendente = this.state.totalReceber - n;
                   this.setState({saldoPendente: pendente});
                   this.changeState(index,'fechado');
                 }else{
-                  n-= Number(this.state.contasareceber[index].valor);
+                  if(this.state.contasareceber[index].valor_parcial!=''){
+                    let _valor_parcial = this.state.contasareceber[index].valor_parcial.replace(".","");
+                    n-=parseFloat((_valor_parcial).replace(/,/g,'.'));
+                  }else{
+                    n-= Number(this.state.contasareceber[index].valor);
+                  }
                   this.setState({totalRecebido: n});
                   let pendente = this.state.totalReceber-n;
                   this.setState({saldoPendente: pendente});
@@ -366,9 +393,9 @@ export default class ClienteContas extends Component<Props> {
         
       </View>
       <View style={{flex: 1, alignContent: 'center', alignItems: 'flex-end'}}>
-        <Text style={{fontWeight: '500', color: 'black'}}>{this.numberToReal(Number(this.state.totalReceber))}</Text>
-        <Text style={{fontWeight: '500', color: 'black'}}>{this.numberToReal(Number(this.state.totalRecebido))}</Text>
-        <Text style={{fontWeight: '500', color: 'black'}}>{this.numberToReal(Number(this.state.saldoPendente))}</Text>
+        <Text style={{fontWeight: '500', color: 'black'}}>{this.state.moeda == "G"? this.numberToReal(Number(this.state.totalReceber)).split(',')[0]:this.numberToReal(Number(this.state.totalReceber))}</Text>
+        <Text style={{fontWeight: '500', color: 'black'}}>{this.state.moeda == "G"? this.numberToReal(Number(this.state.totalRecebido)).split(',')[0]:this.numberToReal(Number(this.state.totalRecebido))}</Text>
+        <Text style={{fontWeight: '500', color: 'black'}}>{this.state.moeda == "G"? this.numberToReal(Number(this.state.saldoPendente)).split(',')[0]:this.numberToReal(Number(this.state.saldoPendente))}</Text>
       </View>
       
     </View>
