@@ -9,6 +9,7 @@ import {
 NativeEventEmitter} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import * as config from '../../config';
+import TextInputMask from 'react-native-masked-text';
 import { StackActions, NavigationActions} from 'react-navigation';
    import AntDesign from 'react-native-vector-icons/AntDesign';
 
@@ -336,14 +337,16 @@ export default class ClienteContas extends Component<Props> {
             <View style={{flex: 1, justifyContent: 'flex-start'}}>
               <View style={{flex: 1, alignContent: 'flex-start', 
               alignItems: 'flex-start'}}>
-                <TextInput 
-                placeholder="valor parcial"
-                value={this.state.contasareceber[index].valor_parcial} 
-                keyboardType="number-pad"
+                <TextInputMask
+                //placeholder="valor parcial"
+                //value={this.state.contasareceber[index].valor_parcial} 
+                //keyboardType="number-pad"
+                type={'money'}
+                value={this.state.contasareceber[index].valor_parcial}
                 onChangeText={
                   (value)=>{
                     var {contasareceber} = this.state;
-                    contasareceber[index].valor_parcial = this.numberToReal(Number(value));
+                    contasareceber[index].valor_parcial = value;
                     
                     this.setState({contasareceber});
                   }
