@@ -132,7 +132,6 @@ export default class Login extends Component {
   }
 
   setuser(user){
-    
     AsyncStorage.setItem('user',user.toString());
   }
 
@@ -155,6 +154,7 @@ export default class Login extends Component {
       //this.setState({usuarios: resp.nome_fantasia});
       //alert(JSON.stringify(resp));
       await AsyncStorage.setItem('empresa',resp.codigo+"-"+resp.nome_fantasia);
+      await AsyncStorage.setItem('moeda',resp.moeda);
       //AsyncStorage.setItem('empresa_cod', resp.codigo);
     }).catch((err)=>{
       Alert.alert('Atenção', 'erro ao conectar-se com o servidor!');

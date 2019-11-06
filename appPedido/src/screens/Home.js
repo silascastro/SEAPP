@@ -120,6 +120,8 @@ export default class Home extends Component<Props> {
     let {dispatch} = this.props.navigation;
     dispatch(resetActionLogin);
     AsyncStorage.removeItem('empresa');
+    AsyncStorage.removeItem('user');
+    AsyncStorage.removeItem('user_cod');
   }
 
   getEmpresaName(){
