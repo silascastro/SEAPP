@@ -289,7 +289,7 @@ export default class ClienteContas extends Component<Props> {
             <View style={{flex: 1, alignContent: 'center', alignItems: 'flex-end'}}>
               <Text style={{}}>{this.numberToReal(Number(item.valor))}</Text>
             </View>
-            <View style={{flex: 1, alignContent: 'center', justifyContent: 'center', alignItems: 'center'}}>
+            <View style={{flex: 1, alignContent: 'center', justifyContent: 'center', alignContent: 'center'}}>
               <TextInput placeholder="valor parcial" onChangeText={
                 (value)=>{
                   var {contasareceber} = this.state;
