@@ -9,6 +9,8 @@ import { StackActions, NavigationActions, navigate } from 'react-navigation';
 import * as Permission from '../../Permissions';
 const LoginModule = NativeModules.LoginModule;
 const eventEmitter = new NativeEventEmitter(NativeModules.LoginModule);
+import AsyncStorage from '@react-native-community/async-storage';
+import * as config from '../../config'; 
 
 export default class AuthLoadingScreen extends Component<Props> {
   constructor(props) {
@@ -56,8 +58,16 @@ export default class AuthLoadingScreen extends Component<Props> {
     );
     //Permission.readPhoneState();
     LoginModule.getLoginStatus();
-    
+    this.getIp();
   };
+
+  getIp(){
+    AsyncStorage.getItem('_ip',(error,result)=> {
+        if(error){
+            AsyncStorage.setItem('_ip',config.url);
+        }
+    });
+  }
 
 
   // Render any loading content that you like here

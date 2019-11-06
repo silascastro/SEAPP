@@ -10,12 +10,12 @@ const _request ="PEDIDO";
 export default class Produto extends Component<Props> {
   constructor(props){
     super(props);
-    this.state = {loading: false, 
-      pesquisado: false, input: '', produtos: [],
-    qtds: [], 
-    produtoSelecionado: '', select_qtd: '1',
-    loadingAsync: false,
-  };
+    this.state = {
+      loading: false, pesquisado: false, 
+      input: '', produtos: [], qtds: [], 
+      produtoSelecionado: '', select_qtd: '1',
+      loadingAsync: false,
+    };
   }
 
   static navigationOptions = ({navigation}) => ({
@@ -27,12 +27,24 @@ export default class Produto extends Component<Props> {
     headerTitleStyle: {
       fontWeight: 'bold',
       alignSelf: 'center'
-      },
-      tabBarVisible: true,
+    },tabBarVisible: true,
   });
 
   componentDidMount(){
-    
+    this.getIp();
+  }
+
+  getIp(){
+    AsyncStorage.getItem('_ip',(error,result)=> {
+        if(error){
+            //AsyncStorage.setItem('_ip',config.url);
+            //API = config.url;
+        }
+        if(result){
+          //API = result;
+          config.url = result;
+        }
+    });
   }
 
   getProdutos(){ 
@@ -224,7 +236,7 @@ export default class Produto extends Component<Props> {
         }  
       {this.state.produtoSelecionado!=''?
       <View style={{flex: 1, backgroundColor: '#fff', elevation: 5}}>
-        <View style={{backgroundColor: '#EEEEEE',padding: 10 }}>
+        <View style={{backgroundColor: /*'#EEEEEE'*/'#ffffff',padding: 10 }}>
           <View style={{flexDirection: 'row'}}>
             <View style={{flex: 1}}>
               <Text style={{fontSize: 15, fontWeight: '600', color: 'black'}}>Produto: </Text> 

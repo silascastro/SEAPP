@@ -32,9 +32,9 @@ export default class Request extends Component<Props> {
     );
   }
 
-  contabilizaProdutos(){
+  async contabilizaProdutos(){
     
-    AsyncStorage.getItem(_request,(error,result) => {
+    await AsyncStorage.getItem(_request,(error,result) => {
       if(result){
         //console.log(result);
         //console.log(JSON.parse(result));
@@ -49,20 +49,28 @@ export default class Request extends Component<Props> {
   
 
   componentDidMount(){
+    this.getIp();
     this.getUser();
     this.getUserCod();
     //AsyncStorage.removeItem(_request)
   }
 
-  componentWillUnmount(){
-    
+  getIp(){
+    AsyncStorage.getItem('_ip',(error,result)=> {
+        if(error){
+            //AsyncStorage.setItem('_ip',config.url);
+            //API = config.url;
+        }
+        if(result){
+          //API = result;
+          config.url = result;
+        }
+    });
   }
 
   getUser(){
     AsyncStorage.getItem('user',(error,result) => {
       if(result){
-        //console.log(result);
-        //console.log(JSON.parse(result));
         this.setState({nome_vendedor: result});
 
       }else{
@@ -74,8 +82,6 @@ export default class Request extends Component<Props> {
   getUserCod(){
     AsyncStorage.getItem('user_cod',(error,result) => {
       if(result){
-        //console.log(result);
-        //console.log(JSON.parse(result));
         this.setState({cod_vendedor: result});
 
       }else{
@@ -107,14 +113,18 @@ export default class Request extends Component<Props> {
   }
 
   contabilizaTotal(){
-    let aux = this.state.pedido;
+    /*let aux = this.state.pedido;
     let total = 0;
     for(let e in aux){
       total+=Number(aux[e].preco_venda);
      
-    }
+    }*/
+    const total = (this.state.pedido)
+    .map(p => p.preco_venda).reduce(
+      (total, preco)=>total+Number(preco),0);
     this.setState({totalPedido: total});
   }
+
   sendItens(numero_pedido){
     let aux = this.state.pedido;
     for(let e in aux){
@@ -150,7 +160,8 @@ export default class Request extends Component<Props> {
       const resetActionHome = StackActions.reset({
         index: 0,
         actions: [
-          NavigationActions.navigate({ routeName: 'Home', params: {message: 'contas enviado com sucesso!'} }),
+          NavigationActions.navigate({ routeName: 'Home', 
+          params: {message: 'contas enviado com sucesso!'} }),
         ],
       });
       this.setState({loading: false});

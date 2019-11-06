@@ -10,8 +10,6 @@ const eventEmitter = new NativeEventEmitter(NativeModules.LoginModule);
 const LoginModule = NativeModules.LoginModule;
 import AsyncStorage from '@react-native-community/async-storage';
 
-//const API = "http://177.16.53.198:3000/";
-
 const resetActionHome = StackActions.reset({
   index: 0,
   actions: [
@@ -36,8 +34,22 @@ export default class Login extends Component {
   };
 
   componentDidMount(){
+    this.getIp();
     this. getUsers();
     //alert(config.url);
+  }
+
+  getIp(){
+    AsyncStorage.getItem('_ip',(error,result)=> {
+        if(error){
+            //AsyncStorage.setItem('_ip',config.url);
+            //API = config.url;
+        }
+        if(result){
+          //API = result;
+          config.url = result;
+        }
+    });
   }
 
   async getImei(){

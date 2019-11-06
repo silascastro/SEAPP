@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
 import {
   Alert,StyleSheet, 
-  Text, View, 
+  Text, TextInput, View, 
    Button,
    ActivityIndicator,  
    FlatList, TouchableNativeFeedback,
    NativeModules, 
 NativeEventEmitter} from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import * as config from '../../config';
 import { StackActions, NavigationActions} from 'react-navigation';
    import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -47,6 +48,7 @@ export default class ClienteContas extends Component<Props> {
   });
 
   componentDidMount(){
+    this.getIp();
     this.getContasAReceber(this.props.navigation.getParam('cod_cliente'));
     //this.getContasAReceber(608);
     eventEmitter.addListener(
@@ -59,7 +61,24 @@ export default class ClienteContas extends Component<Props> {
     LoginModule.getUser();
     //alert(_cod_vendedor);
     this.getVendedor();
-    this.setState({cod_celular: _cod_celular, nome_vendedor: _nome_vendedor, cod_vendedor: _cod_vendedor});
+    this.setState({
+      cod_celular: _cod_celular, 
+      nome_vendedor: _nome_vendedor, 
+      cod_vendedor: _cod_vendedor
+    });
+  }
+
+  getIp(){
+    AsyncStorage.getItem('_ip',(error,result)=> {
+        if(error){
+            //AsyncStorage.setItem('_ip',config.url);
+            //API = config.url;
+        }
+        if(result){
+          //API = result;
+          config.url = result;
+        }
+    });
   }
 
   getContasAReceber(id){
@@ -81,6 +100,7 @@ export default class ClienteContas extends Component<Props> {
 
         for(let e in aux){
           aux[e].status = "aberto";
+          aux[e].valor_parcial = '';
         }
 
         this.setState({totalReceber: _totalReceber});
@@ -243,6 +263,9 @@ export default class ClienteContas extends Component<Props> {
                     <Text style={{fontWeight: '600'}}>Valor</Text>
                   </View>
                   <View style={{flex: 1, alignItems: 'center'}}>
+                    <Text style={{fontWeight: '600'}}>Valor parcial</Text>
+                  </View>
+                  <View style={{flex: 1, alignItems: 'center'}}>
                     <Text style={{fontWeight: '600'}}>Recebido</Text>
                   </View>
                 </View>
@@ -265,6 +288,15 @@ export default class ClienteContas extends Component<Props> {
             </View>
             <View style={{flex: 1, alignContent: 'center', alignItems: 'flex-end'}}>
               <Text style={{}}>{this.numberToReal(Number(item.valor))}</Text>
+            </View>
+            <View style={{flex: 1, alignContent: 'center', justifyContent: 'center', alignItems: 'center'}}>
+              <TextInput placeholder="valor parcial" onChangeText={
+                (value)=>{
+                  var {contasareceber} = this.state;
+                  contasareceber[index].valor_parcial = value;
+                  this.setState({contasareceber});
+                }
+              }/>
             </View>
             <View style={{flex: 1, alignContent: 'center', alignItems: 'center'}}>
               <AntDesign name={this.state.contasareceber[index].status == 'aberto' ? 'close' : 'check'} 
@@ -297,8 +329,9 @@ export default class ClienteContas extends Component<Props> {
       </TouchableNativeFeedback>
     }
   />
+
   <View style={{marginLeft: 10, marginRight: 10, 
-    paddingTop: 10, paddingBottom: 15,}}>
+    paddingTop: 10, paddingBottom: 15}}>
     <View style={{marginLeft: 15, flexDirection: 'row', 
      borderTopWidth: 0.5, borderColor: 'gray'}}>
       <View style={{flex: 2}}>

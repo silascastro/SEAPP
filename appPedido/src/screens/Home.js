@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, FlatList, 
-TouchableNativeFeedback,StatusBar, 
+import {StyleSheet, Text, View, FlatList,
+TouchableNativeFeedback,StatusBar, Alert,
 NativeModules, ImageBackground, Image,
 NativeEventEmitter
 } from 'react-native';
@@ -43,6 +43,7 @@ export default class Home extends Component<Props> {
   getEmpresaData(){
     AsyncStorage.getItem('empresa', (error,result) => {
       if(result){
+        alert(result);
         this.setState({empresa: result});
 
       }
@@ -79,20 +80,44 @@ export default class Home extends Component<Props> {
 
 
   componentDidMount(){
+   this.getIp(); 
    let e = this.props.navigation.getParam('message')
    if(e!=null)
     ToastModule.show(e,3000);
 
     this.getEmpresa();
+  
+  }
+
+  getIp(){
+    AsyncStorage.getItem('_ip',(error,result)=> {
+        if(error){
+            //AsyncStorage.setItem('_ip',config.url);
+            //API = config.url;
+        }
+        if(result){
+          //API = result;
+          config.url = result;
+        }
+    });
   }
 
   getEmpresa(){
       setTimeout(() => {
+        
         this.props.navigation.setParams({
           empresa: this.state.empresa,
         });
         //alert(this.state.empresa);
       }, 1000);
+      alert(this.state.empresa);
+  }
+
+  sair(){
+    LoginModule.logoff();
+    let {dispatch} = this.props.navigation;
+    dispatch(resetActionLogin);
+    AsyncStorage.removeItem('empresa');
   }
 
   getEmpresaName(){
@@ -133,19 +158,34 @@ export default class Home extends Component<Props> {
                   if(item.title == "Clientes"){
                     this.props.navigation.push('Cliente');
                   }
+                  
                   if(item.title == "Pedidos"){
                     this.props.navigation.push('Pedido');
                   }
 
                   if(item.title == "Sair"){
-                    LoginModule.logoff();
-                    let {dispatch} = this.props.navigation;
-                    dispatch(resetActionLogin);
-                    AsyncStorage.removeItem('empresa');
+                    Alert.alert('Atenção', 'confirma a sua ação?',
+                    [
+                      {
+                        text: 'Cancelar',
+                        onPress: () => console.log('cancel'),
+                        style: 'cancel',
+                      },
+                      {
+                        text: 'Confimar',
+                        onPress: () => {
+                          this.sair();
+                          
+                        },
+                        
+                        }
+                    ]);
+                    
                   }
 
                   if(item.title == 'Configurações'){
                     //alert(this.state.empresa);
+                    this.props.navigation.navigate('Settings');
                   }
                 }}>
 

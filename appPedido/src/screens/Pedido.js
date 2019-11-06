@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
-import {DrawerLayoutAndroid,Alert,StyleSheet, Text, View, TextInput, ActivityIndicator, FlatList, TouchableNativeFeedback} from 'react-native';
+import {DrawerLayoutAndroid,Alert,StyleSheet, Text, View, TextInput,
+   ActivityIndicator, FlatList, TouchableNativeFeedback} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import AsyncStorage from  '@react-native-community/async-storage';
 import * as config from '../../config';
 const API = "http://179.177.126.10:3000/";
 
@@ -24,7 +26,20 @@ export default class Pedido extends Component<Props> {
   });
 
   componentDidMount(){
-    
+    this.getIp();
+  }
+
+  getIp(){
+    AsyncStorage.getItem('_ip',(error,result)=> {
+        if(error){
+            //AsyncStorage.setItem('_ip',config.url);
+            //API = config.url;
+        }
+        if(result){
+          //API = result;
+          config.url = result;
+        }
+    });
   }
 
     getClientes(){ 
