@@ -3,7 +3,8 @@ const {tbcontasreceber} = require('../../app/models');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op; 
 
-exports.get = async(req, res, next) => {  
+exports.get = (req, res, next) => {  
+    //console.log(tbcliente.tbcliente.findAll());
     tbcliente.findAll({order:[['nome','ASC']]}).then((resp) => {
         res.status(200).send(resp);
     }).catch((e)=> {
@@ -11,7 +12,7 @@ exports.get = async(req, res, next) => {
     });
 }
 
-exports.getOnClienteById = async(req, res, next) => {
+exports.getOnClienteById = (req, res, next) => {
     var id = req.params.id;
     tbcliente.findOne({
         where: {cod_cliente: id},
@@ -28,7 +29,7 @@ exports.getOnClienteById = async(req, res, next) => {
     });
 }
 
-exports.getOneClienteByName = async(req, res, next) => {
+exports.getOneClienteByName = (req, res, next) => {
     tbcliente.findAll().then((resp) => {
         
     }).catch((err)=>{
@@ -36,7 +37,7 @@ exports.getOneClienteByName = async(req, res, next) => {
     });
 }
 
-exports.getOneClienteByNameHasNotCont = async(req, res, next) => {
+exports.getOneClienteByNameHasNotCont = (req, res, next) => {
     var nome_param = req.params.nome;
     
 
@@ -56,7 +57,7 @@ exports.getOneClienteByNameHasNotCont = async(req, res, next) => {
 }
 
 
-exports.getOneClienteByName = async(req, res, next) => {
+exports.getOneClienteByName = (req, res, next) => {
     var nome_param = req.params.nome;
 
     tbcliente.findAll(

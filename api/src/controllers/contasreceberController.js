@@ -1,7 +1,7 @@
 const {tbcontasreceber} = require('../../app/models');
 
 
-exports.get = async(req, res, next) => {
+exports.get = (req, res, next) => {
     
     tbcontasreceber.findAll().then((resp) => {
         res.status(200).send(resp);
@@ -11,7 +11,7 @@ exports.get = async(req, res, next) => {
 
 }
 
-exports.getOne = async(req, res, next) => {
+exports.getOne = (req, res, next) => {
     var id = req.params.id;
     tbcontasreceber.findAll({where: {cod_cliente:id}}).then(resp => {
         //console.log(resp.length);

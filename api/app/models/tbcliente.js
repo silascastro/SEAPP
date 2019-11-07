@@ -1,6 +1,5 @@
 const {tbcontasreceber} = require('../../app/models');
 
-
 module.exports = (sequelize, DataTypes) =>{
     const tbcliente = sequelize.define('tbcliente', {
         cod_cliente: {type: DataTypes.INTEGER, primaryKey: true},

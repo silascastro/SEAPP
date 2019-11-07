@@ -3,6 +3,7 @@ module.exports = (sequelize, DataTypes) =>{
         id_empresa: {type: DataTypes.INTEGER, primaryKey: true},
         codigo: {type: DataTypes.STRING, primaryKey: true},
         nome_fantasia: {type: DataTypes.STRING},
+	moeda: {type: DataTypes.STRING},
         
       }, {
         freezeTableName: true,
@@ -10,5 +11,6 @@ module.exports = (sequelize, DataTypes) =>{
         timestamps: false
       });
     
-      return tbempresa;  
-}
+      return tbempresa;
+
+}  

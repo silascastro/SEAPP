@@ -1,8 +1,8 @@
 const {tbfuncionario} = require('../../app/models');
 
 
-exports.get = async(req, res, next) => {
-    
+exports.get = (req, res, next) => {
+    //console.log(tbfuncionario);    
     tbfuncionario.findAll().then((resp) => {
         res.status(200).send(resp);
     }).catch((e)=> {
@@ -11,7 +11,7 @@ exports.get = async(req, res, next) => {
 
 }
 
-exports.getOne = async(req, res, next) => {
+exports.getOne = (req, res, next) => {
     var nome_param = req.params.nome;
     tbfuncionario.findOne({where: {nome: nome_param}}).then(resp => {
         if(resp){
@@ -23,7 +23,7 @@ exports.getOne = async(req, res, next) => {
     })
 }
 
-exports.getById = async(req, res, next) => {
+exports.getById = (req, res, next) => {
 	var id = req.params.id;
 	tbfuncionario.findByPk(id).then(resp => {
 		if(resp)

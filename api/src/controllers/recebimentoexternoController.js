@@ -2,7 +2,7 @@ const {tbrecebimentoexterno} = require('../../app/models');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op; 
 
-exports.get = async(req, res, next) => {   
+exports.get = (req, res, next) => {   
     tbrecebimentoexterno.findAll().then((resp) => {
         res.status(200).send(resp);
     }).catch((e)=> {
@@ -10,7 +10,7 @@ exports.get = async(req, res, next) => {
     });
 }
 
-exports.post = async(req, res, next) => {
+exports.post = (req, res, next) => {
     tbrecebimentoexterno.create({
         sequencia: req.body.sequencia,
         cod_vendedor: req.body.cod_vendedor,

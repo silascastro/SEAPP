@@ -2,7 +2,7 @@ const {tbpedidoexternoitens} = require('../../app/models');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op; 
 
-exports.get = async(req, res, next) => {   
+exports.get = (req, res, next) => {   
     tbpedidoexternoitens.findAll().then((resp) => {
         res.status(200).send(resp);
     }).catch((e)=> {
@@ -10,7 +10,7 @@ exports.get = async(req, res, next) => {
     });
 }
 
-exports.post = async(req, res, next) => {
+exports.post = (req, res, next) => {
     tbpedidoexternoitens.create({
         numero_pedido: req.body.numero_pedido,
         id_produto: req.body.id_produto,
