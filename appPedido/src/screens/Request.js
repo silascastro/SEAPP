@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
-import {Alert,StyleSheet, Text ,View,Button, FlatList, TouchableNativeFeedback, TouchableHighlight, BackHandler} from 'react-native';
+import {Alert,StyleSheet, Text ,View,Button, 
+  TouchableNativeFeedback,} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-community/async-storage';
 import {SwipeListView} from 'react-native-swipe-list-view';
-import { StackActions, NavigationActions, navigate } from 'react-navigation';
+import { StackActions, NavigationActions } from 'react-navigation';
 import * as config from '../../config';
 
 
@@ -17,7 +18,8 @@ export default class Request extends Component<Props> {
       pedido: [],
       totalPedido: '',
       cod_vendedor: '',
-      nome_vendedor: ''
+      nome_vendedor: '',
+      moeda: ''
     };
     const { navigation } = this.props;
     //this.aysncData();
@@ -53,6 +55,20 @@ export default class Request extends Component<Props> {
     this.getUser();
     this.getUserCod();
     //AsyncStorage.removeItem(_request)
+    this.getTipoMoeda();
+  }
+
+  getTipoMoeda(){
+    AsyncStorage.getItem('moeda',(error,result)=> {
+      if(error){
+          //AsyncStorage.setItem('_ip',config.url);
+          //API = config.url;
+      }
+      if(result){
+        //API = result;
+        this.setState({moeda: result});
+      }
+    });
   }
 
   getIp(){
@@ -249,9 +265,9 @@ export default class Request extends Component<Props> {
                   </View>
                   <View style={{flex: 1, alignContent: 'center', alignItems: 'flex-end'}}>
                     <Text style={{alignContent: "center", color: 'black', fontWeight: '600',fontSize: 13,}}>
-                    {this.numberToReal(Number(this.props.navigation.getParam('limite')))}</Text>
-                    <Text style={{color: 'red'}}>{this.numberToReal(Number(this.props.navigation.getParam('saldo_devedor')))}</Text>
-                    <Text style={{color: this.props.navigation.getParam('saldo_compra')<0?'red':'green'}}>{this.numberToReal(Number(this.props.navigation.getParam('saldo_compra'))).replace("-.","-")}</Text>
+                    {this.state.moeda == "G" ? this.numberToReal(Number(this.props.navigation.getParam('limite'))).split(',')[0]: this.numberToReal(Number(this.props.navigation.getParam('limite')))}</Text>
+                    <Text style={{color: 'red'}}>{this.state.moeda == "G" ? this.numberToReal(Number(this.props.navigation.getParam('saldo_devedor'))).split(',')[0]:this.numberToReal(Number(this.props.navigation.getParam('saldo_devedor')))}</Text>
+                    <Text style={{color: this.props.navigation.getParam('saldo_compra')<0?'red':'green'}}>{this.state.moeda == "G" ? (this.numberToReal(Number(this.props.navigation.getParam('saldo_compra'))).replace("-.","-")).split(',')[0]:this.numberToReal(Number(this.props.navigation.getParam('saldo_compra'))).replace("-.","-")}</Text>
                   </View>
 
                 </View>
@@ -261,8 +277,12 @@ export default class Request extends Component<Props> {
                 <View style={{ flex: 2}}>
                   <Text style={{fontWeight: '600', color: 'black', fontSize: 15}}>Data/Hora</Text>
                   <View style={{flex: 0, flexDirection: 'row'}}>
-                    <Text style={{marginRight: 10}}>{new Date().getDate()}/{new Date().getMonth()+1}/{new Date().getFullYear()}</Text>
-                    <Text>{new Date().getHours()}:{new Date().getMinutes()<10?'0'+new Date().getMinutes(): new Date().getMinutes()}</Text>
+                    <Text style={{marginRight: 10}}>
+                      {new Date().getDate()}/{new Date().getMonth()+1}/{new Date().getFullYear()}
+                    </Text>
+                    <Text>
+                      {new Date().getHours()}:{new Date().getMinutes()<10?'0'+new Date().getMinutes(): new Date().getMinutes()}
+                    </Text>
                   </View>
                  
                 </View>
@@ -331,10 +351,13 @@ export default class Request extends Component<Props> {
                             <Text style={{fontWeight: '600', color: 'black',}}>{data.item.qtd} </Text>
                           </View>
                           <View style={{flex: 1, alignItems: 'flex-end',}}>
-                            <Text style={{fontWeight: '600', color: 'black',}}>{this.numberToReal(data.item.preco_uni)} </Text> 
+                            <Text style={{fontWeight: '600', color: 'black',}}>
+                            {this.numberToReal(data.item.preco_uni)} </Text> 
                           </View>
                           <View style={{flex: 1, alignItems: 'flex-end',}}>
-                            <Text style={{fontWeight: '600', color: 'black',}}>{this.numberToReal(data.item.preco_venda)}</Text>
+                            <Text style={{fontWeight: '600', color: 'black',}}>
+                              {this.numberToReal(data.item.preco_venda)}
+                            </Text>
                           </View>
  
                         </View>

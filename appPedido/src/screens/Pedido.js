@@ -244,9 +244,9 @@ export default class Pedido extends Component<Props> {
                             </View>
                             <View style={{flex: 1, alignContent: 'center', alignItems: 'flex-end'}}>
                               <Text style={{alignContent: "center", color: 'black', fontWeight: '600',fontSize: 13,}}>
-                              {this.numberToReal(Number(item.limite))}</Text>
-                              <Text style={{color: 'red'}}>{this.numberToReal(Number(item['tbcontasreceber.saldo_devedor']))}</Text>
-                              <Text style={{color: item['tbcontasreceber.saldo_compra']<0?'red':'green'}}>{this.numberToReal(Number(item['tbcontasreceber.saldo_compra'])).replace("-.","-")}</Text>
+                              {this.state.moeda == "G" ? this.numberToReal(Number(item.limite)).split(',')[0]:this.numberToReal(Number(item.limite))}</Text>
+                              <Text style={{color: 'red'}}>{this.state.moeda == "G" ? this.numberToReal(Number(item['tbcontasreceber.saldo_devedor'])).split(',')[0]:this.numberToReal(Number(item['tbcontasreceber.saldo_devedor']))}</Text>
+                              <Text style={{color: item['tbcontasreceber.saldo_compra']<0?'red':'green'}}>{this.state.moeda == "G" ? (this.numberToReal(Number(item['tbcontasreceber.saldo_compra'])).replace("-.","-")).split(',')[0]:this.numberToReal(Number(item['tbcontasreceber.saldo_compra'])).replace("-.","-")}</Text>
                             </View>
 
                         </View>

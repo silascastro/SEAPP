@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
-import {DrawerLayoutAndroid,Alert,StyleSheet, Text, View, TextInput, ActivityIndicator, FlatList, TouchableNativeFeedback} from 'react-native';
+import {DrawerLayoutAndroid,Alert,StyleSheet, Text,
+   View, TextInput, ActivityIndicator, FlatList, 
+   TouchableNativeFeedback} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import * as config from '../../config';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -61,27 +63,27 @@ export default class Cliente extends Component<Props> {
     });
   }
 
-    getClientes(){ 
-      fetch(config.url+'clientes/byname/'+(this.state.input).toUpperCase(), {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      }).then((response)=> response.json()).then((resp) => {
-        let aux = [];
-        
-        for(e in resp){
-          aux.push(resp[e]);
-        }
+  getClientes(){ 
+    fetch(config.url+'clientes/byname/'+(this.state.input).toUpperCase(), {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    }).then((response)=> response.json()).then((resp) => {
+      let aux = [];
+      
+      for(e in resp){
+        aux.push(resp[e]);
+      }
 
-        this.setState({clientes: aux});
-        this.setState({loading: false});
-        this.getClientesHasNotCont();
-        
-      }).catch((err)=>{
-        //Alert.alert('Atenção', 'erro');
-      });
+      this.setState({clientes: aux});
+      this.setState({loading: false});
+      this.getClientesHasNotCont();
+      
+    }).catch((err)=>{
+      //Alert.alert('Atenção', 'erro');
+    });
   }
 
   getContasAReceber(id){
@@ -241,7 +243,8 @@ export default class Cliente extends Component<Props> {
                               <Text style={{alignContent: "center", color: 'black', fontWeight: '600',fontSize: 13,}}>
                               {this.state.moeda == "G" ? this.numberToReal(Number(item.limite)).split(',')[0]:this.numberToReal(Number(item.limite))}</Text>
                               <Text style={{color: 'red'}}>{this.state.moeda == "G" ? this.numberToReal(Number(item['tbcontasreceber.saldo_devedor'])).split(',')[0]:this.numberToReal(Number(item['tbcontasreceber.saldo_devedor']))}</Text>
-                              <Text style={{color: item['tbcontasreceber.saldo_compra']<0?'red':'green'}}>{this.state.moeda == "G" ? (this.numberToReal(Number(item['tbcontasreceber.saldo_compra'])).replace("-.","-")).split(',')[0]:this.numberToReal(Number(item['tbcontasreceber.saldo_compra'])).replace("-.","-")}</Text>
+                              <Text style={{color: item['tbcontasreceber.saldo_compra']<0?'red':'green'}}>
+                              {this.state.moeda == "G" ? (this.numberToReal(Number(item['tbcontasreceber.saldo_compra'])).replace("-.","-")).split(',')[0]:this.numberToReal(Number(item['tbcontasreceber.saldo_compra'])).replace("-.","-")}</Text>
                             </View>
 
                         </View>
