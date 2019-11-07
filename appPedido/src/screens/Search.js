@@ -4,11 +4,12 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import { TextInput } from 'react-native-gesture-handler';
 const LoginModule = NativeModules.LoginModule;
 
-
 export default class Search extends Component<Props> {
   constructor(props){
     super(props);
-    this.state = {loading: true, searchValue:''};
+    this.state = {
+      loading: true, searchValue:''
+    };
   }
 
   static navigationOptions = ({navigation})=>{

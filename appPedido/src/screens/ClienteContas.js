@@ -165,7 +165,6 @@ export default class ClienteContas extends Component<Props> {
   }
 
   getVendedor(){
-    
     fetch(config.url+'funcionarios/byid/'+_cod_vendedor, {
         method: 'GET',
         headers: {
@@ -181,7 +180,6 @@ export default class ClienteContas extends Component<Props> {
         //this.setState({loading: false});
         
       });
-      
   }
 
   changeState(index, _status){
@@ -330,8 +328,14 @@ export default class ClienteContas extends Component<Props> {
                   underlineColorAndroid="blue"
                   onChangeText={text => {
                     let {contasareceber} = this.state;
-                                       
+                    //alert(parseFloat((text.replace(".","")).replace(/,/g,'.')));
+                    if(parseFloat((text.replace(".","")).replace(/,/g,'.'))>Number(this.state.contasareceber[index].valor)){
+                      //this.state.moeda == "G"? this.numberToReal(Number(item.valor)).split(',')[0] : this.numberToReal(Number(item.valor))
+                      contasareceber[index].valor_parcial = this.numberToReal(Number(this.state.contasareceber[index].valor));
+                    }else{
+                  
                     contasareceber[index].valor_parcial = text;
+                    }
                     this.setState({
                       contasareceber
                     });

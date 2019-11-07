@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Alert,DrawerLayoutAndroid,StyleSheet, Text, Button,View, 
-  TextInput, ActivityIndicator, FlatList, TouchableNativeFeedback} from 'react-native';
+  TextInput, ActivityIndicator, FlatList, 
+  TouchableNativeFeedback, Picker} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -16,6 +17,7 @@ export default class Produto extends Component<Props> {
       input: '', produtos: [], qtds: [], 
       produtoSelecionado: '', select_qtd: '1',
       loadingAsync: false,
+      unitOption: ''
     };
   }
 
@@ -270,11 +272,14 @@ export default class Produto extends Component<Props> {
           </View>
         </View>
         
-        <Text style={{margin: 10, fontSize: 15, textAlign: 'center'}}>Selecione a quantidade</Text>
+        <Text style={{margin: 10, fontSize: 15, textAlign: 'center'}}>
+          Selecione a quantidade</Text>
           
             <View style={{flex: 2,}}>
               <View style={{flex: 0, flexDirection: 'row', flex: 1}}>
-                <View style={{alignItems: 'center',flex: 1,}}>  
+                <View style={{flex: 1,
+                alignItems: 'center',
+                justifyContent: 'center'}}>  
                   <View style={styles.float}>
                     <AntDesign name='minus' size={25} color="black" style={{}}
                     onPress={()=>{
@@ -292,26 +297,46 @@ export default class Produto extends Component<Props> {
                     />
                   </View>
                 </View>
-                <View style={{alignItems: 'center' ,flex: 1,}}>
-
-                  <TextInput /*value={this.state.produtos[index].qtd_selec} */
-                    value={this.state.select_qtd}
-                    //editable={true}
-                    placeholder="qtd"
-                    keyboardType="numeric"
+                <View style={{flex: 2, flexDirection: 'row'}}>
+                  <View style={{flex:2, 
+                    alignContent: 'center', 
+                    justifyContent: 'center',}}>
+                  <Picker
                     
-                    onChangeText={(value)=>{
+                    selectedValue={this.state.unitOption}
+                    onValueChange={(itemValue, itemIndex) =>{
                       
-                      this.setState({
-                        select_qtd: value,
-                      });
+                      this.setState({unitOption: itemValue});
+                    }
+                    }>
+                      <Picker.Item label="UND" value="UND"/>
+                      <Picker.Item label="GRM" value="GRM"/>
+                      <Picker.Item label="MTS" value="MTS"/>
+                      <Picker.Item label="MT2" value="MT2"/>
+                  </Picker>
+                  </View>
+                  <View style={{flex:1, 
+                    //alignContent: 'center',
+                  }}>
+                    <TextInput /*value={this.state.produtos[index].qtd_selec} */
+                      value={this.state.select_qtd}
+                      //editable={true}
+                      placeholder="qtd"
+                      keyboardType="numeric"
+                      style={{flex:1}}
+                      onChangeText={(value)=>{
+                        
+                        this.setState({
+                          select_qtd: value,
+                        });
+                      
+                    }}
                     
-                  }}
-                  
-                  />
-                  
+                    />  
+                  </View>
                 </View>
                 <View style={{alignItems: 'center', 
+                justifyContent: 'center',
                 flex: 1}}>
                   <View style={styles.float}>
                     <AntDesign name='plus' size={25} 
@@ -410,7 +435,8 @@ float: {
   alignItems: "center",                                     
   //bottom: 10,                                                    
   //right: 15,
-  elevation: 3
+  elevation: 3,
+  
 },
   card: {
     //paddingLeft: 10,

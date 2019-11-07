@@ -22,7 +22,6 @@ export default class Login extends Component {
   constructor(props){
     super(props);
     this.state = {rememberPass: false, userSelect: '', usuarios: [],user: '', password: '', loading: false, imei: ''};
-
   }
 
   static navigationOptions = {
@@ -207,7 +206,8 @@ export default class Login extends Component {
               <Text >Lembrar minha senha</Text>
             </View>
             <View style={{flex: 1, alignItems: 'center'}}>
-              <Switch value={this.state.rememberPass} onValueChange={()=>{
+              <Switch value={this.state.rememberPass} 
+              onValueChange={()=>{
                 this.setState({rememberPass: !this.state.rememberPass});
               }}/>
             </View>
