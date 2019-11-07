@@ -3,6 +3,7 @@ import {Alert,DrawerLayoutAndroid,StyleSheet, Text, Button,View,
   TextInput, ActivityIndicator, FlatList, 
   TouchableNativeFeedback, Picker} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import {TextInputMask} from 'react-native-masked-text';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-community/async-storage';
 import * as config from '../../config';
@@ -17,7 +18,7 @@ export default class Produto extends Component<Props> {
       input: '', produtos: [], qtds: [], 
       produtoSelecionado: '', select_qtd: '1',
       loadingAsync: false,
-      unitOption: ''
+      unitOption: 'UND'
     };
   }
 
@@ -255,7 +256,9 @@ export default class Produto extends Component<Props> {
               <Text style={{fontSize: 15, fontWeight: '600', color: 'black'}}>Preço: </Text>
             </View>
             <View style={{flex: 1, alignItems: 'flex-end'}}>
-              <Text style={{alignSelf: 'flex-end'}}>{this.numberToReal(Number(this.state.produtoSelecionado.preco_venda))}</Text>
+              <Text style={{alignSelf: 'flex-end'}}>{
+                this.numberToReal(Number(this.state.produtoSelecionado.preco_venda))
+                }</Text>
             </View>
           </View>
           <View style={{flexDirection: 'row'}}>
@@ -264,9 +267,14 @@ export default class Produto extends Component<Props> {
             </View>
             <View style={{flex: 1, alignItems: 'flex-end'}}>
               <Text style={{alignSelf: 'flex-end'}}>{
-                Number(this.state.select_qtd)>0?
-                this.numberToReal(Number(Number(this.state.select_qtd)*Number(this.state.produtoSelecionado.preco_venda))):
-                '0,00'
+                /*Number(this.state.select_qtd)>0 || (parseFloat(((this.state.select_qtd).replace(".","")).replace("/,/g","."))*Number(this.state.produtoSelecionado.preco_venda))? 
+                this.state.unitOption == "UND"?
+                  this.numberToReal(Number(Number(this.state.select_qtd)*Number(this.state.produtoSelecionado.preco_venda)))
+                  :this.numberToReal(Number(parseFloat(((this.state.select_qtd).replace(".","")).replace(/,/g,'.'))
+                  *Number(this.state.produtoSelecionado.preco_venda)))
+                :
+                '0,00'*/
+                this.numberToReal(Number(parseFloat(((this.state.select_qtd).replace(".","")).replace(/,/g,'.')))*Number(this.state.produtoSelecionado.preco_venda))
               }</Text>
             </View>
           </View>
@@ -283,16 +291,29 @@ export default class Produto extends Component<Props> {
                   <View style={styles.float}>
                     <AntDesign name='minus' size={25} color="black" style={{}}
                     onPress={()=>{
+                      if(this.state.unitOption == "UND"){
+                        let {select_qtd} = this.state;
+                        if(Number(select_qtd)>1){
+                        
+                        //select_qtd = Number(select_qtd)-1;
+                        select_qtd = Number((parseFloat(((select_qtd).replace(".","")).replace(/,/g,'.')))-1);
+                        //alert(qtds[index]);
+                        this.setState({
+                          select_qtd: select_qtd.toString()
+                        });
+                        }
+                      }else{
+                        let {select_qtd} = this.state;
+                        //alert(this.state.select_qtd);
+                        if((parseFloat(((select_qtd).replace(".","")).replace(/,/g,'.')))>1){
 
-                      let {select_qtd} = this.state;
-                      if(Number(select_qtd != '1')){
-                      
-                      select_qtd = Number(select_qtd)-1;
-                      //alert(qtds[index]);
-                      this.setState({
-                        select_qtd: select_qtd.toString()
-                      });
-                    }
+                          let aux = parseFloat(((select_qtd).replace(".","")).replace(/,/g,'.'))-1;
+                          this.setState({
+                            select_qtd: this.numberToReal(aux)
+                          });
+                          
+                        }
+                      }
                     }}
                     />
                   </View>
@@ -305,6 +326,9 @@ export default class Produto extends Component<Props> {
                     
                     selectedValue={this.state.unitOption}
                     onValueChange={(itemValue, itemIndex) =>{
+                      if(itemValue == "UND"){
+                        this.setState({select_qtd: '1'});
+                      }
                       
                       this.setState({unitOption: itemValue});
                     }
@@ -318,21 +342,49 @@ export default class Produto extends Component<Props> {
                   <View style={{flex:1, 
                     //alignContent: 'center',
                   }}>
-                    <TextInput /*value={this.state.produtos[index].qtd_selec} */
+                    {this.state.unitOption != "UND" ? 
+                      
+                      <TextInputMask
+                        type={'money'}
+                        options={{
+                          precision: 2,
+                          separator: ',',
+                          unit: '',
+                          delimiter:'' 
+                        }}
+                        keyboardType="number-pad"
+                        value={this.state.select_qtd}
+                        underlineColorAndroid="blue"
+                        onChangeText={text => {                        
+                          this.setState({select_qtd: text});
+                          //alert(Number((parseFloat(((text).replace(".","")).replace(/,/g,'.')))));
+                          //alert(this.numberToReal(Number(parseFloat(((text).replace(".","")).replace(/,/g,'.')))*Number(this.state.produtoSelecionado.preco_venda)));  
+                        }
+                        }
+                      />
+                      :
+                      <TextInput /*value={this.state.produtos[index].qtd_selec} */
                       value={this.state.select_qtd}
                       //editable={true}
                       placeholder="qtd"
                       keyboardType="numeric"
                       style={{flex:1}}
                       onChangeText={(value)=>{
-                        
-                        this.setState({
-                          select_qtd: value,
-                        });
+                        if(value == '0'){
+                          this.setState({
+                            select_qtd: '1'
+                          })
+                        }else{   
+                          this.setState({
+                            select_qtd: value,
+                          });
+                      }
                       
                     }}
                     
-                    />  
+                    />
+                    }
+                      
                   </View>
                 </View>
                 <View style={{alignItems: 'center', 
@@ -345,9 +397,13 @@ export default class Produto extends Component<Props> {
                         let {select_qtd} = this.state;
                         let aux = select_qtd;
                         
-                        aux = Number(aux)+1;
-                        
-                        this.setState({select_qtd: aux.toString()});
+                        //aux = Number(aux)+1;
+                        aux = Number((parseFloat(((aux).replace(".","")).replace(/,/g,'.')))+1);
+                        if(this.state.unitOption == "UND"){
+                          this.setState({select_qtd: aux.toString()});
+                        }else{
+                        this.setState({select_qtd: this.numberToReal(aux)});
+                        }
                       }
                       /*this.state.produtos[index].qtd_selec+=1*/}
                     />
@@ -371,8 +427,13 @@ export default class Produto extends Component<Props> {
                     cod_produto: this.state.produtoSelecionado.cod_produto,
                     descricao: this.state.produtoSelecionado.descricao, 
                     marca: this.state.produtoSelecionado.marca,
-                    preco_venda: Number(this.state.select_qtd)*Number(this.state.produtoSelecionado.preco_venda), 
-                    qtd: Number(this.state.select_qtd),
+                    preco_venda: this.state.unitOption != "UND" ? 
+                    Number(parseFloat(((this.state.select_qtd).replace(".","")).replace(/,/g,'.')))
+                    *Number(this.state.produtoSelecionado.preco_venda)
+                    :
+                    Number(this.state.select_qtd)*Number(this.state.produtoSelecionado.preco_venda) 
+                    , 
+                    qtd: Number(parseFloat(((this.state.select_qtd).replace(".","")).replace(/,/g,'.'))),
                     preco_uni: Number(this.state.produtoSelecionado.preco_venda)
                   });
                   this.setState({loadingAsync: true});

@@ -282,11 +282,12 @@ export default class ClienteContas extends Component<Props> {
                     <Text style={{fontWeight: '600'}}>Valor</Text>
                   </View>
                   <View style={{flex: 1, alignItems: 'center'}}>
-                    <Text style={{fontWeight: '600'}}>Valor parcial</Text>
-                  </View>
-                  <View style={{flex: 1, alignItems: 'center'}}>
                     <Text style={{fontWeight: '600'}}>Recebido</Text>
                   </View>
+                  <View style={{flex: 1, alignItems: 'center'}}>
+                    <Text style={{fontWeight: '600'}}>Valor parcial</Text>
+                  </View>
+                  
                 </View>
       </View>
       
@@ -312,40 +313,12 @@ export default class ClienteContas extends Component<Props> {
             <View style={{flex: 1, 
             alignContent: 'center', 
             alignItems: 'flex-end', justifyContent: 'center'}}>
-              <Text style={{}}>{this.state.moeda == "G"? this.numberToReal(Number(item.valor)).split(',')[0] : this.numberToReal(Number(item.valor))}</Text>
+              <Text style={{}}>{this.state.moeda == "G"? 
+              this.numberToReal(Number(item.valor)).split(',')[0] 
+              : this.numberToReal(Number(item.valor))}</Text>
             </View>
-            <View style={{flex: 1, justifyContent: 'flex-start'}}>
-              <View style={{flex: 1, alignContent: 'center', 
-              alignItems: 'center'}}>
-                <TextInputMask
-                  type={'money'}
-                  options={{
-                    precision: 2,
-                    unit: '',
-                  }}
-                  keyboardType="number-pad"
-                  value={this.state.contasareceber[index].valor_parcial}
-                  underlineColorAndroid="blue"
-                  onChangeText={text => {
-                    let {contasareceber} = this.state;
-                    //alert(parseFloat((text.replace(".","")).replace(/,/g,'.')));
-                    if(parseFloat((text.replace(".","")).replace(/,/g,'.'))>Number(this.state.contasareceber[index].valor)){
-                      //this.state.moeda == "G"? this.numberToReal(Number(item.valor)).split(',')[0] : this.numberToReal(Number(item.valor))
-                      contasareceber[index].valor_parcial = this.numberToReal(Number(this.state.contasareceber[index].valor));
-                    }else{
-                  
-                    contasareceber[index].valor_parcial = text;
-                    }
-                    this.setState({
-                      contasareceber
-                    });
-                    //let n = this.state.contasareceber[index].valor_parcial;
-                    //parseFloat(n.replace(/,/g,'.'));
-                  }}
-                />
-              </View>
-            </View>
-            <View style={{flex: 1, alignContent: 'center', alignItems: 'center', justifyContent: 'center'}}>
+            <View style={{flex: 1, alignContent: 'center', 
+            alignItems: 'center', justifyContent: 'center'}}>
               <AntDesign name={this.state.contasareceber[index].status == 'aberto' ? 'close' : 'check'} 
               size={25} 
               color={this.state.contasareceber[index].status == 'aberto' ? 'red' : 'green'}
@@ -378,7 +351,37 @@ export default class ClienteContas extends Component<Props> {
                 }
               }}/>
             </View>
-
+            <View style={{flex: 1, justifyContent: 'flex-start'}}>
+              <View style={{flex: 1, alignContent: 'center', 
+              alignItems: 'center'}}>
+                <TextInputMask
+                  type={'money'}
+                  options={{
+                    precision: 2,
+                    unit: '',
+                  }}
+                  keyboardType="number-pad"
+                  value={this.state.contasareceber[index].valor_parcial}
+                  underlineColorAndroid="blue"
+                  onChangeText={text => {
+                    let {contasareceber} = this.state;
+                    //alert(parseFloat((text.replace(".","")).replace(/,/g,'.')));
+                    if(parseFloat((text.replace(".","")).replace(/,/g,'.'))>Number(this.state.contasareceber[index].valor)){
+                      //this.state.moeda == "G"? this.numberToReal(Number(item.valor)).split(',')[0] : this.numberToReal(Number(item.valor))
+                      contasareceber[index].valor_parcial = this.numberToReal(Number(this.state.contasareceber[index].valor));
+                    }else{
+                  
+                    contasareceber[index].valor_parcial = text;
+                    }
+                    this.setState({
+                      contasareceber
+                    });
+                    //let n = this.state.contasareceber[index].valor_parcial;
+                    //parseFloat(n.replace(/,/g,'.'));
+                  }}
+                />
+              </View>
+            </View>
           </View>
         </View>
 

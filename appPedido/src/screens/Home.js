@@ -88,7 +88,7 @@ export default class Home extends Component<Props> {
     ToastModule.show(e,3000);
 
     this.getEmpresa();
-  
+    AsyncStorage.removeItem("PEDIDO");
   }
 
   getIp(){

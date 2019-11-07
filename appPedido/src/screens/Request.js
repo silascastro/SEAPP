@@ -123,7 +123,7 @@ export default class Request extends Component<Props> {
 
   
   numberToReal(numero) {
-    var numero = numero.toFixed(2).split('.');
+    var numero = Number(numero).toFixed(2).split('.');
     numero[0] = "" + numero[0].split(/(?=(?:...)*$)/).join('.');
     return numero.join(',');
   }
