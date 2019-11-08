@@ -21,7 +21,22 @@ const resetActionHome = StackActions.reset({
 export default class Login extends Component {
   constructor(props){
     super(props);
-    this.state = {rememberPass: false, userSelect: '', usuarios: [],user: '', password: '', loading: false, imei: ''};
+    this.state = {rememberPass: false,
+       userSelect: '', 
+       usuarios: [],
+       user: '', 
+       password: '',
+      // _ipAddress: '',
+       loading: false, 
+       imei: ''};
+       
+       this.willFocuSub = this.props.navigation.addListener(
+        'willFocus',
+        ()=>{
+          //alert('voltando');
+          this.getIp();
+        }
+      );
   }
 
   static navigationOptions = {
@@ -33,7 +48,7 @@ export default class Login extends Component {
   };
 
   componentDidMount(){
-    this.getIp();
+    
     this. getUsers();
     //alert(config.url);
   }
@@ -47,6 +62,9 @@ export default class Login extends Component {
         if(result){
           //API = result;
           config.url = result;
+          /*let aux = result.split('//')[1];
+          let final = aux.split(':')[0];
+          this.setState({_ipAddress: result});*/
         }
     });
   }
@@ -125,7 +143,7 @@ export default class Login extends Component {
         }
       }).catch((err)=>{
         this.setState({loading: false});
-        
+        Alert.alert('Atenção', 'erro ao conectar-se com o servidor!');
       });
     }
   }
@@ -188,19 +206,18 @@ export default class Login extends Component {
               </Picker>
             </View>
           </View>
-          <View>
-            <View style={styles.password}>
-              <View style={{justifyContent: 'center', }}>
-                <Icon name="lock" size={25} color="black" style={{alignSelf: 'baseline'}}/>
-              </View>
-              <View style={{justifyContent: 'center', flex: 1 }}>
-                <TextInput  /*underlineColorAndroid='#0000ff'*/value={this.state.password} select textContentType='password' placeholder="Senha" secureTextEntry={true}
-                  onChangeText={(text)=>this.setState({password:text})}
-                />
-              </View>
+          <View style={styles.password}>
+            <View style={{justifyContent: 'center', }}>
+              <Icon name="lock" size={25} color="black" style={{alignSelf: 'baseline'}}/>
+            </View>
+            <View style={{justifyContent: 'center', flex: 1 }}>
+              <TextInput  /*underlineColorAndroid='#0000ff'*/value={this.state.password} 
+              textContentType='password' placeholder="Senha" secureTextEntry={true}
+                onChangeText={(text)=>this.setState({password:text})}
+              />
             </View>
           </View>
-          
+        
           <View style={styles.lembrarSenha}>
             <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
               <Text >Lembrar minha senha</Text>
@@ -219,6 +236,13 @@ export default class Login extends Component {
               this.doLogin(this.state.userSelect);
             else
             Alert.alert('Atenção', 'digite a sua senha!');
+            
+            }/**/
+          }/>
+        </View>
+        <View style={styles.btn}>
+          <Button title="configurar ip" color="blue" onPress={()=>{
+            this.props.navigation.navigate('Settings');
             
             }/**/
           }/>
@@ -255,6 +279,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: 'gray'
   },
+  ipAddress: {
+    flex: 0,
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderBottomColor: 'gray'
+  },
   lembrarSenha: {
     height: 40,
     flex: 0,
@@ -263,6 +293,7 @@ const styles = StyleSheet.create({
   btn:{
     marginLeft: 20, 
     marginRight: 20,
-    elevation: 5
+    elevation: 5, 
+    marginBottom: 5
   },
 });

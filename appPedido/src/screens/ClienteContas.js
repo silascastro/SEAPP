@@ -366,7 +366,19 @@ export default class ClienteContas extends Component<Props> {
                   onChangeText={text => {
                     let {contasareceber} = this.state;
                     //alert(parseFloat((text.replace(".","")).replace(/,/g,'.')));
-                    if(parseFloat((text.replace(".","")).replace(/,/g,'.'))>Number(this.state.contasareceber[index].valor)){
+                    if(text == '' && this.state.contasareceber[index].status == "aberto"){
+                      //alert(`teste`);
+                      let n = Number(this.state.totalRecebido);
+                      let _valor_parcial = this.state.contasareceber[index].valor_parcial.replace(".","");
+                      n-=parseFloat((_valor_parcial).replace(/,/g,'.'));
+                      n += Number(this.state.contasareceber[index].valor);
+
+                      this.setState({totalRecebido: n});
+                      let pendente = this.state.totalReceber-n;
+                      this.setState({saldoPendente: pendente});
+                    }
+                    if(parseFloat((text.replace(".","")).replace(/,/g,'.'))
+                    >Number(this.state.contasareceber[index].valor)){
                       //this.state.moeda == "G"? this.numberToReal(Number(item.valor)).split(',')[0] : this.numberToReal(Number(item.valor))
                       contasareceber[index].valor_parcial = this.numberToReal(Number(this.state.contasareceber[index].valor));
                     }else{

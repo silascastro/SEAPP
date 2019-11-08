@@ -38,7 +38,7 @@ export default class AuthLoadingScreen extends Component<Props> {
       index: 0,
       actions: [
         NavigationActions.navigate({ routeName: 'Login' }),
-        NavigationActions.navigate({ routeName: 'Home' }),
+        //NavigationActions.navigate({ routeName: 'Home' }),
         //NavigationActions.navigate({ routeName: 'Cliente' }),
         //NavigationActions.navigate({ routeName: 'Request' }),
       ],

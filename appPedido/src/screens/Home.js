@@ -26,7 +26,7 @@ const resetActionLogin = StackActions.reset({
   index: 0,
   actions: [
     NavigationActions.navigate({ routeName: 'Login' }),
-    NavigationActions.navigate({ routeName: 'Home' }),
+    //NavigationActions.navigate({ routeName: 'Home' }),
     //NavigationActions.navigate({ routeName: 'Cliente' }),
     //NavigationActions.navigate({ routeName: 'Request' }),
   ],
@@ -91,8 +91,8 @@ export default class Home extends Component<Props> {
     AsyncStorage.removeItem("PEDIDO");
   }
 
-  getIp(){
-    AsyncStorage.getItem('_ip',(error,result)=> {
+  async getIp(){
+    await AsyncStorage.getItem('_ip',(error,result)=> {
         if(error){
             //AsyncStorage.setItem('_ip',config.url);
             //API = config.url;
@@ -111,7 +111,7 @@ export default class Home extends Component<Props> {
           empresa: this.state.empresa,
         });
         //alert(this.state.empresa);
-      }, 1000);
+      }, 2000);
       //alert(this.state.empresa);
   }
 
