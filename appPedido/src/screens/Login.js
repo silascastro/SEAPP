@@ -48,8 +48,8 @@ export default class Login extends Component {
   };
 
   componentDidMount(){
-    
-    this. getUsers();
+    this.getIp();
+    //this. getUsers();
     //alert(config.url);
   }
 
@@ -60,8 +60,9 @@ export default class Login extends Component {
             //API = config.url;
         }
         if(result){
-          //API = result;
+
           config.url = result;
+          this.getUsers();
           /*let aux = result.split('//')[1];
           let final = aux.split(':')[0];
           this.setState({_ipAddress: result});*/
