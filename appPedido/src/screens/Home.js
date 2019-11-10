@@ -26,9 +26,6 @@ const resetActionLogin = StackActions.reset({
   index: 0,
   actions: [
     NavigationActions.navigate({ routeName: 'Login' }),
-    //NavigationActions.navigate({ routeName: 'Home' }),
-    //NavigationActions.navigate({ routeName: 'Cliente' }),
-    //NavigationActions.navigate({ routeName: 'Request' }),
   ],
 });
 

@@ -33,6 +33,7 @@ export default class ClienteContas extends Component<Props> {
       nome_vendedor: '',
       cod_celular: '',
       moeda: '',
+      first_time: true,
     };
   }
 
@@ -119,6 +120,7 @@ export default class ClienteContas extends Component<Props> {
         for(let e in aux){
           aux[e].status = "aberto";
           aux[e].valor_parcial = '';
+          aux[e].last_value = '';
         }
 
         this.setState({totalReceber: _totalReceber});
@@ -356,6 +358,70 @@ export default class ClienteContas extends Component<Props> {
               alignItems: 'center'}}>
                 <TextInputMask
                   type={'money'}
+                  onEndEditing={()=>{
+                    let {contasareceber} = this.state;
+
+                    let n = Number(this.state.totalRecebido);
+                    if((contasareceber[index].valor_parcial == '' && contasareceber[index].status == "fechado") 
+                    || (contasareceber[index].valor_parcial == '0,00' && contasareceber[index].status == "fechado")){
+                                                    
+                      let last_value = contasareceber[index].last_value.replace(".","");
+                      let _valor_parcial = contasareceber[index].valor_parcial.replace(".","");
+                      //alert(_valor_parcial);
+                      n-=parseFloat((last_value).replace(/,/g,'.'));
+                      alert(n);
+                      n += Number(this.state.contasareceber[index].valor);
+
+                      this.setState({totalRecebido: n});
+                      let pendente = this.state.totalReceber-n;
+                      this.setState({saldoPendente: pendente});
+                    }else{
+                      
+                      if(contasareceber[index].status == "fechado"){
+                        if(
+                          parseFloat(((contasareceber[index].valor_parcial).replace(".","")).replace(/,/g,'.'))
+                          >Number(contasareceber[index].valor)){
+                          
+                          //contasareceber[index].valor_parcial = this.numberToReal(Number(this.state.contasareceber[index].valor));
+                          let _valor_parcial = contasareceber[index].valor_parcial.replace(".","");
+                          
+                          if(contasareceber[index].last_value != ''){
+                            let last_value = contasareceber[index].last_value.replace(".","");
+                            n-= parseFloat((last_value).replace(/,/g,'.'));
+                          }
+                          //let last_valor_parcial_ = (this.state.contasareceber[index].valor_parcial).replace(".","");
+                          if(contasareceber[index].last_value == ''){
+                            n-=Number(contasareceber[index].valor);
+                          }
+
+                          n+=parseFloat((_valor_parcial).replace(/,/g,'.'));
+                          this.setState({totalRecebido: n});
+                          let pendente = this.state.totalReceber-n;
+                          this.setState({saldoPendente: pendente});
+                        }else{
+                          let _valor_parcial = contasareceber[index].valor_parcial.replace(".","");
+                          if(contasareceber[index].last_value != ''){
+                            let last_value = contasareceber[index].last_value.replace(".","");
+                            n-= parseFloat((last_value).replace(/,/g,'.'));
+                          }
+
+                          if(contasareceber[index].last_value == ''){
+                            n-=Number(contasareceber[index].valor);
+                          }
+                          
+                          n+=parseFloat((_valor_parcial).replace(/,/g,'.'));
+                          this.setState({totalRecebido: n});
+                          let pendente = this.state.totalReceber-n;
+                          this.setState({saldoPendente: pendente});
+                          //contasareceber[index].valor_parcial = text
+                        }
+                      }
+                    }
+                    this.setState({
+                      contasareceber,
+                      last_value: contasareceber[index].valor_parcial
+                    });
+                  }}
                   options={{
                     precision: 2,
                     unit: '',
@@ -363,33 +429,25 @@ export default class ClienteContas extends Component<Props> {
                   keyboardType="number-pad"
                   value={this.state.contasareceber[index].valor_parcial}
                   underlineColorAndroid="blue"
+                  
                   onChangeText={text => {
                     let {contasareceber} = this.state;
+                    
+                    
+                    //alert(text);
                     //alert(parseFloat((text.replace(".","")).replace(/,/g,'.')));
-                    if(text == '' && this.state.contasareceber[index].status == "aberto"){
-                      //alert(`teste`);
-                      let n = Number(this.state.totalRecebido);
-                      let _valor_parcial = this.state.contasareceber[index].valor_parcial.replace(".","");
-                      n-=parseFloat((_valor_parcial).replace(/,/g,'.'));
-                      n += Number(this.state.contasareceber[index].valor);
-
-                      this.setState({totalRecebido: n});
-                      let pendente = this.state.totalReceber-n;
-                      this.setState({saldoPendente: pendente});
-                    }
-                    if(parseFloat((text.replace(".","")).replace(/,/g,'.'))
-                    >Number(this.state.contasareceber[index].valor)){
-                      //this.state.moeda == "G"? this.numberToReal(Number(item.valor)).split(',')[0] : this.numberToReal(Number(item.valor))
-                      contasareceber[index].valor_parcial = this.numberToReal(Number(this.state.contasareceber[index].valor));
+                    
+                    
+                    //let n = this.state.contasareceber[index].valor_parcial;
+                    //parseFloat(n.replace(/,/g,'.'));
+                    if(parseFloat((text.replace(".","")).replace(/,/g,'.')) >Number(contasareceber[index].valor)){
+                      contasareceber[index].valor_parcial = contasareceber[index].valor;
                     }else{
-                  
-                    contasareceber[index].valor_parcial = text;
+                      contasareceber[index].valor_parcial = text;
                     }
                     this.setState({
                       contasareceber
                     });
-                    //let n = this.state.contasareceber[index].valor_parcial;
-                    //parseFloat(n.replace(/,/g,'.'));
                   }}
                 />
               </View>
@@ -412,8 +470,12 @@ export default class ClienteContas extends Component<Props> {
         
       </View>
       <View style={{flex: 1, alignContent: 'center', alignItems: 'flex-end'}}>
-        <Text style={{fontWeight: '500', color: 'black'}}>{this.state.moeda == "G"? this.numberToReal(Number(this.state.totalReceber)).split(',')[0]:this.numberToReal(Number(this.state.totalReceber))}</Text>
-        <Text style={{fontWeight: '500', color: 'black'}}>{this.state.moeda == "G"? this.numberToReal(Number(this.state.totalRecebido)).split(',')[0]:this.numberToReal(Number(this.state.totalRecebido))}</Text>
+        <Text style={{fontWeight: '500', color: 'black'}}>{this.state.moeda == "G"? 
+        this.numberToReal(Number(this.state.totalReceber)).split(',')[0]
+        :this.numberToReal(Number(this.state.totalReceber))}</Text>
+        <Text style={{fontWeight: '500', color: 'black'}}>{this.state.moeda == "G"? 
+        this.numberToReal(Number(this.state.totalRecebido)).split(',')[0]
+        :this.numberToReal(Number(this.state.totalRecebido))}</Text>
         <Text style={{fontWeight: '500', color: 'black'}}>{this.state.moeda == "G"? this.numberToReal(Number(this.state.saldoPendente)).split(',')[0]:this.numberToReal(Number(this.state.saldoPendente))}</Text>
       </View>
       
