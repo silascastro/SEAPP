@@ -8,7 +8,6 @@ import Login from './src/screens/Login';
 import {name as appName} from './app.json';
 import Routes from './src/Routes';
 import Request from './src/screens/Request';
-import Teste from './src/screens/Teste'
 import Produto from './src/screens/Produto';
 import ClienteContas from './src/screens/ClienteContas';
 

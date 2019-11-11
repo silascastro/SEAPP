@@ -5,7 +5,7 @@ StatusBar,
 View,
 NativeModules, 
 DeviceEventEmitter,NativeEventEmitter} from 'react-native';
-import { StackActions, NavigationActions, navigate } from 'react-navigation';
+import { StackActions, NavigationActions } from 'react-navigation';
 import * as Permission from '../../Permissions';
 const LoginModule = NativeModules.LoginModule;
 const eventEmitter = new NativeEventEmitter(NativeModules.LoginModule);

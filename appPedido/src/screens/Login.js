@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {ActivityIndicator,StyleSheet, Text, View, TextInput, 
   Button,Alert ,StatusBar, Switch, Picker, NativeModules, 
-  DeviceEventEmitter, NativeEventEmitter} from 'react-native';
+  NativeEventEmitter} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { StackActions, NavigationActions, navigate } from 'react-navigation';
 import * as Permission from '../../Permissions';
@@ -14,8 +14,6 @@ const resetActionHome = StackActions.reset({
   index: 0,
   actions: [
     NavigationActions.navigate({ routeName: 'Home' }),
-    //NavigationActions.navigate({ routeName: 'Search' }),
-    //NavigationActions.navigate({ routeName: 'Cliente' }),
   ],
 });
 export default class Login extends Component {

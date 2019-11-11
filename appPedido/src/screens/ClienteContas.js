@@ -13,7 +13,7 @@ import {TextInputMask} from 'react-native-masked-text';
 import { StackActions, NavigationActions} from 'react-navigation';
    import AntDesign from 'react-native-vector-icons/AntDesign';
 
-const API = "http://177.16.53.198:3000/";
+
 const LoginModule = NativeModules.LoginModule;
 const eventEmitter = new NativeEventEmitter(NativeModules.LoginModule);
 let _cod_vendedor;

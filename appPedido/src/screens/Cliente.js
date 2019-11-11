@@ -5,7 +5,6 @@ import {DrawerLayoutAndroid,Alert,StyleSheet, Text,
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import * as config from '../../config';
 import AsyncStorage from '@react-native-community/async-storage';
-const API = "http://179.177.126.10:3000/";
 
 export default class Cliente extends Component<Props> {
   constructor(props){

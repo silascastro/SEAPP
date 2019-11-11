@@ -103,13 +103,10 @@ export default class Home extends Component<Props> {
 
   getEmpresa(){
       setTimeout(() => {
-        
         this.props.navigation.setParams({
           empresa: this.state.empresa,
         });
-        //alert(this.state.empresa);
       }, 2000);
-      //alert(this.state.empresa);
   }
 
   sair(){
@@ -128,12 +125,9 @@ export default class Home extends Component<Props> {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      /*body: JSON.stringify({
-        firstParam: 'yourValue',
-        secondParam: 'yourOtherValue',
-      }),*/
-    }).then((response)=> response.json()).then((resp) => {
-      this.setState({usuarios: resp.nome_fantasia});
+    }).then((response)=> response.json())
+      .then((resp) => {
+        this.setState({usuarios: resp.nome_fantasia});
       
     }).catch((err)=>{
       Alert.alert('Atenção', 'erro ao conectar-se com o servidor!');
