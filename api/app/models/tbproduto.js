@@ -13,7 +13,8 @@ module.exports = (sequelize, DataTypes) =>{
         qtd: {type: DataTypes.INTEGER},
         preco_compra: {type: DataTypes.INTEGER},
         preco_venda: {type: DataTypes.INTEGER},
-        preco_minimo: {type: DataTypes.INTEGER}
+        preco_minimo: {type: DataTypes.INTEGER},
+	tipo_unidade: {type: DataTypes.STRING},
         //telefone: {type: DataTypes.STRING},
         //cidade: DataTypes.STRING,
 	    //  estado: DataTypes.STRING,

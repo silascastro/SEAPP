@@ -60,10 +60,6 @@ export default class Request extends Component<Props> {
 
   getTipoMoeda(){
     AsyncStorage.getItem('moeda',(error,result)=> {
-      if(error){
-          //AsyncStorage.setItem('_ip',config.url);
-          //API = config.url;
-      }
       if(result){
         //API = result;
         this.setState({moeda: result});

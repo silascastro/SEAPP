@@ -8,7 +8,6 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import Login from './screens/Login';
 import Home from './screens/Home';
 import AuthLoading from './screens/AuthLoading';
-import Search from './screens/Search';
 import Request from './screens/Request';
 import Cliente from './screens/Cliente';
 import ClienteContas from './screens/ClienteContas';
@@ -21,7 +20,6 @@ const Routes = createAppContainer(
     {AuthLoading: AuthLoading,
       Login: Login,
       Home: Home,
-      Search: Search, 
       Request: Request , 
       Cliente: Cliente, 
       ClienteContas: ClienteContas,

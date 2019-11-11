@@ -225,6 +225,7 @@ export default class ClienteContas extends Component<Props> {
   }
 
   fechaConta(data, cod_vendedor, nome_vendedor, cod_celular){
+    console.log(data);
     //alert('entrou');
     //alert('nome: '+_nome_vendedor+'cod_celular'+_cod_celular+'cod_vendedor'+_cod_vendedor);
     this.setState({loading: true});
@@ -243,7 +244,7 @@ export default class ClienteContas extends Component<Props> {
           numero_documento: aux[e].documento,
           data_vencimento: aux[e].dt_vencimento,
           valor_documento: aux[e].valor,
-          valor_recebido: aux[e].valor_parcial!=''? parseFloat((aux[e].valor_parcial).replace(/,/g,'.')):aux[e].valor
+          valor_recebido: aux[e].valor_parcial!=''? parseFloat(((aux[e].valor_parcial).replace(".","")).replace(/,/g,'.')):aux[e].valor
         };
         console.log(data);
         //alert(JSON.stringify(data));
@@ -284,10 +285,10 @@ export default class ClienteContas extends Component<Props> {
                     <Text style={{fontWeight: '600'}}>Valor</Text>
                   </View>
                   <View style={{flex: 1, alignItems: 'center'}}>
-                    <Text style={{fontWeight: '600'}}>Recebido</Text>
+                    <Text style={{fontWeight: '600'}}></Text>
                   </View>
                   <View style={{flex: 1, alignItems: 'center'}}>
-                    <Text style={{fontWeight: '600'}}>Valor parcial</Text>
+                    <Text style={{fontWeight: '600'}}>Recebido</Text>
                   </View>
                   
                 </View>
@@ -331,8 +332,13 @@ export default class ClienteContas extends Component<Props> {
                   if(this.state.contasareceber[index].valor_parcial!=''){
                     let _valor_parcial = this.state.contasareceber[index].valor_parcial.replace(".","");
                     n+=parseFloat((_valor_parcial).replace(/,/g,'.'));
+                    
+                    
                   }else{
                     n += Number(this.state.contasareceber[index].valor);
+                    let {contasareceber}= this.state;
+                    contasareceber[index].valor_parcial =  this.numberToReal(Number(contasareceber[index].valor));
+                    this.setState({contasareceber});
                   }
                     this.setState({totalRecebido: n});
                   //alert(this.state.totalReceber);

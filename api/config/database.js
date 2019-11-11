@@ -2,7 +2,7 @@ module.exports = {
   username: 'postgres',
   password: 'masterkey',
   database: 'estoque_db',
-  host: '177.16.79.166',
+  host: '200.146.28.28',
   port: '5432',
   dialect: 'postgres',
 }
