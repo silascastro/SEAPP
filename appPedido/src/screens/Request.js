@@ -134,6 +134,7 @@ export default class Request extends Component<Props> {
     const total = (this.state.pedido)
     .map(p => p.preco_venda).reduce(
       (total, preco)=>total+Number(preco),0);
+      //alert(total);
     this.setState({totalPedido: total});
   }
 
@@ -155,7 +156,7 @@ export default class Request extends Component<Props> {
       qtd_pedida: data.qtd,
       preco_unitario: data.preco_uni,
       preco_total: data.preco_venda,
-    }
+    };
 
     fetch(config.url+'pedidoitens', {
       method: 'POST',
@@ -213,6 +214,12 @@ export default class Request extends Component<Props> {
       this.setState({loading: false});
       console.log(err);
     });
+  }
+
+  numberToQTd(numero) {
+    var numero = numero.toFixed(3).split('.');
+    numero[0] = "" + numero[0].split(/(?=(?:...)*$)/).join('.');
+    return numero.join(',');
   }
 
   render(){
@@ -344,7 +351,8 @@ export default class Request extends Component<Props> {
                         <View style={{flexDirection: 'row'}}>
 
                           <View style={{flex: 1, alignItems: 'stretch', }}>
-                            <Text style={{fontWeight: '600', color: 'black',}}>{data.item.qtd} </Text>
+                            <Text style={{fontWeight: '600', color: 'black',}}>{(data.item.tipo_unid == "UND" 
+                    || data.item.tipo_unid == "UN")? data.item.qtd :this.numberToQTd(Number(data.item.qtd))} </Text>
                           </View>
                           <View style={{flex: 1, alignItems: 'flex-end',}}>
                             <Text style={{fontWeight: '600', color: 'black',}}>

@@ -205,16 +205,7 @@ export default class ClienteContas extends Component<Props> {
       body: JSON.stringify(data),
       
     }).then((response) => response.json()).then((resp) => {
-      const {dispatch} = this.props.navigation;
-      const resetActionHome = StackActions.reset({
-        index: 0,
-        actions: [
-          NavigationActions.navigate({ routeName: 'Home', 
-          params: {message: 'contas recebidas com sucesso!'} }),
-        ],
-      });
-      this.setState({loading: false});
-      dispatch(resetActionHome);
+      
       
       console.log(resp);
     }).catch((err)=>{
@@ -225,7 +216,7 @@ export default class ClienteContas extends Component<Props> {
   }
 
   fechaConta(data, cod_vendedor, nome_vendedor, cod_celular){
-    console.log(data);
+    //alert(JSON.stringify(data));
     //alert('entrou');
     //alert('nome: '+_nome_vendedor+'cod_celular'+_cod_celular+'cod_vendedor'+_cod_vendedor);
     this.setState({loading: true});
@@ -244,7 +235,9 @@ export default class ClienteContas extends Component<Props> {
           numero_documento: aux[e].documento,
           data_vencimento: aux[e].dt_vencimento,
           valor_documento: aux[e].valor,
-          valor_recebido: aux[e].valor_parcial!=''? parseFloat(((aux[e].valor_parcial).replace(".","")).replace(/,/g,'.')):aux[e].valor
+          valor_recebido: aux[e].valor_parcial!=''? 
+          parseFloat((((aux[e].valor_parcial).split(".")).join('')).replace(/,/g,'.'))
+          :aux[e].valor
         };
         console.log(data);
         //alert(JSON.stringify(data));
@@ -253,7 +246,16 @@ export default class ClienteContas extends Component<Props> {
       }
       //console.log(aux[e]);
     }
-    
+    const {dispatch} = this.props.navigation;
+      const resetActionHome = StackActions.reset({
+        index: 0,
+        actions: [
+          NavigationActions.navigate({ routeName: 'Home', 
+          params: {message: 'contas recebidas com sucesso!'} }),
+        ],
+      });
+      this.setState({loading: false});
+      dispatch(resetActionHome);
   }
 
   render() {
@@ -264,30 +266,32 @@ export default class ClienteContas extends Component<Props> {
       </View>
       :
     <View style={{flex: 1}}>
-    <View style={{marginLeft: 10, marginRight: 10, 
+    <View style={{marginLeft: 5, marginRight: 5, 
       paddingTop: 10,}}>
                 
-                <View style={{marginLeft: 15, borderBottomWidth: 0.5, borderBottomColor: 'gray', paddingBottom: 5}}>
+                <View style={{marginLeft: 10, borderBottomWidth: 0.5, 
+                  borderBottomColor: 'gray', paddingBottom: 5}}>
                   <View style={{flexDirection: 'row'}}>
                     <Text style={{fontWeight: '500'}}>Cliente: </Text>
                     <Text>{this.props.navigation.getParam('cod_cliente')+'-'}</Text>
                     <Text>{this.props.navigation.getParam('nome')}</Text>
                   </View>
                 </View>
-                <View style={{flexDirection: 'row', marginLeft: 15, borderBottomWidth: 0.5, borderColor: 'gray'}}>
-                  <View style={{flex: 1, alignContent: 'center'}}>
+                <View style={{flexDirection: 'row', marginLeft: 10, 
+                borderBottomWidth: 0.5, borderColor: 'gray'}}>
+                  <View style={{flex: 2, alignContent: 'center'}}>
                     <Text style={{fontWeight: '600'}}>Documento</Text>
                   </View>
-                  <View style={{flex: 1, alignItems: 'center'}}>
+                  <View style={{flex: 2, alignItems: 'center'}}>
                     <Text style={{fontWeight: '600'}}>Vencimento</Text>
                   </View>
-                  <View style={{flex: 1, alignItems: 'center'}}>
+                  <View style={{flex: 2, alignItems: 'center'}}>
                     <Text style={{fontWeight: '600'}}>Valor</Text>
                   </View>
                   <View style={{flex: 1, alignItems: 'center'}}>
                     <Text style={{fontWeight: '600'}}></Text>
                   </View>
-                  <View style={{flex: 1, alignItems: 'center'}}>
+                  <View style={{flex: 2, alignItems: 'center'}}>
                     <Text style={{fontWeight: '600'}}>Recebido</Text>
                   </View>
                   
@@ -301,27 +305,25 @@ export default class ClienteContas extends Component<Props> {
         data={this.state.contasareceber}
         renderItem={({item, index})=>
         <TouchableNativeFeedback >
-        <View style={{elevation: 5,paddingTop: 5, 
-         paddingLeft: 10, 
-          paddingRight: 10}}>
+        <View style={{elevation: 5,paddingTop: 5, }}>
           <View style={{flexDirection: 'row', marginLeft: 5}}>
-            <View style={{flex: 1, alignContent: 'center', 
+            <View style={{flex: 2, alignContent: 'center', 
             alignItems: 'center', justifyContent: 'center'}}>
               <Text style={{}}>{item.documento}</Text>
             </View>
-            <View style={{flex: 1, alignContent: 'center', 
+            <View style={{flex: 2, alignContent: 'center', 
             alignItems: 'center', justifyContent: 'center'}}> 
               <Text style={{}}>{item.dt_vencimento.split('-')[2]+'/'+item.dt_vencimento.split('-')[1]+'/'+item.dt_vencimento.split('-')[0]}</Text>
             </View>
-            <View style={{flex: 1, 
+            <View style={{flex: 2, 
             alignContent: 'center', 
             alignItems: 'flex-end', justifyContent: 'center'}}>
               <Text style={{}}>{this.state.moeda == "G"? 
               this.numberToReal(Number(item.valor)).split(',')[0] 
               : this.numberToReal(Number(item.valor))}</Text>
             </View>
-            <View style={{flex: 1, alignContent: 'center', 
-            alignItems: 'center', justifyContent: 'center'}}>
+            <View style={{flex: 1, alignContent: 'flex-end',
+            alignItems: 'flex-end', justifyContent: 'center'}}>
               <AntDesign name={this.state.contasareceber[index].status == 'aberto' ? 'close' : 'check'} 
               size={25} 
               color={this.state.contasareceber[index].status == 'aberto' ? 'red' : 'green'}
@@ -330,7 +332,7 @@ export default class ClienteContas extends Component<Props> {
                 let n = Number(this.state.totalRecebido);  
                 if(this.state.contasareceber[index].status == 'aberto'){
                   if(this.state.contasareceber[index].valor_parcial!=''){
-                    let _valor_parcial = this.state.contasareceber[index].valor_parcial.replace(".","");
+                    let _valor_parcial = (this.state.contasareceber[index].valor_parcial.split(".").join(''));
                     n+=parseFloat((_valor_parcial).replace(/,/g,'.'));
                     
                     
@@ -338,6 +340,7 @@ export default class ClienteContas extends Component<Props> {
                     n += Number(this.state.contasareceber[index].valor);
                     let {contasareceber}= this.state;
                     contasareceber[index].valor_parcial =  this.numberToReal(Number(contasareceber[index].valor));
+                    contasareceber[index].last_value = this.numberToReal(Number(contasareceber[index].valor));
                     this.setState({contasareceber});
                   }
                     this.setState({totalRecebido: n});
@@ -347,7 +350,7 @@ export default class ClienteContas extends Component<Props> {
                   this.changeState(index,'fechado');
                 }else{
                   if(this.state.contasareceber[index].valor_parcial!=''){
-                    let _valor_parcial = this.state.contasareceber[index].valor_parcial.replace(".","");
+                    let _valor_parcial = (this.state.contasareceber[index].valor_parcial.split(".").join(''));
                     n-=parseFloat((_valor_parcial).replace(/,/g,'.'));
                   }else{
                     n-= Number(this.state.contasareceber[index].valor);
@@ -359,7 +362,7 @@ export default class ClienteContas extends Component<Props> {
                 }
               }}/>
             </View>
-            <View style={{flex: 1, justifyContent: 'flex-start'}}>
+            <View style={{flex: 2, justifyContent: 'flex-start'}}>
               <View style={{flex: 1, alignContent: 'center', 
               alignItems: 'center'}}>
                 <TextInputMask
@@ -370,44 +373,59 @@ export default class ClienteContas extends Component<Props> {
                     let n = Number(this.state.totalRecebido);
                     if((contasareceber[index].valor_parcial == '' && contasareceber[index].status == "fechado") 
                     || (contasareceber[index].valor_parcial == '0,00' && contasareceber[index].status == "fechado")){
-                                                    
-                      let last_value = contasareceber[index].last_value.replace(".","");
-                      let _valor_parcial = contasareceber[index].valor_parcial.replace(".","");
-                      //alert(_valor_parcial);
-                      n-=parseFloat((last_value).replace(/,/g,'.'));
-                      alert(n);
-                      n += Number(this.state.contasareceber[index].valor);
-
+                      
+                      if(contasareceber[index].last_value != ''){
+                        let last_value = contasareceber[index].last_value.replace(".","");
+                        n-=parseFloat((last_value).replace(/,/g,'.'));
+                        //alert(n);
+                        n += Number(this.state.contasareceber[index].valor);
+                      }
                       this.setState({totalRecebido: n});
                       let pendente = this.state.totalReceber-n;
                       this.setState({saldoPendente: pendente});
                     }else{
                       
                       if(contasareceber[index].status == "fechado"){
+                        //alert('last value: '+contasareceber[index].last_value);
                         if(
-                          parseFloat(((contasareceber[index].valor_parcial).replace(".","")).replace(/,/g,'.'))
-                          >Number(contasareceber[index].valor)){
+                          parseFloat(((contasareceber[index].valor_parcial.split(".").join('')))
+                          .replace(/,/g,'.'))>Number(contasareceber[index].valor)){
                           
                           //contasareceber[index].valor_parcial = this.numberToReal(Number(this.state.contasareceber[index].valor));
-                          let _valor_parcial = contasareceber[index].valor_parcial.replace(".","");
-                          
+                          contasareceber[index].valor_parcial = this.numberToReal(Number(contasareceber[index].valor));
                           if(contasareceber[index].last_value != ''){
+                            
+                          
+
+                          let last_value = (contasareceber[index].last_value.split(".")).join('');
+                          if(parseFloat((last_value).replace(/,/g,'.')) == contasareceber[index].valor){
+
+                          }else{
+                            let last_value = contasareceber[index].last_value.replace(".","");
+                            n-= parseFloat((last_value).replace(/,/g,'.'));
+                            contasareceber[index].valor_parcial = contasareceber[index].valor;
+                            let _valor_parcial = (this.state.contasareceber[index].valor_parcial.split(".").join(''))
+                            n+=parseFloat((_valor_parcial).replace(/,/g,'.'));
+                          }
+                        }
+                          /*if(contasareceber[index].last_value != ''){
                             let last_value = contasareceber[index].last_value.replace(".","");
                             n-= parseFloat((last_value).replace(/,/g,'.'));
                           }
                           //let last_valor_parcial_ = (this.state.contasareceber[index].valor_parcial).replace(".","");
                           if(contasareceber[index].last_value == ''){
                             n-=Number(contasareceber[index].valor);
-                          }
+                          }*/
+                          
 
-                          n+=parseFloat((_valor_parcial).replace(/,/g,'.'));
+                          
                           this.setState({totalRecebido: n});
                           let pendente = this.state.totalReceber-n;
                           this.setState({saldoPendente: pendente});
                         }else{
-                          let _valor_parcial = contasareceber[index].valor_parcial.replace(".","");
+                          let _valor_parcial = (this.state.contasareceber[index].valor_parcial.split(".").join(''));
                           if(contasareceber[index].last_value != ''){
-                            let last_value = contasareceber[index].last_value.replace(".","");
+                            let last_value = contasareceber[index].last_value..split(".")).join('');
                             n-= parseFloat((last_value).replace(/,/g,'.'));
                           }
 
@@ -423,9 +441,10 @@ export default class ClienteContas extends Component<Props> {
                         }
                       }
                     }
+                    contasareceber[index].last_value = contasareceber[index].valor_parcial;
                     this.setState({
                       contasareceber,
-                      last_value: contasareceber[index].valor_parcial
+                      
                     });
                   }}
                   options={{
@@ -446,10 +465,13 @@ export default class ClienteContas extends Component<Props> {
                     
                     //let n = this.state.contasareceber[index].valor_parcial;
                     //parseFloat(n.replace(/,/g,'.'));
-                    if(parseFloat((text.replace(".","")).replace(/,/g,'.')) >Number(contasareceber[index].valor)){
+                    if(parseFloat(((text.split('')).join('')).replace(/,/g,'.')) >Number(contasareceber[index].valor)){
                       contasareceber[index].valor_parcial = contasareceber[index].valor;
                     }else{
-                      contasareceber[index].valor_parcial = text;
+                      
+                        contasareceber[index].valor_parcial = text;
+                      
+                      
                     }
                     this.setState({
                       contasareceber

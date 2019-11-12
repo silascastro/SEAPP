@@ -1,5 +1,7 @@
-import {PermissionsAndroid} from 'react-native';
-
+import {PermissionsAndroid, NativeModules, NativeEventEmitter} from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
+const eventEmitter = new NativeEventEmitter(NativeModules.LoginModule);
+const LoginModule = NativeModules.LoginModule;
 
 async function readPhoneState() {
     try{
@@ -19,6 +21,16 @@ async function readPhoneState() {
       if(granted== PermissionsAndroid.RESULTS.GRANTED){
         console.log('permissão de ler estado concedida');
         //CallPhone();
+        eventEmitter.addListener(
+          'imei', (e) =>{
+            //this.setState({imei: e.imei});
+            AsyncStorage.setItem('imei',e.imei);
+            
+          }
+        );
+        //Permission.readPhoneState();
+        LoginModule.getImei();
+        
       }else{
         //alert("Permissão negada");
       }

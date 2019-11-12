@@ -8,9 +8,11 @@ import { StackActions, NavigationActions, navigate } from 'react-navigation';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import * as config from '../../config'; 
+import * as Permission from '../../Permissions'
 import AsyncStorage from '@react-native-community/async-storage';
 
-const eventEmitter = new NativeEventEmitter(NativeModules.LoginModule);
+
+
 
 const DATA = [
   {title: 'Pedidos', subtitle: 'Crie e gerencie os pedidos', icon: 'local-offer', type: Icon}, 
@@ -19,6 +21,7 @@ const DATA = [
   {title: 'Sair', subtitle: 'Analise e gerencie seus clientes', icon: 'md-exit', type: Ionicons},
 ];
 
+const eventEmitter = new NativeEventEmitter(NativeModules.LoginModule);
 const LoginModule = NativeModules.LoginModule;
 const ToastModule = NativeModules.ToastModule;
 
@@ -34,7 +37,8 @@ export default class Home extends Component<Props> {
     super(props);
     this.state = {
       loading: true, user: '',
-      empresa: '', empresa_cod: ''
+      empresa: '', empresa_cod: '',
+      imei: ''
     };
     this.getEmpresaData();
   }
@@ -79,6 +83,7 @@ export default class Home extends Component<Props> {
 
 
   componentDidMount(){
+    Permission.readPhoneState();
    this.getIp(); 
    let e = this.props.navigation.getParam('message')
    if(e!=null)
@@ -86,6 +91,8 @@ export default class Home extends Component<Props> {
 
     this.getEmpresa();
     AsyncStorage.removeItem("PEDIDO");
+
+    
   }
 
   async getIp(){

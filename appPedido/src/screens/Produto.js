@@ -83,7 +83,7 @@ export default class Produto extends Component<Props> {
   }
     
   changeText(value, index){
-    alert(index);
+    //alert(index);
     let aux = this.state.produtos;
     aux[index].qtd_selec = value;
     alert(aux[index].qtd_selec);
@@ -102,6 +102,12 @@ export default class Produto extends Component<Props> {
     aux[index].qtd_selec=(Number(aux[index].qtd_selec)-1).toString();
     this.setState({produtos: aux});
     
+  }
+
+  numberToQTd(numero) {
+    var numero = numero.toFixed(3).split('.');
+    numero[0] = "" + numero[0].split(/(?=(?:...)*$)/).join('.');
+    return numero.join(',');
   }
 
   numberToReal(numero) {
@@ -207,7 +213,10 @@ export default class Produto extends Component<Props> {
                             </View>
                             <View style={{flex: 1, alignItems: 'center'}}>
                               <Text>Unidades</Text>
-                              <Text style={{fontWeight: '700', color: Number(item.qtd)<=0 ? 'red': 'black'}}>{Number(item.qtd)}</Text>
+                              <Text style={{fontWeight: '700', 
+                              color: Number(item.qtd)<=0 ? 'red': 'black'}}>
+                                {(item.tipo_unid == "UND") || (item.tipo_unid == "UN") ?  Number(item.qtd): Number(item.qtd).toFixed(3)}
+                                </Text>
                             </View>
                             <View style={{flex: 1, alignItems: 'flex-end'}}>
                               <Text>Valor</Text>
@@ -221,9 +230,9 @@ export default class Produto extends Component<Props> {
                           <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
                             <Button title="adicionar ao pedido" color="green"
                               onPress={()=>{
-                                if(!item.tipo_unid == "UND" || !item.tipo_unid == "UN"){
+                                if(!(item.tipo_unid == "UND") && !(item.tipo_unid == "UN")){
                                   
-                                  this.setState({select_qtd: '1,00'});
+                                  this.setState({select_qtd: '1,000'});
                                 }
                                 //alert(JSON.stringify(item));
                                 this.setState({produtoSelecionado: item});
@@ -252,6 +261,9 @@ export default class Produto extends Component<Props> {
       {this.state.produtoSelecionado!=''?
       <View style={{flex: 1, backgroundColor: '#ffffff', elevation: 5}}>
         <View style={{backgroundColor: /*'#EEEEEE'*/'#E0E0E0',paddingLeft: 10, paddingRight: 10, paddingTop: 10 }}>
+          <View style={{alignContent: 'center',alignItems: 'center'}}>
+            <Text style={{fontSize: 18, fontWeight: '800'}}>Lançamento de pedido</Text>
+          </View>
           <View style={{flexDirection: 'row'}}>
             <View style={{flex: 1}}>
               <Text style={{fontSize: 15, fontWeight: '600', color: 'black'}}>Produto: </Text> 
@@ -263,31 +275,36 @@ export default class Produto extends Component<Props> {
             </View>
           </View>
           <View style={{flexDirection: 'row'}}>
-            <View style={{flex: 1}}>
-              <Text style={{fontSize: 15, fontWeight: '600', color: 'black'}}>Preço: </Text>
-            </View>
-            <View style={{flex: 1, alignItems: 'flex-end'}}>
-              <Text style={{alignSelf: 'flex-end'}}>{
-                this.numberToReal(Number(this.state.produtoSelecionado.preco_venda))
+            <View style={{flexDirection: 'row', flex: 1}}>
+              <View style={{flex: 1}}>
+                <Text style={{fontSize: 15, 
+                  fontWeight: '600', color: 'black'}}>Preço unid: </Text>
+              </View>
+              <View style={{flex: 1}}>
+                <Text style={{alignSelf: 'flex-start'}}>{
+                  this.numberToReal(Number(this.state.produtoSelecionado.preco_venda))
+                  }</Text>
+                </View>
+              </View>
+            <View style={{flex: 1, flexDirection: 'row'}}> 
+              <View style={{flex: 1,}}>
+                <Text style={{fontSize: 15, fontWeight: '600', color: 'black',alignSelf: 'flex-end'}}>Total: </Text>
+              </View>
+              <View style={{flex: 1, alignItems: 'flex-end'}}>
+                <Text style={{alignSelf: 'flex-end'}}>{
+                  
+                  /*this.numberToReal(Number(parseFloat(((this.state.select_qtd).replace(".","")).replace(/,/g,'.')))*/
+                  this.numberToReal(Number(parseFloat((((this.state.select_qtd).split('.')).join('')).replace(/,/g,'.')))
+                  *Number(this.state.produtoSelecionado.preco_venda))
                 }</Text>
+              </View>
             </View>
           </View>
-          <View style={{flexDirection: 'row'}}>
-            <View style={{flex: 1}}>
-              <Text style={{fontSize: 15, fontWeight: '600', color: 'black'}}>Total: </Text>
-            </View>
-            <View style={{flex: 1, alignItems: 'flex-end'}}>
-              <Text style={{alignSelf: 'flex-end'}}>{
-                
-                this.numberToReal(Number(parseFloat(((this.state.select_qtd).replace(".","")).replace(/,/g,'.')))
-                *Number(this.state.produtoSelecionado.preco_venda))
-              }</Text>
-            </View>
-          </View>
+          
         </View>
           <View style={{flex: 1, backgroundColor: '#E0E0E0'}}>
               <View style={{flex: 0, flexDirection: 'row', flex: 1}}>
-                <View style={{flex: 2,
+                <View style={{flex: 1,
                 alignItems: 'center',
                 justifyContent: 'center'}}>  
                   <View style={styles.float}>
@@ -302,7 +319,7 @@ export default class Produto extends Component<Props> {
                         if(Number(select_qtd)>1){
                         
                         //select_qtd = Number(select_qtd)-1;
-                        select_qtd = Number((parseFloat(((select_qtd).replace(".","")).replace(/,/g,'.')))-1);
+                        select_qtd = Number((parseFloat((((select_qtd).split(".").join(''))).replace(/,/g,'.')))-1);
                         //alert(qtds[index]);
                         this.setState({
                           select_qtd: select_qtd.toString()
@@ -311,11 +328,12 @@ export default class Produto extends Component<Props> {
                       }else{
                         let {select_qtd} = this.state;
                         //alert(this.state.select_qtd);
-                        if((parseFloat(((select_qtd).replace(".","")).replace(/,/g,'.')))>1){
+                        if((parseFloat((((select_qtd).split(".").join(''))).replace(/,/g,'.')))>1){
 
-                          let aux = parseFloat(((select_qtd).replace(".","")).replace(/,/g,'.'))-1;
+                          let aux = parseFloat((((select_qtd).split(".").join('')))
+                          .replace(/,/g,'.'))-1;
                           this.setState({
-                            select_qtd: this.numberToReal(aux)
+                            select_qtd: this.numberToQTd(aux)
                           });
                           
                         }
@@ -324,33 +342,17 @@ export default class Produto extends Component<Props> {
                     />
                   </View>
                 </View>
-                <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                <View style={{flex: 2, justifyContent: 'center', alignItems: 'center'}}>
                   
-                    {(!this.state.produtoSelecionado.tipo_unid == "UND") 
-                    || (!this.state.produtoSelecionado.tipo_unid == "UN") ? 
+                    {(this.state.produtoSelecionado.tipo_unid == "UND") 
+                    || (this.state.produtoSelecionado.tipo_unid == "UN") ? 
                       
-                      <TextInputMask
-                        type={'money'}
-                        options={{
-                          precision: 2,
-                          separator: ',',
-                          unit: '',
-                          delimiter:'' 
-                        }}
-                        keyboardType="number-pad"
-                        value={this.state.select_qtd}
-                        underlineColorAndroid="blue"
-                        onChangeText={text => {                        
-                          this.setState({select_qtd: text});
-                          //alert(Number((parseFloat(((text).replace(".","")).replace(/,/g,'.')))));
-                          //alert(this.numberToReal(Number(parseFloat(((text).replace(".","")).replace(/,/g,'.')))*Number(this.state.produtoSelecionado.preco_venda)));  
-                        }
-                        }
-                      />
-                      :
+                      
+                      
                       <TextInput /*value={this.state.produtos[index].qtd_selec} */
                       value={this.state.select_qtd}
                       //editable={true}
+                      underlineColorAndroid="red"
                       placeholder="qtd"
                       keyboardType="numeric"
                       style={{flex:1}}
@@ -368,26 +370,46 @@ export default class Produto extends Component<Props> {
                     }}
                     
                     />
+                    :
+                    <TextInputMask
+                        type={'money'}
+                        options={{
+                          precision: 3,
+                          separator: ',',
+                          unit: '',
+                          delimiter:'' 
+                        }}
+                        keyboardType="number-pad"
+                        value={this.state.select_qtd}
+                        underlineColorAndroid="blue"
+                        onChangeText={text => {                        
+                          this.setState({select_qtd: text});
+                          //alert(Number((parseFloat(((text).replace(".","")).replace(/,/g,'.')))));
+                          //alert(this.numberToReal(Number(parseFloat(((text).replace(".","")).replace(/,/g,'.')))*Number(this.state.produtoSelecionado.preco_venda)));  
+                        }
+                        }
+                      />
                     }
                       
                 
                 </View>
                 <View style={{alignItems: 'center', 
                 justifyContent: 'center',
-                flex: 2}}>
+                flex: 1}}>
                   <View style={styles.float}>
                     <AntDesign name='plus' size={25} 
                       color="black" style={{}}
                       onPress={()=>{
                         let {select_qtd} = this.state;
-                        let aux = select_qtd;
+                        let aux;
                         
                         //aux = Number(aux)+1;
-                        aux = Number((parseFloat(((aux).replace(".","")).replace(/,/g,'.')))+1);
-                        if(this.state.produtoSelecionado.tipo_unid == "UND" || this.state.produtoSelecionado.tipo_unid == "UN"){
-                          this.setState({select_qtd: aux.toString()});
+                        select_qtd = Number((parseFloat((((select_qtd).split(".").join(''))).replace(/,/g,'.')))+1);
+                        if(this.state.produtoSelecionado.tipo_unid == "UND" 
+                        || this.state.produtoSelecionado.tipo_unid == "UN"){
+                          this.setState({select_qtd: select_qtd.toString()});
                         }else{
-                        this.setState({select_qtd: this.numberToReal(aux)});
+                        this.setState({select_qtd: this.numberToQTd(select_qtd)});
                         }
                       }
                       /*this.state.produtos[index].qtd_selec+=1*/}
@@ -412,13 +434,15 @@ export default class Produto extends Component<Props> {
                     cod_produto: this.state.produtoSelecionado.cod_produto,
                     descricao: this.state.produtoSelecionado.descricao, 
                     marca: this.state.produtoSelecionado.marca,
-                    preco_venda: this.state.unitOption != "UND" ? 
-                    Number(parseFloat(((this.state.select_qtd).replace(".","")).replace(/,/g,'.')))
-                    *Number(this.state.produtoSelecionado.preco_venda)
-                    :
+                    preco_venda: (this.state.produtoSelecionado.tipo_unid == "UND" 
+                    || this.state.produtoSelecionado.tipo_unid == "UN")? 
                     Number(this.state.select_qtd)*Number(this.state.produtoSelecionado.preco_venda) 
+                    :
+                    Number(parseFloat((((this.state.select_qtd).split('.')).join('')).replace(/,/g,'.')))
+                    *Number(this.state.produtoSelecionado.preco_venda)
                     , 
-                    qtd: Number(parseFloat(((this.state.select_qtd).replace(".","")).replace(/,/g,'.'))),
+                    qtd: Number(parseFloat((((this.state.select_qtd).split('.')).join('')).replace(/,/g,'.'))),
+                    tipo_unid: this.state.produtoSelecionado.tipo_unid,
                     preco_uni: Number(this.state.produtoSelecionado.preco_venda)
                   });
                   this.setState({loadingAsync: true});
