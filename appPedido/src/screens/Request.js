@@ -268,9 +268,17 @@ export default class Request extends Component<Props> {
                   </View>
                   <View style={{flex: 1, alignContent: 'center', alignItems: 'flex-end'}}>
                     <Text style={{alignContent: "center", color: 'black', fontWeight: '600',fontSize: 13,}}>
-                    {this.state.moeda == "G" ? this.numberToReal(Number(this.props.navigation.getParam('limite'))).split(',')[0]: this.numberToReal(Number(this.props.navigation.getParam('limite')))}</Text>
-                    <Text style={{color: 'red'}}>{this.state.moeda == "G" ? this.numberToReal(Number(this.props.navigation.getParam('saldo_devedor'))).split(',')[0]:this.numberToReal(Number(this.props.navigation.getParam('saldo_devedor')))}</Text>
-                    <Text style={{color: this.props.navigation.getParam('saldo_compra')<0?'red':'green'}}>{this.state.moeda == "G" ? (this.numberToReal(Number(this.props.navigation.getParam('saldo_compra'))).replace("-.","-")).split(',')[0]:this.numberToReal(Number(this.props.navigation.getParam('saldo_compra'))).replace("-.","-")}</Text>
+                      {this.state.moeda == "G" ? 
+                       this.numberToReal(Number(this.props.navigation.getParam('limite'))).split(',')[0]
+                      :this.numberToReal(Number(this.props.navigation.getParam('limite')))}
+                    </Text>
+                    <Text style={{color: 'red'}}>{this.state.moeda == "G" ? 
+                      this.numberToReal(Number(this.props.navigation.getParam('saldo_devedor'))).split(',')[0]
+                      :this.numberToReal(Number(this.props.navigation.getParam('saldo_devedor')))}</Text>
+                    <Text style={{color: this.props.navigation.getParam('saldo_compra')<0?'red':'green'}}>{
+                    this.state.moeda == "G" ? 
+                    (this.numberToReal(Number(this.props.navigation.getParam('saldo_compra'))).replace("-.","-")).split(',')[0]
+                    :this.numberToReal(Number(this.props.navigation.getParam('saldo_compra'))).replace("-.","-")}</Text>
                   </View>
 
                 </View>

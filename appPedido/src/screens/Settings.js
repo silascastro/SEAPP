@@ -60,6 +60,7 @@ export default class Settings extends Component<Props> {
             this.setState({descricao: array[e].descricao});
           }
         }
+
         this.setState({ipcollections: array});
       }
     });
@@ -80,12 +81,24 @@ export default class Settings extends Component<Props> {
     AsyncStorage.getItem(_ipcollections, (error,result)=>{
       if(result){
         let aux = JSON.parse(result);
-        if(!(data in aux)){
+        
+        let repetido = false;
+        for(e in aux){
+          if(data.ip == aux[e].ip){
+            repetido = true;
+          }
+        }
+        
+        if(!repetido){
           aux.push(data);
           aux.sort();
           AsyncStorage.setItem(_ipcollections,
             JSON.stringify(aux));
+          this.getIpCollections();
         }
+        
+
+        
       }else{
         let aux = [];
         aux.push(data);

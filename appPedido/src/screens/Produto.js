@@ -41,12 +41,13 @@ export default class Produto extends Component<Props> {
   }
 
   getTipoMoeda(){
-    AsyncStorage.getItem('moeda',(error,result)=> {
-      if(result){
-        //API = result;
-        this.setState({moeda: result});
-      }
-    });
+    AsyncStorage.getItem('moeda',
+      (error,result)=> {
+        if(result){
+          //API = result;
+          this.setState({moeda: result});
+        }
+      });
   }
 
   getIp(){
@@ -231,7 +232,7 @@ export default class Produto extends Component<Props> {
                               <Text>Valor</Text>
                               <Text style={{fontWeight: '700', color: 'black'}}>
                               {this.state.moeda == "G" ? 
-                              this.numberToReal(Number(item.preco_venda)).split('')[0]
+                              this.numberToReal(Number(item.preco_venda)).split(',')[0]
                               :this.numberToReal(Number(item.preco_venda))}</Text>
                             </View>
                         </View>
