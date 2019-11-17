@@ -356,11 +356,13 @@ export default class Request extends Component<Props> {
                           </View>
                           <View style={{flex: 1, alignItems: 'flex-end',}}>
                             <Text style={{fontWeight: '600', color: 'black',}}>
-                            {this.numberToReal(data.item.preco_uni)} </Text> 
+                            {this.state.moeda == "G" ? this.numberToReal(data.item.preco_uni).split(',')[0]
+                            :this.numberToReal(data.item.preco_uni)} </Text> 
                           </View>
                           <View style={{flex: 1, alignItems: 'flex-end',}}>
                             <Text style={{fontWeight: '600', color: 'black',}}>
-                              {this.numberToReal(data.item.preco_venda)}
+                              {this.state.moeda == "G" ? this.numberToReal(data.item.preco_venda).split(',')[0]
+                              :this.numberToReal(data.item.preco_venda)}
                             </Text>
                           </View>
  
@@ -414,7 +416,9 @@ export default class Request extends Component<Props> {
         <View style={{alignItems: 'flex-end',padding: 10}}>
           <View style={{flexDirection: 'row'}}>
             <Text style={{  fontWeight: '600', fontSize: 13, color: 'black'}}>Total do pedido: </Text>
-            <Text style={{color: Number(this.state.totalPedido)>0? 'green' : 'red'}}>{this.numberToReal(Number(this.state.totalPedido))}</Text>
+            <Text style={{color: Number(this.state.totalPedido)>0? 'green' : 'red'}}>
+              {this.state.moeda == "G" ? this.numberToReal(Number(this.state.totalPedido)).split(',')[0]
+              : this.numberToReal(Number(this.state.totalPedido))}</Text>
           </View>
         </View>
 

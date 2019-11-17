@@ -33,11 +33,11 @@ export default class Settings extends Component<Props> {
 
   getIp(){
     AsyncStorage.getItem('_ip',(error,result)=> {
-        if(result){
-            let aux = result.split('//')[1];
-            let final = aux.split(':')[0];
-            this.setState({ip: final});
-        }
+      if(result){
+        let aux = result.split('//')[1];
+        let final = aux.split(':')[0];
+        this.setState({ip: final});
+      }
     });
   }
 
@@ -80,9 +80,12 @@ export default class Settings extends Component<Props> {
     AsyncStorage.getItem(_ipcollections, (error,result)=>{
       if(result){
         let aux = JSON.parse(result);
-        aux.push(data);
-        aux.sort();
-        AsyncStorage.setItem(_ipcollections,JSON.stringify(aux));
+        if(!(data in aux)){
+          aux.push(data);
+          aux.sort();
+          AsyncStorage.setItem(_ipcollections,
+            JSON.stringify(aux));
+        }
       }else{
         let aux = [];
         aux.push(data);
@@ -92,9 +95,8 @@ export default class Settings extends Component<Props> {
   }
 
   selectIp(item, index){
-    //alert(JSON.stringify(item));
-    //let  aux = JSON.parse(item);
-    this.setState({ip: item.ip, descricao: item.descricao});
+    this.setState({ip: item.ip, 
+      descricao: item.descricao});
   }
 
   static navigationOptions = ({navigation}) => ({
@@ -182,10 +184,13 @@ export default class Settings extends Component<Props> {
             }
           />
           
-          <View style={{flex: 1, justifyContent: 'flex-end', }}>    
-            <Button title="confirmar" disabled={this.state.ip!=''?false:true}
+          <View style={{flex: 1, 
+            justifyContent: 'flex-end', }}>    
+            <Button title="confirmar" 
+            disabled={this.state.ip!=''?false:true}
             onPress={() => {
-                this.setIp(this.state.ip, this.state.descricao);
+                this.setIp(this.state.ip, 
+                  this.state.descricao);
             }}
             />
           </View>

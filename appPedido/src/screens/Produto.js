@@ -18,7 +18,8 @@ export default class Produto extends Component<Props> {
       input: '', produtos: [], qtds: [], 
       produtoSelecionado: '', select_qtd: '1',
       loadingAsync: false,
-      unitOption: 'UND'
+      unitOption: 'UND',
+      moeda: ''
     };
   }
 
@@ -36,6 +37,16 @@ export default class Produto extends Component<Props> {
 
   componentDidMount(){
     this.getIp();
+    this.getTipoMoeda();
+  }
+
+  getTipoMoeda(){
+    AsyncStorage.getItem('moeda',(error,result)=> {
+      if(result){
+        //API = result;
+        this.setState({moeda: result});
+      }
+    });
   }
 
   getIp(){
@@ -219,7 +230,9 @@ export default class Produto extends Component<Props> {
                             <View style={{flex: 1, alignItems: 'flex-end'}}>
                               <Text>Valor</Text>
                               <Text style={{fontWeight: '700', color: 'black'}}>
-                              {this.numberToReal(Number(item.preco_venda))}</Text>
+                              {this.state.moeda == "G" ? 
+                              this.numberToReal(Number(item.preco_venda)).split('')[0]
+                              :this.numberToReal(Number(item.preco_venda))}</Text>
                             </View>
                         </View>
                       
@@ -228,7 +241,8 @@ export default class Produto extends Component<Props> {
                           <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
                             <Button title="adicionar ao pedido" color="green"
                               onPress={()=>{
-                                if(!(item.tipo_unid == "UND") && !(item.tipo_unid == "UN")){
+                                if(!(item.tipo_unid == "UND") 
+                                && !(item.tipo_unid == "UN")){
                                   
                                   this.setState({select_qtd: '1,000'});
                                 }
@@ -264,9 +278,11 @@ export default class Produto extends Component<Props> {
           </View>
           <View style={{flexDirection: 'row'}}>
             <View style={{flex: 1}}>
-              <Text style={{fontSize: 15, fontWeight: '600', color: 'black'}}>Produto: </Text> 
+              <Text style={{fontSize: 15, fontWeight: '600', 
+              color: 'black'}}>Produto: </Text> 
             </View>
-            <View style={{flex: 3, alignItems: 'flex-end', textAlign: 'right'}}>
+            <View style={{flex: 3, alignItems: 'flex-end', 
+            textAlign: 'right'}}>
               <Text>
                 {this.state.produtoSelecionado.cod_produto}-{this.state.produtoSelecionado.descricao}
               </Text>              
@@ -276,11 +292,14 @@ export default class Produto extends Component<Props> {
             <View style={{flexDirection: 'row', flex: 1}}>
               <View style={{flex: 1}}>
                 <Text style={{fontSize: 15, 
-                  fontWeight: '600', color: 'black'}}>Preço unid: </Text>
+                  fontWeight: '600', color: 'black'}}>Preço unid: 
+                  </Text>
               </View>
               <View style={{flex: 1}}>
                 <Text style={{alignSelf: 'flex-start'}}>{
-                  this.numberToReal(Number(this.state.produtoSelecionado.preco_venda))
+                 this.state.moeda == "G" ? 
+                 this.numberToReal(Number(this.state.produtoSelecionado.preco_venda)).split('')[0]
+                 :this.numberToReal(Number(this.state.produtoSelecionado.preco_venda))
                   }</Text>
                 </View>
               </View>
@@ -292,6 +311,10 @@ export default class Produto extends Component<Props> {
                 <Text style={{alignSelf: 'flex-end'}}>{
                   
                   /*this.numberToReal(Number(parseFloat(((this.state.select_qtd).replace(".","")).replace(/,/g,'.')))*/
+                  this.state.moeda == "G"?
+                  this.numberToReal(Number(parseFloat((((this.state.select_qtd).split('.')).join('')).replace(/,/g,'.')))
+                  *Number(this.state.produtoSelecionado.preco_venda)).split(',')[0]
+                  :
                   this.numberToReal(Number(parseFloat((((this.state.select_qtd).split('.')).join('')).replace(/,/g,'.')))
                   *Number(this.state.produtoSelecionado.preco_venda))
                 }</Text>
