@@ -40,10 +40,6 @@ export default class Produto extends Component<Props> {
 
   getIp(){
     AsyncStorage.getItem('_ip',(error,result)=> {
-        if(error){
-            //AsyncStorage.setItem('_ip',config.url);
-            //API = config.url;
-        }
         if(result){
           //API = result;
           config.url = result;
@@ -58,7 +54,8 @@ export default class Produto extends Component<Props> {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-    }).then((response)=> response.json()).then((resp) => {
+    }).then((response)=> response.json())
+      .then((resp) => {
       let aux = [];
       
       for(e in resp){
@@ -215,7 +212,8 @@ export default class Produto extends Component<Props> {
                               <Text>Unidades</Text>
                               <Text style={{fontWeight: '700', 
                               color: Number(item.qtd)<=0 ? 'red': 'black'}}>
-                                {(item.tipo_unid == "UND") || (item.tipo_unid == "UN") ?  Number(item.qtd): Number(item.qtd).toFixed(3)}
+                                {(item.tipo_unid == "UND") || (item.tipo_unid == "UN") 
+                                ?  Number(item.qtd): Number(item.qtd).toFixed(3)}
                                 </Text>
                             </View>
                             <View style={{flex: 1, alignItems: 'flex-end'}}>

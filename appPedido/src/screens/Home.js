@@ -11,9 +11,6 @@ import * as config from '../../config';
 import * as Permission from '../../Permissions'
 import AsyncStorage from '@react-native-community/async-storage';
 
-
-
-
 const DATA = [
   {title: 'Pedidos', subtitle: 'Crie e gerencie os pedidos', icon: 'local-offer', type: Icon}, 
   {title: 'Clientes', subtitle: 'Analise e gerencie seus clientes', icon: 'people', type: Icon},
@@ -46,9 +43,7 @@ export default class Home extends Component<Props> {
   async getEmpresaData(){
    await AsyncStorage.getItem('empresa', (error,result) => {
       if(result){
-        
         this.setState({empresa: result});
-
       }
     });
   }
@@ -66,11 +61,9 @@ export default class Home extends Component<Props> {
         alignSelf: 'center'
         },
         tabBarVisible: true,
-        headerRight: /*<View style={{margin: 10}}>
-              <Icon name={'search'} size={25} color="#ffffff" onPress={()=>navigation.navigate('Search')}/>
-            </View>*/null
-      }
-    };
+        headerRight: null
+    }
+  };
 
   formatCurrency(value){
     var tmp = value+'';
@@ -81,9 +74,8 @@ export default class Home extends Component<Props> {
     return tmp;
   }
 
-
   componentDidMount(){
-    Permission.readPhoneState();
+   Permission.readPhoneState();
    this.getIp(); 
    let e = this.props.navigation.getParam('message')
    if(e!=null)
@@ -91,18 +83,11 @@ export default class Home extends Component<Props> {
 
     this.getEmpresa();
     AsyncStorage.removeItem("PEDIDO");
-
-    
   }
 
   async getIp(){
     await AsyncStorage.getItem('_ip',(error,result)=> {
-        if(error){
-            //AsyncStorage.setItem('_ip',config.url);
-            //API = config.url;
-        }
         if(result){
-          //API = result;
           config.url = result;
         }
     });
@@ -110,9 +95,7 @@ export default class Home extends Component<Props> {
 
   getEmpresa(){
       setTimeout(() => {
-        this.props.navigation.setParams({
-          empresa: this.state.empresa,
-        });
+        this.props.navigation.setParams({empresa: this.state.empresa});
       }, 2000);
   }
 
@@ -135,7 +118,6 @@ export default class Home extends Component<Props> {
     }).then((response)=> response.json())
       .then((resp) => {
         this.setState({usuarios: resp.nome_fantasia});
-      
     }).catch((err)=>{
       Alert.alert('Atenção', 'erro ao conectar-se com o servidor!');
     });
@@ -160,11 +142,9 @@ export default class Home extends Component<Props> {
                   if(item.title == "Clientes"){
                     this.props.navigation.push('Cliente');
                   }
-                  
                   if(item.title == "Pedidos"){
                     this.props.navigation.push('Pedido');
                   }
-
                   if(item.title == "Sair"){
                     Alert.alert('Atenção', 'confirma a sua ação?',
                     [
@@ -184,7 +164,6 @@ export default class Home extends Component<Props> {
                     ]);
                     
                   }
-
                   if(item.title == 'Configurações'){
                     //alert(this.state.empresa);
                     //alert(this.state.empresa);
@@ -219,11 +198,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    //justifyContent: 'center',
-    //alignItems: 'center',
-    
-    //backgroundColor: '#ffffff',
-    //backgroundColor:'rgba(255,0,0,0.5)',
   },
   card: {
     textAlign: 'center',
@@ -238,20 +212,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flex: 0,
     flexDirection: "row",
-    //color: '#ffffff'
-    //alignSelf: 'center',
-   // flex: 0
-   
   },
   float: {
     width: 60,  
     height: 60,   
-    borderRadius: 30,            
-    backgroundColor: '#30dac5',                                    
-    position: 'absolute', 
+    borderRadius: 30,
+    backgroundColor: '#30dac5',
+    position: 'absolute',
     justifyContent: "center",
-    alignItems: "center",                                     
-    bottom: 10,                                                    
+    alignItems: "center",                                 
+    bottom: 10,                                          
     right: 15,
     elevation: 3
   }

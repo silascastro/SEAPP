@@ -1,9 +1,6 @@
-import React,{Component} from 'react';
-import {View, Button} from 'react-native';
-import {createAppContainer, HeaderBackButton, createSwitchNavigator, } from 'react-navigation';
-import {createMaterialBottomTabNavigator} from 'react-navigation-material-bottom-tabs';
+import {createAppContainer,} from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+
 
 import Login from './screens/Login';
 import Home from './screens/Home';

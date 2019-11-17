@@ -14,6 +14,7 @@ export default class Pedido extends Component<Props> {
       input: '', contasareceber: [],
       moeda: '',
     };
+
   }
 
   static navigationOptions = ({navigation}) => ({
@@ -36,10 +37,6 @@ export default class Pedido extends Component<Props> {
 
   getTipoMoeda(){
     AsyncStorage.getItem('moeda',(error,result)=> {
-      if(error){
-          //AsyncStorage.setItem('_ip',config.url);
-          //API = config.url;
-      }
       if(result){
         //API = result;
         this.setState({moeda: result});
@@ -49,10 +46,6 @@ export default class Pedido extends Component<Props> {
 
   getIp(){
     AsyncStorage.getItem('_ip',(error,result)=> {
-        if(error){
-            //AsyncStorage.setItem('_ip',config.url);
-            //API = config.url;
-        }
         if(result){
           //API = result;
           config.url = result;

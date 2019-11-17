@@ -136,16 +136,7 @@ export default class Login extends Component {
             dispatch(resetActionHome);
             //this.props.navigation.navigate('Home');
           }else{
-            /*console.log(resp.id_funcionario);
-            //até resolver permissões do imei
-            this.setuser(resp.nome);
-            this.setuserCode(resp.id_funcionario);
             
-            this.getEmpresaName(resp.id_empresa);
-            LoginModule.login((resp.id_funcionario),this.state.password);
-            let {dispatch} = this.props.navigation;
-            dispatch(resetActionHome);*/
-            //alert('imei: '+this.state.imei+'\ncodigo1: '+resp.codigo1);
             Alert.alert('Atenção', 'dispositivo não autorizado!');
           }
         }else{

@@ -9,9 +9,10 @@ import {name as appName} from './app.json';
 import Routes from './src/Routes';
 import Request from './src/screens/Request';
 import Produto from './src/screens/Produto';
+import Settings from './src/screens/Settings';
 import ClienteContas from './src/screens/ClienteContas';
 
-//AppRegistry.registerComponent(appName, ()=>Produto);
+//AppRegistry.registerComponent(appName, ()=>Settings);
 //AppRegistry.registerComponent(appName, ()=>Request);
 AppRegistry.registerComponent(appName, () => Routes);
 //AppRegistry.registerComponent(appName, () => ClienteContas);

@@ -60,9 +60,8 @@ export default class AuthLoadingScreen extends Component<Props> {
 
   getIp(){
     AsyncStorage.getItem('_ip',(error,result)=> {
-        if(error){
-            AsyncStorage.setItem('_ip',config.url);
-        }
+        if(error) 
+          AsyncStorage.setItem('_ip',config.url);
     });
   }
 
@@ -72,9 +71,8 @@ export default class AuthLoadingScreen extends Component<Props> {
 
     return (
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <StatusBar backgroundColor="#008577" barStyle="light-content" />
-        <ActivityIndicator size="large"/>
-        
+        <StatusBar backgroundColor="#008577" barStyle="light-content" />
+          <ActivityIndicator size="large"/>
       </View>
     );
   }

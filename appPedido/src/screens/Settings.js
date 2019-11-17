@@ -1,18 +1,22 @@
 import React, {Component} from 'react';
-import {Alert,StyleSheet, Text ,View,
-Button, TextInput, NativeModules} from 'react-native';
+import {Alert,StyleSheet, Text ,View,FlatList,
+Button, TextInput, NativeModules, TouchableNativeFeedback} from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-community/async-storage';
 
 const ToastModule = NativeModules.ToastModule;
 
 const _request ="PEDIDO";
+const _ipcollections = 'ipcollections';
 
 export default class Settings extends Component<Props> {
   constructor(props){
     super(props);
     this.state = {
       loading: true,
-      ip: ''
+      ip: '',
+      descricao: '',
+      ipcollections: [],
     };
     const { navigation } = this.props;
     //this.aysncData();
@@ -22,7 +26,9 @@ export default class Settings extends Component<Props> {
   
 
   componentDidMount(){
+      //AsyncStorage.removeItem(_ipcollections);
       this.getIp();
+      this.getIpCollections();
   }
 
   getIp(){
@@ -35,9 +41,60 @@ export default class Settings extends Component<Props> {
     });
   }
 
-  setIp(value){
+  setIp(value, descricao){
+    this.setIpCollections({descricao: descricao, ip: value});
     AsyncStorage.setItem('_ip',"http://"+value+":3000/");
     ToastModule.show('endereço atualizado com sucesso!',3000);
+  }
+
+  getIpCollections(){
+    AsyncStorage.getItem(_ipcollections,(error,result)=>{
+      if(result){
+        let array = JSON.parse(result);
+        for(let e in array){
+          let aux = (array[e].ip).split('//')[1];
+          let final = aux.split(':')[0];
+          array[e].ip = final;
+          
+          if(final == this.state.ip){
+            this.setState({descricao: array[e].descricao});
+          }
+        }
+        this.setState({ipcollections: array});
+      }
+    });
+  }
+
+  removeFromIpCollections(index){
+    AsyncStorage.getItem(_ipcollections, (error,result)=>{
+      if(result){
+        let aux = JSON.parse(result);
+        aux.splice(index,1);
+        AsyncStorage.setItem(_ipcollections,JSON.stringify(aux));
+      }
+    });
+  }
+
+  setIpCollections(data){
+    data.ip = "http://"+data.ip+":3000/"
+    AsyncStorage.getItem(_ipcollections, (error,result)=>{
+      if(result){
+        let aux = JSON.parse(result);
+        aux.push(data);
+        aux.sort();
+        AsyncStorage.setItem(_ipcollections,JSON.stringify(aux));
+      }else{
+        let aux = [];
+        aux.push(data);
+        AsyncStorage.setItem(_ipcollections,JSON.stringify(aux));
+      }
+    });
+  }
+
+  selectIp(item, index){
+    //alert(JSON.stringify(item));
+    //let  aux = JSON.parse(item);
+    this.setState({ip: item.ip, descricao: item.descricao});
   }
 
   static navigationOptions = ({navigation}) => ({
@@ -60,26 +117,75 @@ export default class Settings extends Component<Props> {
       <View style={styles.container}>
           <View style={styles.card} onPress={()=>{}}>
               <View style={styles.cardContent}>
-                <View style={{ flex: 1, justifyContent: 'center'}}>
-                    <Text style={{fontWeight: '600', 
-                    color: 'black', fontSize: 15}}>
-                        Endereço IP
-                    </Text>                                  
+                <View style={{flexDirection: 'row'}}>
+                  <View style={{ flex: 1, justifyContent: 'center'}}>
+                      <Text style={{fontWeight: '600', 
+                      color: 'black', fontSize: 15}}>
+                          Endereço IP
+                      </Text>                                  
+                  </View>
+                  <View style={{flex: 2}}>
+                    <TextInput placeholder="Digite o ip" 
+                      value={this.state.ip}
+                      keyboardType="phone-pad"
+                      onChangeText={(value) => 
+                      this.setState({ip: value})}
+                    />
+                  </View>
                 </View>
-                <View style={{flex: 2}}>
-                  <TextInput placeholder="Digite o ip" 
-                    value={this.state.ip}
-                    keyboardType="phone-pad"
-                    onChangeText={(value) => 
-                    this.setState({ip: value})}
-                  />
+                <View style={{flexDirection: 'row'}}>
+                  <View style={{ flex: 1, justifyContent: 'center'}}>
+                      <Text style={{fontWeight: '600', 
+                      color: 'black', fontSize: 15}}>
+                          Nome da rede
+                      </Text>                                  
+                  </View>
+                  <View style={{flex: 2}}>
+                    <TextInput placeholder="digite o nome da rede" 
+                      value={this.state.descricao}
+                      keyboardType="default"
+                      onChangeText={(value) => 
+                      this.setState({descricao: value})}
+                    />
+                  </View>
                 </View>
               </View>
+
           </View>
-          <View style={{flex: 1, justifyContent: 'flex-end'}}>    
+          <Text style={{alignSelf: 'center', marginTop: 5, fontWeight: '800', fontSize: 18}}>Relação de Ips</Text>
+            <FlatList
+            style={{flex: 1,}}
+            data={this.state.ipcollections}
+            renderItem={({item, index})=>
+              <View style={styles.card} >
+                <TouchableNativeFeedback onPress={()=> this.selectIp(item, index)}>
+                  <View style={{marginLeft: 20, marginRight: 20, paddingTop:10, 
+                    paddingBottom: 10, borderBottomColor: 'gray', borderBottomWidth: 0.4}}
+                    >
+                      <View style={{flexDirection: 'row'}}>
+                        <Text style={{fontWeight: '600', flex: 1}}>{item.ip}-{item.descricao}</Text>
+                        <Icon name='close' size={25} color="red"  
+                        style={{alignSelf:'flex-end'}}
+                          onPress={()=> {
+                            console.log('excluir');
+                            let {ipcollections} =this.state;
+                            ipcollections.splice(index,1);
+                            this.setState({ipcollections});
+                            this.removeFromIpCollections(index);
+                          }}
+                        />
+                      </View>
+                  </View>
+                </TouchableNativeFeedback>
+                
+              </View>
+            }
+          />
+          
+          <View style={{flex: 1, justifyContent: 'flex-end', }}>    
             <Button title="confirmar" disabled={this.state.ip!=''?false:true}
             onPress={() => {
-                this.setIp(this.state.ip);
+                this.setIp(this.state.ip, this.state.descricao);
             }}
             />
           </View>
@@ -96,14 +202,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
   },
   card: {
-      flex: 2,
+      //flex: 1,
     //textAlign: 'center',
     //borderBottomWidth: 2,
    // borderColor: 'black',
     //textDecorationStyle: "solid",
+    
   },
   cardContent:{
-    flex: 0, flexDirection: 'row', paddingTop: 15, 
+    flex: 0, paddingTop: 15, 
     paddingBottom:15, borderBottomColor: 'gray', borderBottomWidth: 0.65,
     paddingLeft: 10,paddingRight: 10
   },

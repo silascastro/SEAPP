@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import {DrawerLayoutAndroid,Alert,StyleSheet, Text,
-   View, TextInput, ActivityIndicator, FlatList, 
-   TouchableNativeFeedback} from 'react-native';
+import {Alert,StyleSheet, Text,
+View, TextInput, ActivityIndicator, FlatList, 
+TouchableNativeFeedback} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import * as config from '../../config';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -79,7 +79,6 @@ export default class Cliente extends Component<Props> {
       this.setState({clientes: aux});
       this.setState({loading: false});
       this.getClientesHasNotCont();
-      
     }).catch((err)=>{
       //Alert.alert('Atenção', 'erro');
     });
@@ -156,13 +155,11 @@ export default class Cliente extends Component<Props> {
 	}
 
   render() {
-    var navigationView = (
-      <View><Text>Teste</Text></View>
-    );
     return (
       <View style={styles.container}>
         <View style={styles.input}>
-          <TextInput placeholder="Digite o nome do cliente" style={{flex: 4}} value={this.state.input} 
+          <TextInput placeholder="Digite o nome do cliente" style={{flex: 4}} 
+          value={this.state.input} 
           onChangeText={(value)=>{
               this.setState({loading: true});
               this.setState({pesquisado: true});
@@ -170,7 +167,8 @@ export default class Cliente extends Component<Props> {
               this.getClientes();
             
           }}/>
-          {this.state.input != '' ?<Icon name='close' size={25} color="black"  style={{flex: 1,alignSelf: 'center', textAlign: 'right', paddingRight: 5}}
+          {this.state.input != '' ?<Icon name='close' size={25} color="black"  
+          style={{flex: 1,alignSelf: 'center', textAlign: 'right', paddingRight: 5}}
             onPress={()=> {
               this.setState({input: ''});
             }}
@@ -198,8 +196,10 @@ export default class Cliente extends Component<Props> {
                       <View style={styles.cardContent}>
                         <View style={{flex: 0, flexDirection: 'row'}}>
                           <Text style={styles.title}>{item.cod_cliente}</Text>
-                          <Text style={{  fontWeight: '600', fontSize: 15, color: 'black'}}>-</Text>
-                          <Text style={{  fontWeight: '600', fontSize: 15, color: 'black', flex: 1}}>{item.nome}</Text>
+                          <Text style={{  fontWeight: '600', fontSize: 15, color: 'black'}}>
+                            -</Text>
+                          <Text style={{  fontWeight: '600', fontSize: 15, color: 'black', flex: 1}}>
+                            {item.nome}</Text>
                           
                         </View>
                         <View style={{flex: 0, flexDirection: 'row'}}>
@@ -227,7 +227,8 @@ export default class Cliente extends Component<Props> {
                           </View>
                         </View>
 
-                        <View style={{flex: 0, flexDirection: 'row', borderBottomWidth: 0.5,borderBottomColor: '#000000'}}>
+                        <View style={{flex: 0, flexDirection: 'row', borderBottomWidth: 0.5,
+                        borderBottomColor: '#000000'}}>
                           <Text style={{fontWeight: '600', color: 'red'}}>Observação: </Text>
                           <Text style={{color :'red', flex: 1}}>{item.observacao}</Text>
                         </View>
