@@ -14,7 +14,8 @@ import AsyncStorage from '@react-native-community/async-storage';
 const DATA = [
   {title: 'Pedidos', subtitle: 'Crie e gerencie os pedidos', icon: 'local-offer', type: Icon}, 
   {title: 'Clientes', subtitle: 'Analise e gerencie seus clientes', icon: 'people', type: Icon},
-  {title: 'Configurações', subtitle: 'Analise e gerencie seus clientes', icon: 'md-settings', type: Ionicons},
+  {title: 'Configurações', subtitle: 'Analise e gerencie seus clientes', icon: 'md-settings', 
+  type: Ionicons},
   {title: 'Sair', subtitle: 'Analise e gerencie seus clientes', icon: 'md-exit', type: Ionicons},
 ];
 

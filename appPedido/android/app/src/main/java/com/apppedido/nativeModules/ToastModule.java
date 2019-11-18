@@ -1,5 +1,6 @@
 package com.apppedido.nativeModules;
 
+import android.view.View;
 import android.widget.Toast;
 
 import com.facebook.react.bridge.ReactApplicationContext;

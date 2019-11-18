@@ -7,9 +7,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-
 import androidx.annotation.Nullable;
-
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
@@ -17,9 +15,7 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
-
 import java.util.UUID;
-
 import javax.annotation.Nonnull;
 
 public class LoginModule extends ReactContextBaseJavaModule {

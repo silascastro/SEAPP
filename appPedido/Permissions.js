@@ -11,7 +11,7 @@ async function readPhoneState() {
         {
           title: 'App read write read phone state Permission',
             message:
-            'App needs write external storage' +
+            'App needs write external storage ' +
             'so you can take.',
             buttonNeutral: 'Ask Me Later',
             buttonNegative: 'Cancel',
