@@ -1,4 +1,4 @@
-const {tbfuncionario} = require('../../app/models');
+const {tbfuncionario} = require(process.cwd()+'/app/models');
 
 
 exports.get = (req, res, next) => {

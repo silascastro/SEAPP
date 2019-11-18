@@ -1,4 +1,4 @@
-const {tbproduto} = require('../../app/models');
+const {tbproduto} = require(process.cwd()+'/app/models');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op; 
 

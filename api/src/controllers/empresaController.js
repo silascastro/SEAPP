@@ -1,9 +1,10 @@
-const {tbempresa} = require('../../app/models');
+const {tbempresa} = require(process.cwd()+'/app/models');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op; 
 
 exports.get = (req, res, next) => {  
-    tbempresa.findAll({order:[['nome_fantasia','ASC']]}).then((resp) => {
+    tbempresa.findAll({order:[['nome_fantasia','ASC']]})
+    .then((resp) => {
         res.status(200).send(resp);
     }).catch((e)=> {
         res.status(500).send(e);

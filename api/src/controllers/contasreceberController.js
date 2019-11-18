@@ -1,4 +1,4 @@
-const {tbcontasreceber} = require('../../app/models');
+const {tbcontasreceber} = require(process.cwd()+'/app/models');
 
 
 exports.get = (req, res, next) => {

@@ -1,11 +1,16 @@
-const {tbcliente} = require('../../app/models');
-const {tbcontasreceber} = require('../../app/models');
+//const path = require('path');
+//const {tbcliente} = require('../../app/models');
+//const {tbcontasreceber} = require('../../app/models');
+const {tbcliente} = require(process.cwd()+'/app/models');
+const {tbcontasreceber} = require(process.cwd()+'/app/models');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op; 
 
 exports.get = (req, res, next) => {  
     //console.log(tbcliente.tbcliente.findAll());
-    tbcliente.findAll({order:[['nome','ASC']]}).then((resp) => {
+    
+    tbcliente.findAll({order:[['nome','ASC']]})
+    .then((resp) => {
         res.status(200).send(resp);
     }).catch((e)=> {
         res.status(500).send(e);
@@ -16,9 +21,6 @@ exports.getOnClienteById = (req, res, next) => {
     var id = req.params.id;
     tbcliente.findOne({
         where: {cod_cliente: id},
-        //include: [tbcontasreceber],
-        //attributes:['tbcontasreceber.valor',[Sequelize.fn('sum',Sequelize.col('tbcontasreceber.valor')),'saldo_devedor']],
-       // group: ['tbcontasreceber.cod_cliente'],
     }).then(resp => {
         if(resp){
             res.status(200).send(resp);
@@ -42,7 +44,12 @@ exports.getOneClienteByNameHasNotCont = (req, res, next) => {
     
 
     tbcliente.findAll({
-        where: {nome: {[Op.like]: nome_param+'%'},cod_cliente: {[Op.notIn]: Sequelize.literal('(select cod_cliente from tbcontasreceber)')}},
+        where: {
+            nome: {[Op.like]: nome_param+'%'},
+            cod_cliente: {
+                [Op.notIn]: Sequelize.literal('(select cod_cliente from tbcontasreceber)')
+            }
+        },
         order:[['nome','ASC']],
     }).then(resp => {
         //console.log(resp);
@@ -62,11 +69,15 @@ exports.getOneClienteByName = (req, res, next) => {
 
     tbcliente.findAll(
         {
-            where: {nome: {[Op.like]: nome_param+'%'}, cod_cliente: [Sequelize.col("tbcontasreceber.cod_cliente")]},
+            where: {
+                nome: {[Op.like]: nome_param+'%'}, 
+                cod_cliente: [Sequelize.col("tbcontasreceber.cod_cliente")]
+            },
             attributes: [
                 "limite",
                 "tbcontasreceber.cod_cliente",
-            "nome", "endereco","bairro", "telefone", "cidade","estado","cep","email","observacao"
+                "nome", "endereco","bairro", "telefone", 
+                "cidade","estado","cep","email","observacao"
             ],
             //attributes:[['tbcontasreceber.valor',[Sequelize.fn('sum',Sequelize.col('tbcontasreceber.valor')),'saldo_devedor']],],
             group: [

@@ -1,4 +1,4 @@
-const {tbrecebimentoexterno} = require('../../app/models');
+const {tbrecebimentoexterno} = require(process.cwd()+'/app/models');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op; 
 
