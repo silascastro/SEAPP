@@ -1,4 +1,4 @@
-const {tbpedidoexternoitens} = require(process.cwd()+'/app/models');
+const {tbpedidoexternoitens} = require(__dirname+'/../../app/models');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op; 
 

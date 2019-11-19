@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "bin": "server.js",
+  "pkg": {
+    "scripts": [
+      "app/models/*.js"
+    ]
+  },
   "main": "server.js",
   "author": "",
   "license": "ISC",

@@ -1,10 +1,10 @@
-//const path = require('path');
-//const {tbcliente} = require('../../app/models');
-//const {tbcontasreceber} = require('../../app/models');
-const {tbcliente} = require(process.cwd()+'/app/models');
-const {tbcontasreceber} = require(process.cwd()+'/app/models');
+const {tbcliente} = require(__dirname+'/../../app/models');
+const {tbcontasreceber} = require(__dirname+'/../../app/models');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op; 
+const sequelize = new Sequelize('estoque_db', 'postgres', 'masterkey', {
+    host: 'localhost',
+    dialect: 'postgres'});
 
 exports.get = (req, res, next) => {  
     //console.log(tbcliente.tbcliente.findAll());
@@ -31,18 +31,9 @@ exports.getOnClienteById = (req, res, next) => {
     });
 }
 
-exports.getOneClienteByName = (req, res, next) => {
-    tbcliente.findAll().then((resp) => {
-        
-    }).catch((err)=>{
-
-    });
-}
-
 exports.getOneClienteByNameHasNotCont = (req, res, next) => {
     var nome_param = req.params.nome;
     
-
     tbcliente.findAll({
         where: {
             nome: {[Op.like]: nome_param+'%'},
@@ -67,48 +58,25 @@ exports.getOneClienteByNameHasNotCont = (req, res, next) => {
 exports.getOneClienteByName = (req, res, next) => {
     var nome_param = req.params.nome;
 
-    tbcliente.findAll(
-        {
-            where: {
-                nome: {[Op.like]: nome_param+'%'}, 
-                cod_cliente: [Sequelize.col("tbcontasreceber.cod_cliente")]
-            },
-            attributes: [
-                "limite",
-                "tbcontasreceber.cod_cliente",
-                "nome", "endereco","bairro", "telefone", 
-                "cidade","estado","cep","email","observacao"
-            ],
-            //attributes:[['tbcontasreceber.valor',[Sequelize.fn('sum',Sequelize.col('tbcontasreceber.valor')),'saldo_devedor']],],
-            group: [
-
-                //"cod_cliente",
-                "tbcontasreceber.cod_cliente",
-                "limite", 
-                "nome", 
-                "endereco",
-                "bairro", 
-                "telefone", 
-                "cidade",
-                "estado",
-            "cep","email","observacao"            
-            /*'tbcontasreceber.cod_cliente',
-            'tbcontasreceber.documento',
-            'tbcontasreceber.tipo',
-            'tbcontasreceber.dt_vencimento',*/],
-            include: [{model: tbcontasreceber,as:'tbcontasreceber',
-                    attributes:[
-                        [Sequelize.fn('sum',Sequelize.col('tbcontasreceber.valor')),'saldo_devedor'],
-                        [Sequelize.literal('tbcliente.limite - sum(tbcontasreceber.valor)'),'saldo_compra']
-                    ]
-            }],
-            order:[['nome','ASC']],
-            raw: true,
-        })
+    sequelize.query("SELECT tbcliente.limite, tbcliente.cod_cliente,"+
+     "tbcliente.nome, tbcliente.endereco, tbcliente.bairro," +
+     "tbcliente.telefone, tbcliente.cidade, tbcliente.estado,"+ 
+     "tbcliente.cep, tbcliente.email,"+
+     "tbcliente.observacao, sum(tbcontasreceber.valor) AS \"tbcontasreceber.saldo_devedor\","+
+     "tbcliente.limite - sum(tbcontasreceber.valor) AS \"tbcontasreceber.saldo_compra\" "+ 
+     "FROM public.tbcliente AS tbcliente LEFT OUTER JOIN public.tbcontasreceber AS tbcontasreceber "+
+     "ON tbcliente.cod_cliente = tbcontasreceber.cod_cliente "+
+     //"FROM public.tbcliente, public.tbcontasreceber "+
+     "WHERE tbcliente.nome LIKE \'"+nome_param+
+     "%\' AND tbcliente.cod_cliente IN (tbcontasreceber.cod_cliente) "+
+     //"WHERE (tbcliente.nome LIKE \'"+nome_param+"%\' AND tbcliente.cod_cliente = tbcontasreceber.cod_cliente) "+
+     "GROUP BY tbcliente.cod_cliente, "+
+     "tbcliente.limite, tbcliente.nome, tbcliente.endereco, tbcliente.bairro, tbcliente.telefone, tbcliente.cidade, tbcliente.estado, tbcliente.cep, tbcliente.email, tbcliente.observacao "+
+     "ORDER BY tbcliente.nome ASC")
     .then(resp => {
         //console.log(resp);
         if(resp){
-            res.status(200).send(resp);
+            res.status(200).send(resp[0]);
         }
         res.status(404).send({msg: 'Cliente não encontrado!'});
     }).catch((e)=>{

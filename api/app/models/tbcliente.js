@@ -22,7 +22,8 @@ module.exports = (sequelize, DataTypes) =>{
 
     tbcliente.associate = function(models){
       //models.tbcliente.belongsTo(models.tbcontasreceber, {foreignKey: 'cod_cliente'});
-      models.tbcliente.hasMany(models.tbcontasreceber, {foreignKey: 'cod_cliente', as: 'tbcontasreceber'});
+      models.tbcliente.hasMany(models.tbcontasreceber, {foreignKey: 'cod_cliente', 
+      as: 'tbcontasreceber'});
       
     };
     

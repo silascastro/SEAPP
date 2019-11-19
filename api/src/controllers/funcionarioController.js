@@ -1,4 +1,4 @@
-const {tbfuncionario} = require(process.cwd()+'/app/models');
+const {tbfuncionario} = require(__dirname+'/../../app/models');
 
 
 exports.get = (req, res, next) => {
