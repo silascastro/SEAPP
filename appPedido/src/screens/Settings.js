@@ -3,11 +3,19 @@ import {Alert,StyleSheet, Text ,View,FlatList,
 Button, TextInput, NativeModules, TouchableNativeFeedback} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-community/async-storage';
+import { StackActions, NavigationActions, navigate } from 'react-navigation';
 
 const ToastModule = NativeModules.ToastModule;
 
 const _request ="PEDIDO";
 const _ipcollections = 'ipcollections';
+
+const resetActionLogin = StackActions.reset({
+  index: 0,
+  actions: [
+    NavigationActions.navigate({ routeName: 'Login' }),
+  ],
+});
 
 export default class Settings extends Component<Props> {
   constructor(props){
@@ -45,6 +53,8 @@ export default class Settings extends Component<Props> {
     this.setIpCollections({descricao: descricao, ip: value});
     AsyncStorage.setItem('_ip',"http://"+value+":3000/");
     ToastModule.show('endereço atualizado com sucesso!',3000);
+    let {dispatch} = this.props.navigation;
+    dispatch(resetActionLogin);
   }
 
   getIpCollections(){
