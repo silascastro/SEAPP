@@ -28,6 +28,12 @@ module.exports = (sequelize, DataTypes) =>{
         timestamps: false
     });
 
+    tbproduto.associate = function(models){
+        //models.tbcliente.belongsTo(models.tbcontasreceber, {foreignKey: 'cod_cliente'});
+        models.tbproduto.hasMany(models.tbprodutofoto, {foreignKey: 'cod_produto', 
+        as: 'tbprodutofoto'});
+        
+    };
     
     return tbproduto;  
 }

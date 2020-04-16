@@ -5,9 +5,13 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-community/async-storage';
 import { StackActions, NavigationActions, navigate } from 'react-navigation';
 
+/*
+  Screen para configurações 
+  
+*/
+
 const ToastModule = NativeModules.ToastModule;
 
-const _request ="PEDIDO";
 const _ipcollections = 'ipcollections';
 
 const resetActionLogin = StackActions.reset({
@@ -56,7 +60,7 @@ export default class Settings extends Component<Props> {
     let {dispatch} = this.props.navigation;
     dispatch(resetActionLogin);
   }
-
+  
   getIpCollections(){
     AsyncStorage.getItem(_ipcollections,(error,result)=>{
       if(result){

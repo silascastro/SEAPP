@@ -4,7 +4,7 @@ TouchableNativeFeedback,StatusBar, Alert,
 NativeModules, ImageBackground, Image,
 NativeEventEmitter
 } from 'react-native';
-import { StackActions, NavigationActions, navigate } from 'react-navigation';
+import { StackActions, NavigationActions } from 'react-navigation';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import * as config from '../../config'; 
@@ -139,7 +139,8 @@ export default class Home extends Component<Props> {
             data={DATA}
             renderItem={({item})=>
               <View style={styles.card} >
-                <TouchableNativeFeedback onPress={()=>{
+                <TouchableNativeFeedback onPress={
+                  ()=>{
                   if(item.title == "Clientes"){
                     this.props.navigation.push('Cliente');
                   }
@@ -159,9 +160,8 @@ export default class Home extends Component<Props> {
                         onPress: () => {
                           this.sair();
                           
-                        },
-                        
-                        }
+                        },  
+                      }
                     ]);
                     
                   }

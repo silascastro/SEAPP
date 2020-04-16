@@ -3,10 +3,8 @@ import React, {Component}from 'react';
 import {ActivityIndicator,
 StatusBar,
 View,
-NativeModules, 
-DeviceEventEmitter,NativeEventEmitter} from 'react-native';
+NativeModules, NativeEventEmitter} from 'react-native';
 import { StackActions, NavigationActions } from 'react-navigation';
-import * as Permission from '../../Permissions';
 const LoginModule = NativeModules.LoginModule;
 const eventEmitter = new NativeEventEmitter(NativeModules.LoginModule);
 import AsyncStorage from '@react-native-community/async-storage';

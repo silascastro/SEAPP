@@ -13,7 +13,7 @@ exports.get = (req, res, next) => {
     .then((resp) => {
         res.status(200).send(resp);
     }).catch((e)=> {
-        res.status(500).send(e);
+        res.status(500).send(e.message);
     });
 }
 

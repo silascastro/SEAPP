@@ -58,14 +58,7 @@ export default class Request extends Component<Props> {
     this.getTipoMoeda();
   }
 
-  getTipoMoeda(){
-    AsyncStorage.getItem('moeda',(error,result)=> {
-      if(result){
-        //API = result;
-        this.setState({moeda: result});
-      }
-    });
-  }
+  
 
   getIp(){
     AsyncStorage.getItem('_ip',(error,result)=> {
@@ -124,18 +117,25 @@ export default class Request extends Component<Props> {
     return numero.join(',');
   }
 
+  getTipoMoeda(){
+    AsyncStorage.getItem('moeda',(error,result)=> {
+      if(result){
+        //API = result;
+        this.setState({moeda: result});
+      }
+    });
+  }
+
   contabilizaTotal(){
-    /*let aux = this.state.pedido;
-    let total = 0;
-    for(let e in aux){
-      total+=Number(aux[e].preco_venda);
-     
-    }*/
-    const total = (this.state.pedido)
+    /*const total = (this.state.pedido)
     .map(p => p.preco_venda).reduce(
       (total, preco)=>total+Number(preco),0);
       //alert(total);
-    this.setState({totalPedido: total});
+    this.setState({totalPedido: total});*/
+    const total = (this.state.pedido)
+    .map(p=> p.preco_venda).reduce(
+      (total, preco)=>total+Number(preco),0);
+    this.setState({totalPedido: total});  
   }
 
   sendItens(numero_pedido){

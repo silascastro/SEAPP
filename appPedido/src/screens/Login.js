@@ -3,7 +3,7 @@ import {ActivityIndicator,StyleSheet, Text, View, TextInput,
   Button,Alert ,StatusBar, Switch, Picker, NativeModules, 
   NativeEventEmitter} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { StackActions, NavigationActions, navigate } from 'react-navigation';
+import { StackActions, NavigationActions } from 'react-navigation';
 import * as Permission from '../../Permissions';
 import * as config from '../../config';
 const eventEmitter = new NativeEventEmitter(NativeModules.LoginModule);
@@ -94,7 +94,8 @@ export default class Login extends Component {
         firstParam: 'yourValue',
         secondParam: 'yourOtherValue',
       }),*/
-    }).then((response)=> response.json()).then((resp) => {
+    }).then((response)=> response.json())
+      .then((resp) => {
       var aux = [];
       for(let e in resp){
         aux.push(resp[e]);
@@ -122,6 +123,7 @@ export default class Login extends Component {
           secondParam: 'yourOtherValue',
         }),*/
       }).then((response)=> response.json()).then((resp) => {
+        console.log(resp);
         this.setState({loading: false});
         if(this.state.password == resp.senha){
           

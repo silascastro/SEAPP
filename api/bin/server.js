@@ -14,6 +14,18 @@ server.on('listening', onListening);
 console.log('API rodando na porta: ' + port);
 
 
+//system functions 
+
+function onListening() {
+    const addr = server.address();
+    const bind = typeof addr == 'string' ?
+        'pipe ' + addr :
+        'port ' + addr.port;
+    debug('Listening on ' + bind);
+
+}
+
+
 function normalizePort(val) {
     const port = parseInt(val, 10);
 
@@ -51,11 +63,3 @@ function onError(error) {
     }
 }
 
-function onListening() {
-    const addr = server.address();
-    const bind = typeof addr == 'string' ?
-        'pipe ' + addr :
-        'port ' + addr.port;
-    debug('Listening on ' + bind);
-
-}
