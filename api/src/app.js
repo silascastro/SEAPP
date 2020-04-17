@@ -27,7 +27,6 @@ app.use('/produtos',produto);
 app.use('/empresas',empresa);
 app.use('/pedidoexterno',pedidoexterno);
 app.use('/pedidoitens',pedidoexternoitens);
-app
-app.use('/uploads',express.static(process.cwd()+'/uploads'));
+app.use('/imagens',express.static('C:\\Estoque\\Fotos\\Produtos\\'));
 
 module.exports = app;
