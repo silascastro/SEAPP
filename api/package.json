@@ -2,7 +2,7 @@
   "name": "api",
   "version": "1.0.0",
   "description": "",
-  "bin": "server.js",
+  "bin": "nodemon server.js",
   "pkg": {
     "scripts": [
       "app/models/*.js"

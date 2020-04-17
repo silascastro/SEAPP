@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const bodyParser = require('body-parser');
 const logger = require('morgan');
+const multer = require('multer');
 
 const indexRoute = require('./routes/index');
 const funcionarioRoute = require('./routes/funcionario');
@@ -26,5 +27,7 @@ app.use('/produtos',produto);
 app.use('/empresas',empresa);
 app.use('/pedidoexterno',pedidoexterno);
 app.use('/pedidoitens',pedidoexternoitens);
+app
+app.use('/uploads',express.static(process.cwd()+'/uploads'));
 
 module.exports = app;
