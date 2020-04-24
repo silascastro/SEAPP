@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Alert,DrawerLayoutAndroid,StyleSheet, Text, Button,View, 
   TextInput, ActivityIndicator, FlatList, 
-  TouchableNativeFeedback, Picker} from 'react-native';
+  TouchableNativeFeedback, Image} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {TextInputMask} from 'react-native-masked-text';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -15,7 +15,7 @@ export default class Produto extends Component<Props> {
     super(props);
     this.state = {
       loading: false, pesquisado: false, 
-      input: '', produtos: [], qtds: [], 
+      input: '', produtos: [], qtds: [], fotosProdutos: [],
       produtoSelecionado: '', select_qtd: '1',
       loadingAsync: false,
       unitOption: 'UND',
@@ -69,18 +69,23 @@ export default class Produto extends Component<Props> {
     }).then((response)=> response.json())
       .then((resp) => {
       let aux = [];
+      this.setState({fotosProdutos: []});
+
       
+
       for(e in resp){
         //aux.push(resp[e]);
         let item = {cod_produto: resp[e].cod_produto,
-        descricao: resp[e].descricao, marca: resp[e].marca,
-        preco_venda: resp[e].preco_venda, qtd: resp[e].qtd,
-        tipo_unid: resp[e].tipo_unidade,
-        qtd_selec: "1",
+          descricao: resp[e].descricao, marca: resp[e].marca,
+          preco_venda: resp[e].preco_venda, qtd: resp[e].qtd,
+          tipo_unid: resp[e].tipo_unidade,
+          qtd_selec: "1",
         };
         aux.push(item);
       }
-
+      
+      aux.map(p => this.getFotoProduto(p.cod_produto));
+      
       this.setState({produtos: aux});
       this.setState({loading: false});
       //console.log(aux);
@@ -89,6 +94,30 @@ export default class Produto extends Component<Props> {
       this.setState({loading: false});
       //Alert.alert('Atenção', 'erro');
     });
+  }
+
+  getFotoProduto(id){
+    fetch(config.url+'produtos/foto/'+id, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    }).then((response)=> response.json())
+      .then((resp) => {
+      //console.log(resp.caminho_foto.split('Produtos\\')[1]);
+      const fotos = this.state.fotosProdutos;
+      
+      //let fotos = [];
+      fotos.push(resp.caminho_foto.split('Produtos\\')[1]);
+      console.log(fotos);
+      this.setState({fotosProdutos: fotos});
+      
+    }).catch((err)=>{
+      this.setState({loading: false});
+      //Alert.alert('Atenção', 'erro');
+    });
+    console.log(id);
   }
     
   changeText(value, index){
@@ -199,12 +228,14 @@ export default class Produto extends Component<Props> {
               style={styles.list}
               data={this.state.produtos}
               numColumns={1}
+              key={1}
               renderItem={({item, index}) => 
                 <View style={styles.card} >
                     <TouchableNativeFeedback  onPress={()=>{
 
                       }}>
                       <View style={styles.cardContent}>
+                        
                         <View style={styles.name}>
                           <Text style={{  fontWeight: '600', 
                           fontSize: 15, color: 'black',flex: 1}}>{item.cod_produto}</Text>
@@ -213,6 +244,18 @@ export default class Produto extends Component<Props> {
                           alignItems: 'flex-end'}}>
                             <Text >{item.tipo_unid}</Text>
                           </View>
+                        </View>
+                        <View style={{flex: 1}}>
+                          <Image
+                            style={ {
+                              width: "100%",
+                              height: 150,
+                              resizeMode: 'center',
+                            }}
+                            source={{
+                              uri: 'http://179.182.240.237:3000/imagens/'+this.state.fotosProdutos[index]
+                            }}
+                          />
                         </View>
                         <View style={{paddingLeft: 10, paddingRight: 10,
                           paddingBottom: 5, paddingTop: 5, flex: 0, flexDirection: 'row'}}>

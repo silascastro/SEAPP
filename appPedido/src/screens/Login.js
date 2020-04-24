@@ -142,6 +142,7 @@ export default class Login extends Component {
             Alert.alert('Atenção', 'dispositivo não autorizado!');
           }
         }else{
+          this.setState({password: ''});
           alert('senha incorreta!');
         }
       }).catch((err)=>{

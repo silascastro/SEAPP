@@ -4,18 +4,11 @@ const Sequelize = require('sequelize');
 const Op = Sequelize.Op; 
 
 exports.get = (req, res, next) => {  
-    /*tbproduto.findAll({order:[['descricao','ASC']]}).then((resp) => {
-        res.status(200).send(resp);
-    }).catch((e)=> {
-        res.status(500).send(e);
-    });*/
-
-    tbprodutofoto.findAll().then((resp) => {
+    tbproduto.findAll({order:[['descricao','ASC']]}).then((resp) => {
         res.status(200).send(resp);
     }).catch((e)=> {
         res.status(500).send(e);
     });
-
 }
 
 exports.getOneProductById = (req, res, next) => {
@@ -50,3 +43,4 @@ exports.getOneProductByName = (req, res, next) => {
         res.status(500).send(e);
     });
 }
+

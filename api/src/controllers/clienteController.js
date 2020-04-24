@@ -3,7 +3,7 @@ const {tbcontasreceber} = require(__dirname+'/../../app/models');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op; 
 const sequelize = new Sequelize('estoque_db', 'postgres', 'masterkey', {
-    host: '200.146.28.55',
+    host: 'localhost',
     dialect: 'postgres'});
 
 exports.get = (req, res, next) => {  
