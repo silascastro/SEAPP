@@ -5,6 +5,7 @@
 import 'react-native';
 import React from 'react';
 import Home from '../src/screens/Home';
+import Produto from '../src/screens/Produto';
 import renderer from 'react-test-renderer';
 
 
@@ -12,8 +13,12 @@ import renderer from 'react-test-renderer';
   renderer.create(<Routes/>);
 });*/
 
+beforeAll(() => { 
+  jest.mock('@react-native-community/async-storage');
+});
+
 it('renders correctly', ()=> {
-  renderer.create(<Home/>);
+  renderer.create(<Routes/>);
 });
 
 

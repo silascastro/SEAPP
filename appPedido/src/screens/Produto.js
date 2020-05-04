@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Alert,DrawerLayoutAndroid,StyleSheet, Text, Button,View, 
   TextInput, ActivityIndicator, FlatList, 
-  TouchableNativeFeedback, Image, ToastAndroid} from 'react-native';
+  TouchableNativeFeedback, Image} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {TextInputMask} from 'react-native-masked-text';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -9,7 +9,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import * as config from '../../config';
 
 const _request ="PEDIDO";
-
+let foto_produtos = [];
 export default class Produto extends Component<Props> {
   constructor(props){
     super(props);
@@ -59,8 +59,8 @@ export default class Produto extends Component<Props> {
     });
   }
 
-  getProdutos(){ 
-    fetch(config.url+'produtos/'+(this.state.input).toUpperCase(), {
+  getProdutos(value){ 
+    fetch(config.url+'produtos/'+(value).toUpperCase(), {
       method: 'GET',
       headers: {
         Accept: 'application/json',
@@ -69,7 +69,7 @@ export default class Produto extends Component<Props> {
     }).then((response)=> response.json())
       .then((resp) => {
       let aux = [];
-      this.setState({fotosProdutos: []});
+      //this.setState({fotosProdutos: []});
 
       for(e in resp){
         //aux.push(resp[e]);
@@ -79,25 +79,27 @@ export default class Produto extends Component<Props> {
           preco_venda: resp[e].preco_venda, qtd: resp[e].qtd,
           tipo_unid: resp[e].tipo_unidade,
           qtd_selec: "1",
+          foto: ''
         };
         aux.push(item);
       }
-      console.log('produtos: '+aux);
-      //ToastAndroid.show(JSON.stringify(aux),10000);
-      aux.map(p => this.getFotoProduto(p.cod_produto));
-      
       this.setState({produtos: aux});
+      aux.map((p, index) => this.getFotoProduto(p.cod_produto, index));
+      
       this.setState({loading: false});
+      console.log('produtos: '+this.state.produtos);
       
     }).catch((err)=>{
       this.setState({loading: false});
-      console.log('erro ao carregar produtos');
+      console.log('erro ao carregar produtos: ',err);
+      
       //Alert.alert('Atenção', 'erro');
     });
     //
   }
 
-  getFotoProduto(id){
+  getFotoProduto(id, index){
+    console.log(index);
     fetch(config.url+'produtos/foto/'+id, {
       method: 'GET',
       headers: {
@@ -106,20 +108,21 @@ export default class Produto extends Component<Props> {
       },
     }).then((response)=> response.json())
       .then((resp) => {
-      //console.log(resp.caminho_foto.split('Produtos\\')[1]);
-      const fotos = this.state.fotosProdutos;
-      
-      //let fotos = [];
-      fotos.push(resp.caminho_foto.split('Produtos\\')[1]);
-      console.log(fotos);
-      this.setState({fotosProdutos: fotos});
-      
+      /*
+        const fotos = this.state.fotosProdutos;
+        fotos.push(resp.caminho_foto.split('Produtos\\')[1]);
+        this.setState({fotosProdutos: fotos});
+      */
+      let {produtos} = this.state;
+      console.log(produtos);
+      console.log(resp);
+      produtos[index].foto = resp.caminho_foto.split('Produtos\\')[1];
     }).catch((err)=>{
       this.setState({loading: false});
+      console.warn(err);
       console.log('erro ao carregar fotos dos produtos');
       //Alert.alert('Atenção', 'erro');
     });
-    console.log(id);
   }
     
   changeText(value, index){
@@ -212,7 +215,7 @@ export default class Produto extends Component<Props> {
                 this.setState({loading: true});
                 this.setState({pesquisado: true});
                 this.setState({input: value});
-                this.getProdutos();
+                this.getProdutos(value);
              
             }}
           />
@@ -230,7 +233,7 @@ export default class Produto extends Component<Props> {
               style={styles.list}
               data={this.state.produtos}
               numColumns={1}
-              key={1}
+              
               renderItem={({item, index}) => 
                 <View style={styles.card} >
                     <TouchableNativeFeedback  onPress={()=>{
@@ -255,7 +258,7 @@ export default class Produto extends Component<Props> {
                               resizeMode: 'center',
                             }}
                             source={{
-                              uri: config.url+'imagens/'+this.state.fotosProdutos[index]
+                              uri: config.url+'imagens/'+(this.state.produtos[index].foto).replace('\"', '/')//this.state.fotosProdutos[index]
                             }}
                           />
                         </View>
