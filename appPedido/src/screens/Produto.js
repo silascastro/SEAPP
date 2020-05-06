@@ -83,11 +83,9 @@ export default class Produto extends Component<Props> {
         };
         aux.push(item);
       }
-      this.setState({produtos: aux});
-      aux.map((p, index) => this.getFotoProduto(p.cod_produto, index));
       
-      this.setState({loading: false});
-      console.log('produtos: '+this.state.produtos);
+      this.getFotoProduto(aux);
+
       
     }).catch((err)=>{
       this.setState({loading: false});
@@ -98,31 +96,33 @@ export default class Produto extends Component<Props> {
     //
   }
 
-  getFotoProduto(id, index){
-    console.log(index);
-    fetch(config.url+'produtos/foto/'+id, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    }).then((response)=> response.json())
-      .then((resp) => {
-      /*
-        const fotos = this.state.fotosProdutos;
-        fotos.push(resp.caminho_foto.split('Produtos\\')[1]);
-        this.setState({fotosProdutos: fotos});
-      */
-      let {produtos} = this.state;
-      console.log(produtos);
-      console.log(resp);
-      produtos[index].foto = resp.caminho_foto.split('Produtos\\')[1];
-    }).catch((err)=>{
-      this.setState({loading: false});
-      console.warn(err);
-      console.log('erro ao carregar fotos dos produtos');
-      //Alert.alert('Atenção', 'erro');
-    });
+  getFotoProduto(prod){
+    for(let e=0;e<prod.length;e++){
+      fetch(config.url+'produtos/foto/'+prod[e].cod_produto, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      }).then((response)=> response.json())
+        .then((resp) => {
+          //console.log(resp);
+          let aux = resp.caminho_foto.split('\\');
+          prod[e].foto = aux[4]+'/'+aux[5];
+          if(e == 0)
+          this.setState({fotosProdutos: aux[4]+'/'+aux[5]})
+          //console.log(p.foto);
+      }).catch((err)=>{
+        this.setState({loading: false});
+        console.warn(err);
+        console.log('erro ao carregar fotos dos produtos');
+        
+        //Alert.alert('Atenção', 'erro');
+      })
+    }
+
+    this.setState({produtos: prod, loading: false});
+    
   }
     
   changeText(value, index){
@@ -258,7 +258,7 @@ export default class Produto extends Component<Props> {
                               resizeMode: 'center',
                             }}
                             source={{
-                              uri: config.url+'imagens/'+(this.state.produtos[index].foto).replace('\"', '/')//this.state.fotosProdutos[index]
+                              uri: config.url+'imagens/'+this.state.produtos[index].foto
                             }}
                           />
                         </View>
@@ -309,7 +309,7 @@ export default class Produto extends Component<Props> {
                     </TouchableNativeFeedback>
                 </View>
             }
-              keyExtractor={({id},index)=>id}
+              keyExtractor={({id},index)=>index.toString()}
         />:null
           
         }
