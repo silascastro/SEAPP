@@ -94,34 +94,27 @@ export default class Produto extends Component<Props> {
       //Alert.alert('Atenção', 'erro');
     });
     //
+
   }
 
-  getFotoProduto(prod){
-    for(let e=0;e<prod.length;e++){
-      fetch(config.url+'produtos/foto/'+prod[e].cod_produto, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      }).then((response)=> response.json())
-        .then((resp) => {
-          //console.log(resp);
-          let aux = resp.caminho_foto.split('\\');
-          prod[e].foto = aux[4]+'/'+aux[5];
-          if(e == 0)
-          this.setState({fotosProdutos: aux[4]+'/'+aux[5]})
-          //console.log(p.foto);
-      }).catch((err)=>{
-        this.setState({loading: false});
-        console.warn(err);
-        console.log('erro ao carregar fotos dos produtos');
-        
-        //Alert.alert('Atenção', 'erro');
-      })
-    }
-
-    this.setState({produtos: prod, loading: false});
+  async getFotoProduto(prod){
+      prod.map(async(p) => {
+        console.log(p.cod_produto);
+        const response = await fetch(config.url+'produtos/foto/'+p.cod_produto, {
+            method: 'GET',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+            },
+        });
+        const json = await response.json();
+        let aux = json.caminho_foto.split('\\');          
+        p.foto = aux[4]+'/'+aux[5];
+        }
+    );
+    this.setState({produtos: prod});
+    setTimeout(()=>this.setState({loading: false}),500);
+    //this.setState({loading: false})
     
   }
     

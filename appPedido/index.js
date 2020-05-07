@@ -12,8 +12,8 @@ import Produto from './src/screens/Produto';
 import Settings from './src/screens/Settings';
 import ClienteContas from './src/screens/ClienteContas';
 
-//AppRegistry.registerComponent(appName, ()=>Settings);ss
+//AppRegistry.registerComponent(appName, ()=>Settings);
 //AppRegistry.registerComponent(appName, ()=>Request);
-AppRegistry.registerComponent(appName, () => Produto);
-//AppRegistry.registerComponent(appName, () => Routes);
+//AppRegistry.registerComponent(appName, () => Produto);
+AppRegistry.registerComponent(appName, () => Routes);
 //AppRegistry.registerComponent(appName, () => ClienteContas);
