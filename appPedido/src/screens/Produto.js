@@ -84,7 +84,7 @@ export default class Produto extends Component<Props> {
         aux.push(item);
       }
       
-      this.getFotoProduto(aux);
+      this.getFoto1Produto(aux);
 
       
     }).catch((err)=>{
@@ -94,28 +94,25 @@ export default class Produto extends Component<Props> {
       //Alert.alert('Atenção', 'erro');
     });
     //
-
   }
 
-  async getFotoProduto(prod){
+  async getFoto1Produto(prod){
       prod.map(async(p) => {
         console.log(p.cod_produto);
-        const response = await fetch(config.url+'produtos/foto/'+p.cod_produto, {
+        const response = await fetch(config.url+'produtos/foto1/'+p.cod_produto, {
             method: 'GET',
             headers: {
               Accept: 'application/json',
               'Content-Type': 'application/json',
             },
-        });
-        const json = await response.json();
-        let aux = json.caminho_foto.split('\\');          
-        p.foto = aux[4]+'/'+aux[5];
-        }
-    );
+          });
+          const json = await response.json();
+          let aux = json.caminho_foto.split('\\');          
+          p.foto = aux[4]+'/'+aux[5];
+      });
     this.setState({produtos: prod});
     setTimeout(()=>this.setState({loading: false}),500);
     //this.setState({loading: false})
-    
   }
     
   changeText(value, index){
