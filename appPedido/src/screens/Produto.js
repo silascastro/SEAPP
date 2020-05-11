@@ -79,7 +79,8 @@ export default class Produto extends Component<Props> {
           preco_venda: resp[e].preco_venda, qtd: resp[e].qtd,
           tipo_unid: resp[e].tipo_unidade,
           qtd_selec: "1",
-          foto: ''
+          foto: '',
+          index: 1
         };
         aux.push(item);
       }
@@ -114,6 +115,53 @@ export default class Produto extends Component<Props> {
     setTimeout(()=>this.setState({loading: false}),500);
     //this.setState({loading: false})
   }
+
+
+  changeFoto(cod_produto, foto, index){
+    
+    if(foto == 'before'){
+      fetch(config.url+'produtos/foto1/'+cod_produto, {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+      }).then(resp => resp.json())
+      .then((resp)=> {
+        let {produtos} = this.state;
+        let aux = resp.caminho_foto.split('\\');          
+        produtos[index].foto = aux[4]+'/'+aux[5];
+        
+        this.setState({produtos});
+      }).catch((err)=> {
+        console.log(err);
+      })
+
+    }
+    if(foto == 'next'){
+      fetch(config.url+'produtos/foto2/'+cod_produto, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+    }).then(resp => resp.json())
+    .then((resp)=> {
+      let {produtos} = this.state;
+      let aux = resp.caminho_foto.split('\\');          
+      produtos[index].foto = aux[4]+'/'+aux[5];
+      alert(JSON.stringfy(produtos));
+      this.setState({produtos});
+    }).catch((err)=> {
+      console.log(err);
+    })
+      
+
+    }
+  //this.setState({produtos: prod});
+  //setTimeout(()=>this.setState({loading: false}),500);
+  //this.setState({loading: false})
+}
     
   changeText(value, index){
     //alert(index);
@@ -240,7 +288,7 @@ export default class Produto extends Component<Props> {
                             <Text >{item.tipo_unid}</Text>
                           </View>
                         </View>
-                        <View style={{flex: 1}}>
+                        <View style={{flex: 1,}}>
                           <Image
                             style={ {
                               width: "100%",
@@ -251,6 +299,23 @@ export default class Produto extends Component<Props> {
                               uri: config.url+'imagens/'+this.state.produtos[index].foto
                             }}
                           />
+                          {item.index == 2?
+                          <View style={{flex: 1, position: 'absolute', left: 2, top: 75, justifyContent: 'center'}}>
+                              <View style={styles.float}>
+                                <Icon name={'navigate-before'} size={25} color="#ffffff" onPress={()=>{
+                                  alert('Before');
+                                }}/>
+                              </View>
+                          </View>
+                            :
+                          <View style={{flex: 1, position: 'absolute', right: 2, top: 75, justifyContent: 'center'}}>
+                              <View style={styles.float}>
+                                <Icon name={'navigate-next'} size={25} color="#ffffff" onPress={()=>{
+                                  this.changeFoto(item.cod_produto,'next',index);
+                                }}/>
+                              </View>
+                          </View>
+                          }
                         </View>
                         <View style={{paddingLeft: 10, paddingRight: 10,
                           paddingBottom: 5, paddingTop: 5, flex: 0, flexDirection: 'row'}}>
