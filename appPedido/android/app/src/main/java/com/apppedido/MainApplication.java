@@ -20,6 +20,7 @@ import java.util.List;
 
 //modulos de terceiros
 import com.oblador.vectoricons.VectorIconsPackage;
+import com.airbnb.android.react.maps.MapsPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -41,7 +42,8 @@ public class MainApplication extends Application implements ReactApplication {
             new LoginPackage(),
             new CheckBoxPackage(),
           new ToastPackage(),
-          new VectorIconsPackage()
+          new VectorIconsPackage(),
+          new MapsPackage()
       );
     }
 

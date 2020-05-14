@@ -201,8 +201,8 @@ export default class ClienteContas extends Component<Props> {
       },
       body: JSON.stringify(data),
       
-    }).then((response) => response.json()).then((resp) => {
-      
+    }).then((response) => response.json())
+    .then((resp) => {
       
       console.log(resp);
     }).catch((err)=>{

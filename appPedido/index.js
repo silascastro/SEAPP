@@ -14,6 +14,6 @@ import ClienteContas from './src/screens/ClienteContas';
 
 //AppRegistry.registerComponent(appName, ()=>Settings);
 //AppRegistry.registerComponent(appName, ()=>Request);
-AppRegistry.registerComponent(appName, () => Produto);
-//AppRegistry.registerComponent(appName, () => Routes);
+//AppRegistry.registerComponent(appName, () => Produto);
+AppRegistry.registerComponent(appName, () => Routes);
 //AppRegistry.registerComponent(appName, () => ClienteContas);

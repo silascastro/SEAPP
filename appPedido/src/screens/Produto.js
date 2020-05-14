@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Alert,DrawerLayoutAndroid,StyleSheet, Text, Button,View, 
-  TextInput, ActivityIndicator, FlatList, 
+  TextInput, ActivityIndicator, FlatList, TouchableHighlight,
   TouchableNativeFeedback, Image} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {TextInputMask} from 'react-native-masked-text';
@@ -9,7 +9,6 @@ import AsyncStorage from '@react-native-community/async-storage';
 import * as config from '../../config';
 
 const _request ="PEDIDO";
-let foto_produtos = [];
 export default class Produto extends Component<Props> {
   constructor(props){
     super(props);
@@ -84,6 +83,12 @@ export default class Produto extends Component<Props> {
         };
         aux.push(item);
       }
+
+      aux.sort(function (a, b) {
+	
+        return (a.descricao > b.descricao) ? 1 : ((b.descricao > a.descricao) ? -1 : 0);
+      
+      });
       
       this.getFoto1Produto(aux);
 
@@ -109,7 +114,8 @@ export default class Produto extends Component<Props> {
           });
           const json = await response.json();
           let aux = json.caminho_foto.split('\\');          
-          p.foto = aux[4]+'/'+aux[5];
+          p.foto = config.url+'imagens/'+aux[4]+'/'+aux[5];
+          
       });
     this.setState({produtos: prod});
     setTimeout(()=>this.setState({loading: false}),500);
@@ -130,8 +136,8 @@ export default class Produto extends Component<Props> {
       .then((resp)=> {
         let {produtos} = this.state;
         let aux = resp.caminho_foto.split('\\');          
-        produtos[index].foto = aux[4]+'/'+aux[5];
-        
+        produtos[index].foto = config.url+'imagens/'+aux[4]+'/'+aux[5];
+        produtos[index].index = 1;
         this.setState({produtos});
       }).catch((err)=> {
         console.log(err);
@@ -149,8 +155,9 @@ export default class Produto extends Component<Props> {
     .then((resp)=> {
       let {produtos} = this.state;
       let aux = resp.caminho_foto.split('\\');          
-      produtos[index].foto = aux[4]+'/'+aux[5];
-      alert(JSON.stringfy(produtos));
+      produtos[index].foto = config.url+'imagens/'+aux[4]+'/'+aux[5];
+      produtos[index].index = 2;
+      console.log(produtos);
       this.setState({produtos});
     }).catch((err)=> {
       console.log(err);
@@ -271,7 +278,7 @@ export default class Produto extends Component<Props> {
               style={styles.list}
               data={this.state.produtos}
               numColumns={1}
-              
+              extraData={this.state}
               renderItem={({item, index}) => 
                 <View style={styles.card} >
                     <TouchableNativeFeedback  onPress={()=>{
@@ -289,21 +296,22 @@ export default class Produto extends Component<Props> {
                           </View>
                         </View>
                         <View style={{flex: 1,}}>
-                          <Image
-                            style={ {
-                              width: "100%",
-                              height: 150,
-                              resizeMode: 'center',
-                            }}
-                            source={{
-                              uri: config.url+'imagens/'+this.state.produtos[index].foto
-                            }}
-                          />
+                            
+                            <Image
+                              style={ {
+                                width: "100%",
+                                height: 150,
+                                resizeMode: 'center',
+                              }}
+                             source={{uri:  this.state.produtos[index].foto }}
+                            />
+                            
+                            
                           {item.index == 2?
                           <View style={{flex: 1, position: 'absolute', left: 2, top: 75, justifyContent: 'center'}}>
                               <View style={styles.float}>
                                 <Icon name={'navigate-before'} size={25} color="#ffffff" onPress={()=>{
-                                  alert('Before');
+                                  this.changeFoto(item.cod_produto, 'before', index);
                                 }}/>
                               </View>
                           </View>

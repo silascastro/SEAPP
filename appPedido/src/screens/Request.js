@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
 import {Alert,StyleSheet, Text ,View,Button, 
-  TouchableNativeFeedback,} from 'react-native';
+  TouchableNativeFeedback, ScrollView} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-community/async-storage';
 import {SwipeListView} from 'react-native-swipe-list-view';
 import { StackActions, NavigationActions } from 'react-navigation';
 import * as config from '../../config';
+import MapView,{PROVIDER_GOOGLE} from 'react-native-maps';
 
 
 const _request ="PEDIDO";
@@ -225,7 +226,7 @@ export default class Request extends Component<Props> {
   render(){
     const { navigation } = this.props;
     return (
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
           <View style={styles.cardContentOneRow}>
                 <View style={{flex: 0, flexDirection: 'row'}}>
                     <Text style={styles.title}>{this.props.navigation.getParam('cod_cliente')}</Text>
@@ -254,9 +255,26 @@ export default class Request extends Component<Props> {
                       <Text>{this.props.navigation.getParam('estado')}</Text>
                     </View>
                   </View>
-                </View>
 
-                <View style={{flex: 0, flexDirection: 'row', borderBottomWidth: 0.5,borderBottomColor: '#000000'}}>
+                </View>
+                <View style={{flex: 0, }}>
+                    <View style={styles.mapContainer}>
+                      <MapView
+                        provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+                        style={styles.map}
+                        region={{
+                          latitude: 37.78825,
+                          longitude: -122.4324,
+                          latitudeDelta: 0.0922,
+                          longitudeDelta: 0.0421,
+                        }}
+                      >
+                      </MapView>
+                    </View>
+                  </View>
+                  
+                <View style={{flex: 0, flexDirection: 'row', borderBottomWidth: 0.5,
+                borderBottomColor: '#000000'}}>
                   <Text style={{fontWeight: '600', color: 'red'}}>Observação: </Text>
                   <Text style={{color :'red', flex: 1}}>{this.props.navigation.getParam('observacao')}</Text>
                 </View>
@@ -457,12 +475,24 @@ export default class Request extends Component<Props> {
            }/> 
         </View>
 
-      </View>
+      </ScrollView>
     );                                                                                                                                    
   }
 }
 
 const styles = StyleSheet.create({
+  
+  
+  mapContainer: {
+    
+    height: 150,
+    width: 400,
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  map: {
+    ...StyleSheet.absoluteFillObject,
+  },
   container: {
     flex: 1,
     //justifyContent: 'center',
