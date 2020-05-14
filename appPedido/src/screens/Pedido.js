@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {StyleSheet, Text, View, TextInput,
    ActivityIndicator, FlatList, TouchableNativeFeedback} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from  '@react-native-community/async-storage';
 import * as config from '../../config';
 
@@ -209,17 +210,25 @@ export default class Pedido extends Component<Props> {
                         </View>
                         
                         <View style={{flex: 0, flexDirection: 'row'}}>
-                          <View style={{flex: 2}}>
+                          <View style={{flex: 2, }}>
                             <View style={{flexDirection: 'row'}}>
                               <Text style={{fontWeight: '600'}}>Cidade: </Text>
                               <Text>{item.cidade}</Text>
                             </View>
                           </View>
-                          <View style={{flex: 1}}>
+                          <View style={{flex: 1,}}>
                             <View style={{flexDirection: 'row'}}>
                               <Text style={{fontWeight: '600'}}>Estado: </Text>
                               <Text>{item.estado}</Text>
                             </View>
+                          </View>
+                          <View style={{flex: 1, alignItems: 'flex-end'}}>
+                              <View style={styles.float}>
+                                <MaterialCommunityIcons name={'map-marker'} size={25} color="#ea4335" 
+                                onPress={()=>{
+                                  this.props.navigation.navigate('Map');
+                                }}/>
+                              </View>
                           </View>
                         </View>
 
@@ -284,6 +293,19 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
     paddingBottom: 10
+},
+float: {
+  width: 25,  
+  height: 25,   
+  borderRadius: 12,            
+  backgroundColor: 'white',                                    
+  //position: 'absolute', 
+  justifyContent: "center",
+  alignItems: "center",                                     
+  //bottom: 10,                                                    
+  //right: 15,
+  elevation: 3,
+  
 },
   card: {
     //paddingLeft: 10,

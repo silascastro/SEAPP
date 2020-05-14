@@ -11,6 +11,7 @@ import ClienteContas from './screens/ClienteContas';
 import Pedido from './screens/Pedido';
 import Produto from './screens/Produto';
 import Settings from './screens/Settings';
+import Map from './screens/Map';
 
 const Routes = createAppContainer(
   createStackNavigator(
@@ -22,7 +23,8 @@ const Routes = createAppContainer(
       ClienteContas: ClienteContas,
       Pedido: Pedido,
       Produto: Produto,
-      Settings: Settings
+      Settings: Settings,
+      Map: Map,
     },{
 
 }));

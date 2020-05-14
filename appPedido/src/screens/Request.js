@@ -257,21 +257,7 @@ export default class Request extends Component<Props> {
                   </View>
 
                 </View>
-                <View style={{flex: 0, }}>
-                    <View style={styles.mapContainer}>
-                      <MapView
-                        provider={PROVIDER_GOOGLE} // remove if not using Google Maps
-                        style={styles.map}
-                        region={{
-                          latitude: 37.78825,
-                          longitude: -122.4324,
-                          latitudeDelta: 0.0922,
-                          longitudeDelta: 0.0421,
-                        }}
-                      >
-                      </MapView>
-                    </View>
-                  </View>
+                
                   
                 <View style={{flex: 0, flexDirection: 'row', borderBottomWidth: 0.5,
                 borderBottomColor: '#000000'}}>
