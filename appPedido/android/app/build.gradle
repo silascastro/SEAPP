@@ -164,9 +164,9 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.0.0'
     implementation "com.facebook.react:react-native:+"  // From node_modules
     implementation project(':react-native-maps')
-
-   implementation 'com.google.android.gms:play-services-base:10.0.1'
-   implementation 'com.google.android.gms:play-services-maps:10.0.1'
+    implementation project(':react-native-community-geolocation')
+    implementation 'com.google.android.gms:play-services-base:10.0.1'
+    implementation 'com.google.android.gms:play-services-maps:10.0.1'
     compile project(':react-native-vector-icons')
 
 }

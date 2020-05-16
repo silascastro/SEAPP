@@ -12,7 +12,8 @@ export default class Pedido extends Component<Props> {
     this.state = {loading: false, 
       clientes: [], 
       pesquisado: false, 
-      input: '', contasareceber: [],
+      input: '', 
+      contasareceber: [],
       moeda: '',
     };
 
@@ -113,10 +114,14 @@ export default class Pedido extends Component<Props> {
         for(let e in resp){
           //resp[e].tbcontasreceber.saldo_devedor = "0.00";
           //resp[e].tbcontasreceber.saldo_compra = resp[e].limite;
-          let aux2 = {limite: resp[e].limite, cod_cliente: resp[e].cod_cliente,
+          let aux2 = {
+            limite: resp[e].limite, 
+            cod_cliente: resp[e].cod_cliente,
             nome: resp[e].nome, endereco: resp[e].endereco,
-            bairro: resp[e].bairro, telefone: resp[e].telefone, cidade: resp[e].cidade,
-            estado: resp[e].estado, cep: resp[e].cep, observacao: resp[e].observacao,
+            bairro: resp[e].bairro, telefone: resp[e].telefone, 
+            cidade: resp[e].cidade,numero: resp[e].numero,
+            uf: resp[e].uf, cep: resp[e].cep, 
+            observacao: resp[e].observacao,
             ["tbcontasreceber.saldo_devedor"]: '0.00',
             ["tbcontasreceber.saldo_compra"]: resp[e].limite
           }
@@ -184,7 +189,8 @@ export default class Pedido extends Component<Props> {
                         telefone: item.telefone,
                         endereco: item.endereco,
                         cidade: item.cidade,
-                        estado: item.estado,
+                        numero: item.numero,
+                        uf: item.uf,
                         observacao: item.observacao,
                         limite: item.limite,
                         saldo_devedor: item['tbcontasreceber.saldo_devedor'],
@@ -205,31 +211,59 @@ export default class Pedido extends Component<Props> {
                         </View>
 
                         <View style={{flex: 0, flexDirection: 'row'}}>
-                          <Text style={{fontWeight: '600'}}>Endereço: </Text>
-                          <Text style={{flex: 1}}>{item.endereco}</Text>
+                          <View style={{flex: 5, flexDirection: 'row'}}>
+                            <Text style={{fontWeight: '600'}}>Endereço: </Text>
+                            <Text style={{flex: 1}}>{item.endereco}</Text>
+                          </View>
+                          <View style={{flex: 1, flexDirection: 'row'}}>
+                            
+                              <Text style={{fontWeight: '600'}}>Nº: </Text>
+                              <Text style={{flex: 1}}>{item.numero}</Text>
+                            
+                          </View>
                         </View>
                         
                         <View style={{flex: 0, flexDirection: 'row'}}>
-                          <View style={{flex: 2, }}>
+                          <View style={{flex: 0,marginRight: 1}}>
                             <View style={{flexDirection: 'row'}}>
-                              <Text style={{fontWeight: '600'}}>Cidade: </Text>
+                              <Text style={{fontWeight: '600'}}>CEP: </Text>
+                              <Text>{item.cep}</Text>
+                            </View>
+                          </View>
+                          <View style={{flex: 0, marginRight: 2}}>
+                            <View style={{flexDirection: 'row'}}>
+                              <Text style={{fontWeight: '600', }}>Cidade: </Text>
                               <Text>{item.cidade}</Text>
                             </View>
                           </View>
-                          <View style={{flex: 1,}}>
-                            <View style={{flexDirection: 'row'}}>
-                              <Text style={{fontWeight: '600'}}>Estado: </Text>
-                              <Text>{item.estado}</Text>
+                          <View style={{flex: 1, flexDirection: 'row' ,}}>
+                            <View style={{flex: 1, alignContent: 'flex-end', alignItems: 'flex-end'}}>
+                              <View style={{flexDirection: 'row', flex: 1, justifyContent: 'flex-end'}}>
+                                <Text style={{fontWeight: '600'}}>UF: </Text>
+                                <Text>{item.uf}</Text>
+                              </View>
                             </View>
-                          </View>
-                          <View style={{flex: 1, alignItems: 'flex-end'}}>
+
+                            <View style={{flex: 1, alignContent: 'flex-end', alignItems: 'flex-end'}}>
                               <View style={styles.float}>
                                 <MaterialCommunityIcons name={'map-marker'} size={25} color="#ea4335" 
                                 onPress={()=>{
-                                  this.props.navigation.navigate('Map');
+                                  this.props.navigation.navigate('Map',
+                                  {
+                                    cod_cliente: item.cod_cliente,
+                                    nome: item.nome,
+                                    telefone: item.telefone,
+                                    endereco: item.endereco,
+                                    cidade: item.cidade,
+                                    estado: item.estado,
+                                    numero: item.numero,
+                                    uf: item.uf,
+                                  });
                                 }}/>
                               </View>
+                            </View>
                           </View>
+                          
                         </View>
 
                         <View style={{flex: 0, flexDirection: 'row', borderBottomWidth: 0.5,borderBottomColor: '#000000'}}>

@@ -252,7 +252,7 @@ export default class Request extends Component<Props> {
                   <View style={{flex: 1}}>
                     <View style={{flexDirection: 'row'}}>
                       <Text style={{fontWeight: '600'}}>Estado: </Text>
-                      <Text>{this.props.navigation.getParam('estado')}</Text>
+                      <Text>{this.props.navigation.getParam('uf')}</Text>
                     </View>
                   </View>
 

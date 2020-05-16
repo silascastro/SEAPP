@@ -3,6 +3,7 @@ import {Alert,StyleSheet, Text,
 View, TextInput, ActivityIndicator, FlatList, 
 TouchableNativeFeedback} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as config from '../../config';
 import AsyncStorage from '@react-native-community/async-storage';
 
@@ -120,11 +121,13 @@ export default class Cliente extends Component<Props> {
           //resp[e].tbcontasreceber.saldo_devedor = "0.00";
           //resp[e].tbcontasreceber.saldo_compra = resp[e].limite;
           let aux2 = {
-            limite: resp[e].limite, cod_cliente: resp[e].cod_cliente,
+            limite: resp[e].limite, 
+            cod_cliente: resp[e].cod_cliente,
             nome: resp[e].nome, endereco: resp[e].endereco,
             bairro: resp[e].bairro, telefone: resp[e].telefone, 
-            cidade: resp[e].cidade,estado: resp[e].estado, 
-            cep: resp[e].cep, observacao: resp[e].observacao,
+            cidade: resp[e].cidade, numero: resp[e].numero,
+            uf: resp[e].uf, cep: resp[e].cep, 
+            observacao: resp[e].observacao,
             ["tbcontasreceber.saldo_devedor"]: '0.00',
             ["tbcontasreceber.saldo_compra"]: resp[e].limite
           }
@@ -222,7 +225,7 @@ export default class Cliente extends Component<Props> {
                           <View style={{flex: 1}}>
                             <View style={{flexDirection: 'row'}}>
                               <Text style={{fontWeight: '600'}}>Estado: </Text>
-                              <Text>{item.estado}</Text>
+                              <Text>{item.uf}</Text>
                             </View>
                           </View>
                         </View>
@@ -275,6 +278,19 @@ const styles = StyleSheet.create({
     //justifyContent: 'center',
     alignItems: 'stretch',
     backgroundColor: '#ffffff',
+  },
+  float: {
+    width: 25,  
+    height: 25,   
+    borderRadius: 12,            
+    backgroundColor: 'white',                                    
+    //position: 'absolute', 
+    justifyContent: "center",
+    alignItems: "center",                                     
+    //bottom: 10,                                                    
+    //right: 15,
+    elevation: 3,
+    
   },
   input: {
     height: 50,

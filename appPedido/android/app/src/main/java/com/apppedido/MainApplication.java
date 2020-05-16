@@ -21,6 +21,7 @@ import java.util.List;
 //modulos de terceiros
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.airbnb.android.react.maps.MapsPackage;
+import com.reactnativecommunity.geolocation.GeolocationPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -43,7 +44,8 @@ public class MainApplication extends Application implements ReactApplication {
             new CheckBoxPackage(),
           new ToastPackage(),
           new VectorIconsPackage(),
-          new MapsPackage()
+          new MapsPackage(),
+          new GeolocationPackage()
       );
     }
 

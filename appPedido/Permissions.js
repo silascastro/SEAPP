@@ -39,6 +39,58 @@ async function readPhoneState() {
     }
 };
 
+async function location() {
+  try{
+    //
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+      {
+        title: 'App location Permission',
+          message:
+          'App needs access location ' +
+          'so you can take.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+      },
+    );
+    if(granted== PermissionsAndroid.RESULTS.GRANTED){
+      console.log('permissão de localização concedida');
+      
+    }else{
+      //alert("Permissão negada");
+    }
+  }catch(err){
+    alert(err);
+  }
+};
+
+async function fine_location() {
+  try{
+    //
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      {
+        title: 'App location Permission',
+          message:
+          'App needs access location ' +
+          'so you can take.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+      },
+    );
+    if(granted== PermissionsAndroid.RESULTS.GRANTED){
+      console.log('permissão de localização concedida');
+      
+    }else{
+      //alert("Permissão negada");
+    }
+  }catch(err){
+    alert(err);
+  }
+};
+
 async function CallPhone() {
   try{
     //
@@ -66,4 +118,6 @@ async function CallPhone() {
 
 export {
     readPhoneState,
+    location,
+    fine_location,
 }
