@@ -211,23 +211,59 @@ export default class Cliente extends Component<Props> {
                         </View>
 
                         <View style={{flex: 0, flexDirection: 'row'}}>
-                          <Text style={{fontWeight: '600'}}>Endereço: </Text>
-                          <Text style={{flex: 1}}>{item.endereco}</Text>
+                          <View style={{flex: 5, flexDirection: 'row'}}>
+                            <Text style={{fontWeight: '600'}}>Endereço: </Text>
+                            <Text style={{flex: 1}}>{item.endereco}</Text>
+                          </View>
+                          <View style={{flex: 1, flexDirection: 'row'}}>
+                            
+                              <Text style={{fontWeight: '600'}}>Nº: </Text>
+                              <Text style={{flex: 1}}>{item.numero}</Text>
+                            
+                          </View>
                         </View>
                         
                         <View style={{flex: 0, flexDirection: 'row'}}>
-                          <View style={{flex: 2}}>
+                          <View style={{flex: 0,marginRight: 1}}>
                             <View style={{flexDirection: 'row'}}>
-                              <Text style={{fontWeight: '600'}}>Cidade: </Text>
+                              <Text style={{fontWeight: '600'}}>CEP: </Text>
+                              <Text>{item.cep}</Text>
+                            </View>
+                          </View>
+                          <View style={{flex: 0, marginRight: 2}}>
+                            <View style={{flexDirection: 'row'}}>
+                              <Text style={{fontWeight: '600', }}>Cidade: </Text>
                               <Text>{item.cidade}</Text>
                             </View>
                           </View>
-                          <View style={{flex: 1}}>
-                            <View style={{flexDirection: 'row'}}>
-                              <Text style={{fontWeight: '600'}}>Estado: </Text>
-                              <Text>{item.uf}</Text>
+                          <View style={{flex: 1, flexDirection: 'row' ,}}>
+                            <View style={{flex: 1, alignContent: 'flex-end', alignItems: 'flex-end'}}>
+                              <View style={{flexDirection: 'row', flex: 1, justifyContent: 'flex-end'}}>
+                                <Text style={{fontWeight: '600'}}>UF: </Text>
+                                <Text>{item.uf}</Text>
+                              </View>
+                            </View>
+
+                            <View style={{flex: 1, alignContent: 'flex-end', alignItems: 'flex-end'}}>
+                              <View style={styles.float}>
+                                <MaterialCommunityIcons name={'map-marker'} size={25} color="#ea4335" 
+                                onPress={()=>{
+                                  this.props.navigation.navigate('Map',
+                                  {
+                                    cod_cliente: item.cod_cliente,
+                                    nome: item.nome,
+                                    telefone: item.telefone,
+                                    endereco: item.endereco,
+                                    cidade: item.cidade,
+                                    estado: item.estado,
+                                    numero: item.numero,
+                                    uf: item.uf,
+                                  });
+                                }}/>
+                              </View>
                             </View>
                           </View>
+                          
                         </View>
 
                         <View style={{flex: 0, flexDirection: 'row', borderBottomWidth: 0.5,
