@@ -1,8 +1,6 @@
 import React, {Component} from 'react';
 import * as Permission from '../../Permissions';
-import {Alert,StyleSheet, Text ,View,FlatList,
-  
-Button, TextInput, NativeModules, TouchableNativeFeedback} from 'react-native';
+import {StyleSheet, View, Button} from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
 import Geolocation from '@react-native-community/geolocation';
 import MapViewDirections from 'react-native-maps-directions';
@@ -11,6 +9,7 @@ import MapViewDirections from 'react-native-maps-directions';
   
 */
 
+const google_api_key = "AIzaSyBz-KnuVyTNLE8x50E4oA7ZEdzbG8G5cnU";
 
 export default class Map extends Component<Props> {
   constructor(props){
@@ -59,14 +58,13 @@ export default class Map extends Component<Props> {
   }
 
   handleChangeState = () =>{
-    /*this.setState({
-      modalIsVisible: true
-    });*/
     this.getLocation();
   }
 
   getLocation(){
-    Geolocation.getCurrentPosition(local => this.setState({currentLat: local.coords.latitude, currentLng: local.coords.longitude}));
+    Geolocation.getCurrentPosition(local => this.setState(
+      {currentLat: local.coords.latitude, 
+        currentLng: local.coords.longitude}));
   }
 
  
@@ -75,11 +73,12 @@ export default class Map extends Component<Props> {
       return {
         title: 'Localização',
       headerTintColor: '#ffffff',
-      headerRight: <View style={{margin: 10}}>
-        <Button title="Rota" color="blue" style={{marginRight: 20}}
-          onPress={()=> params.changeState()}
-        />
-      </View>
+      headerRight: 
+        <View style={{margin: 10}}>
+          <Button title="Rota" color="blue" style={{marginRight: 20}}
+            onPress={()=> params.changeState()}
+          />
+        </View>
       ,headerStyle: {
         backgroundColor: '#247869',
       },
@@ -95,7 +94,7 @@ export default class Map extends Component<Props> {
     return (
       <View style={styles.container}>
            <MapView
-            //provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+            provider={PROVIDER_GOOGLE} // remove if not using Google Maps
             style={styles.map}
             loadingEnabled={true}
             region={{
@@ -108,10 +107,9 @@ export default class Map extends Component<Props> {
               {
                 (this.state.currentLat != '' && this.state.currentLng!= '') ?
                 <MapViewDirections
-                //{latitude: this.state.currentLat, longitude: this.state.currentLng}
                   origin={{latitude: this.state.currentLat, longitude: this.state.currentLng}}
                   destination={{latitude: this.state.lat, longitude: this.state.lng}}
-                  apikey="AIzaSyBz-KnuVyTNLE8x50E4oA7ZEdzbG8G5cnU"
+                  apikey={google_api_key}
                 />
                 :null
               }

@@ -1,13 +1,15 @@
 import React, {Component} from 'react';
 import {Alert,StyleSheet, Text ,View,Button, 
-  TouchableNativeFeedback, ScrollView} from 'react-native';
+  TouchableNativeFeedback, ScrollView, NativeModules} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-community/async-storage';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {SwipeListView} from 'react-native-swipe-list-view';
 import { StackActions, NavigationActions } from 'react-navigation';
 import * as config from '../../config';
 import MapView,{PROVIDER_GOOGLE} from 'react-native-maps';
 
+const OpenMapModule = NativeModules.OpenMapModule;
 
 const _request ="PEDIDO";
 
@@ -223,10 +225,34 @@ export default class Request extends Component<Props> {
     return numero.join(',');
   }
 
+  getLatLng(endereco, numero, bairro, cidade, uf){
+    fetch('https://api.opencagedata.com/geocode/v1/json?key=27699a4b223f4c028bca825642181b0f&q='
+      +endereco+
+      ', '+numero+
+      ' - '+bairro+
+      ', '+cidade+
+      ' - '+uf+
+      '&pretty=1&no_annotations=1'
+    ,{
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    }).then(response => response.json())
+    .then(responseJson => {
+      console.log(responseJson);
+      //this.setState({lat: responseJson.results[0].geometry.lat, lng: responseJson.results[0].geometry.lng});
+      OpenMapModule.show(responseJson.results[0].geometry.lat, responseJson.results[0].geometry.lng, endereco, cidade, uf);
+    }).catch(err => {
+      console.log('erro: ',err);
+    })
+  }
+
   render(){
     const { navigation } = this.props;
     return (
-      <ScrollView style={styles.container}>
+      <View style={styles.container}>
           <View style={styles.cardContentOneRow}>
                 <View style={{flex: 0, flexDirection: 'row'}}>
                     <Text style={styles.title}>{this.props.navigation.getParam('cod_cliente')}</Text>
@@ -238,24 +264,69 @@ export default class Request extends Component<Props> {
                   <Text>{this.props.navigation.getParam('telefone')}</Text>
                 </View>
                 <View style={{flex: 0, flexDirection: 'row'}}>
+                  <View style={{flex: 5, flexDirection: 'row'}}>
                     <Text style={{fontWeight: '600'}}>Endereço: </Text>
                     <Text style={{flex: 1}}>{this.props.navigation.getParam('endereco')}</Text>
+                  </View>
+                  <View style={{flex: 1, flexDirection: 'row'}}>
+                    
+                      <Text style={{fontWeight: '600'}}>Nº: </Text>
+                      <Text style={{flex: 1}}>{this.props.navigation.getParam('numero')}</Text>
+                    
+                  </View>
+                </View>
+
+                <View style={{flex: 0, flexDirection: 'row'}}>
+                  <View style={{flex: 1,marginRight: 1}}>
+                    <View style={{flexDirection: 'row'}}>
+                      <Text style={{fontWeight: '600'}}>CEP: </Text>
+                      <Text>{this.props.navigation.getParam('cep')}</Text>
+                    </View>
+                  </View>
+                  <View style={{flex: 2}}>
+                    <View style={{flexDirection: 'row'}}>
+                      <Text style={{fontWeight: '600'}}>Bairro: </Text>
+                      <Text>{this.props.navigation.getParam('bairro')}</Text>
+                    </View>
+                  </View>  
                 </View>
                         
                 <View style={{flex: 0, flexDirection: 'row'}}>
-                  <View style={{flex: 2}}>
+                  <View style={{flex: 0, marginRight: 2}}>
                     <View style={{flexDirection: 'row'}}>
-                      <Text style={{fontWeight: '600'}}>Cidade: </Text>
+                      <Text style={{fontWeight: '600', }}>Cidade: </Text>
                       <Text>{this.props.navigation.getParam('cidade')}</Text>
                     </View>
                   </View>
-                  <View style={{flex: 1}}>
-                    <View style={{flexDirection: 'row'}}>
-                      <Text style={{fontWeight: '600'}}>Estado: </Text>
-                      <Text>{this.props.navigation.getParam('uf')}</Text>
+                  <View style={{flex: 1, flexDirection: 'row' ,}}>
+                    <View style={{flex: 1, alignContent: 'flex-end', alignItems: 'flex-end'}}>
+                      <View style={{flexDirection: 'row', flex: 1, justifyContent: 'flex-end'}}>
+                        <Text style={{fontWeight: '600'}}>UF: </Text>
+                        <Text>{this.props.navigation.getParam('uf')}</Text>
+                      </View>
+                    </View>
+
+                    <View style={{flex: 1, alignContent: 'flex-end', alignItems: 'flex-end'}}>
+                      <View style={styles.floatMarker}>
+                        <MaterialCommunityIcons name={'map-marker'} size={25} color="#ea4335" 
+                        onPress={()=>{
+                          /*this.props.navigation.navigate('Map',
+                          {
+                            cod_cliente: item.cod_cliente,
+                            nome: item.nome,
+                            telefone: item.telefone,
+                            endereco: item.endereco,
+                            cidade: item.cidade,
+                            estado: item.estado,
+                            numero: item.numero,
+                            uf: item.uf,
+                          });*/
+                          this.getLatLng(this.props.navigation.getParam('endereco'), this.props.navigation.getParam('numero'), this.props.navigation.getParam('bairro'), this.props.navigation.getParam('cidade'), this.props.navigation.getParam('uf'));
+                          
+                        }}/>
+                      </View>
                     </View>
                   </View>
-
                 </View>
                 
                   
@@ -461,7 +532,7 @@ export default class Request extends Component<Props> {
            }/> 
         </View>
 
-      </ScrollView>
+      </View>
     );                                                                                                                                    
   }
 }
@@ -478,6 +549,19 @@ const styles = StyleSheet.create({
   },
   map: {
     ...StyleSheet.absoluteFillObject,
+  },
+  floatMarker: {
+    width: 25,  
+    height: 25,   
+    borderRadius: 12,            
+    backgroundColor: 'white',                                    
+    //position: 'absolute', 
+    justifyContent: "center",
+    alignItems: "center",                                     
+    //bottom: 10,                                                    
+    //right: 15,
+    elevation: 3,
+    
   },
   container: {
     flex: 1,

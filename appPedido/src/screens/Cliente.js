@@ -1,11 +1,13 @@
 import React, {Component} from 'react';
 import {Alert,StyleSheet, Text,
 View, TextInput, ActivityIndicator, FlatList, 
-TouchableNativeFeedback} from 'react-native';
+TouchableNativeFeedback, NativeModules} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as config from '../../config';
 import AsyncStorage from '@react-native-community/async-storage';
+
+const OpenMapModule = NativeModules.OpenMapModule;
 
 export default class Cliente extends Component<Props> {
   constructor(props){
@@ -155,7 +157,32 @@ export default class Cliente extends Component<Props> {
 	{	
 		campo = campo.split(".").join("");
 		return campo;
-	}
+  }
+  
+  getLatLng(endereco, numero, bairro, cidade, uf){
+    fetch('https://api.opencagedata.com/geocode/v1/json?key=27699a4b223f4c028bca825642181b0f&q='
+      +endereco+
+      ', '+numero+
+      ' - '+bairro+
+      ', '+cidade+
+      ' - '+uf+
+      '&pretty=1&no_annotations=1'
+    ,{
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    }).then(response => response.json())
+    .then(responseJson => {
+      console.log(responseJson);
+      //this.setState({lat: responseJson.results[0].geometry.lat, lng: responseJson.results[0].geometry.lng});
+      OpenMapModule.show(responseJson.results[0].geometry.lat, responseJson.results[0].geometry.lng, endereco, cidade, uf);
+    }).catch(err => {
+      console.log('erro: ',err);
+    })
+  }
+
 
   render() {
     return (
@@ -224,12 +251,24 @@ export default class Cliente extends Component<Props> {
                         </View>
                         
                         <View style={{flex: 0, flexDirection: 'row'}}>
-                          <View style={{flex: 0,marginRight: 1}}>
+                          <View style={{flex: 1,marginRight: 1}}>
                             <View style={{flexDirection: 'row'}}>
                               <Text style={{fontWeight: '600'}}>CEP: </Text>
                               <Text>{item.cep}</Text>
                             </View>
                           </View>
+                          <View style={{flex: 2}}>
+                            <View style={{flexDirection: 'row'}}>
+                              <Text style={{fontWeight: '600'}}>Bairro: </Text>
+                              <Text>{item.bairro}</Text>
+                            </View>
+                          </View>
+                          
+                          
+                          
+                        </View>
+
+                        <View style={{flex: 0, flexDirection: 'row'}}>
                           <View style={{flex: 0, marginRight: 2}}>
                             <View style={{flexDirection: 'row'}}>
                               <Text style={{fontWeight: '600', }}>Cidade: </Text>
@@ -248,7 +287,7 @@ export default class Cliente extends Component<Props> {
                               <View style={styles.float}>
                                 <MaterialCommunityIcons name={'map-marker'} size={25} color="#ea4335" 
                                 onPress={()=>{
-                                  this.props.navigation.navigate('Map',
+                                  /*this.props.navigation.navigate('Map',
                                   {
                                     cod_cliente: item.cod_cliente,
                                     nome: item.nome,
@@ -258,12 +297,13 @@ export default class Cliente extends Component<Props> {
                                     estado: item.estado,
                                     numero: item.numero,
                                     uf: item.uf,
-                                  });
+                                  });*/
+                                  this.getLatLng(item.endereco, item.numero, item.bairro, item.cidade, item.uf);
+                                  
                                 }}/>
                               </View>
                             </View>
                           </View>
-                          
                         </View>
 
                         <View style={{flex: 0, flexDirection: 'row', borderBottomWidth: 0.5,

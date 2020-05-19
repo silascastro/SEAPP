@@ -2,6 +2,7 @@ package com.apppedido;
 
 import android.app.Application;
 
+import com.apppedido.nativeModules.OpenMapPackage;
 import com.apppedido.nativeModules.ToastPackage;
 import com.apppedido.ui.CheckBoxPackage;
 import com.facebook.react.ReactApplication;
@@ -41,6 +42,7 @@ public class MainApplication extends Application implements ReactApplication {
             new RNGestureHandlerPackage(                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ),
             new ReanimatedPackage(),
             new LoginPackage(),
+            new OpenMapPackage(),
             new CheckBoxPackage(),
           new ToastPackage(),
           new VectorIconsPackage(),

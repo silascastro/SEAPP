@@ -1,23 +1,29 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, TextInput,
-   ActivityIndicator, FlatList, TouchableNativeFeedback} from 'react-native';
+   ActivityIndicator, FlatList, TouchableNativeFeedback, NativeModules} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from  '@react-native-community/async-storage';
 import * as config from '../../config';
+import * as Permission from '../../Permissions';
+
+const OpenMapModule = NativeModules.OpenMapModule;
 
 export default class Pedido extends Component<Props> {
   constructor(props){
     super(props);
-    this.state = {loading: false, 
-      clientes: [], 
-      pesquisado: false, 
-      input: '', 
-      contasareceber: [],
-      moeda: '',
-    };
-
-  }
+      this.state = {loading: false, 
+        clientes: [], 
+        pesquisado: false, 
+        input: '', 
+        contasareceber: [],
+        moeda: '',
+        lat: 37.78825,
+        lng: -122.4324,
+      };
+      Permission.location();
+      Permission.fine_location();
+    }
 
   static navigationOptions = ({navigation}) => ({
     title: 'Pedido',
@@ -149,7 +155,31 @@ export default class Pedido extends Component<Props> {
 	{	
 		campo = campo.split(".").join("");
 		return campo;
-	}
+  }
+  
+  getLatLng(endereco, numero, bairro, cidade, uf){
+    fetch('https://api.opencagedata.com/geocode/v1/json?key=27699a4b223f4c028bca825642181b0f&q='
+      +endereco+
+      ', '+numero+
+      ' - '+bairro+
+      ', '+cidade+
+      ' - '+uf+
+      '&pretty=1&no_annotations=1'
+    ,{
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    }).then(response => response.json())
+    .then(responseJson => {
+      console.log(responseJson);
+      //this.setState({lat: responseJson.results[0].geometry.lat, lng: responseJson.results[0].geometry.lng});
+      OpenMapModule.show(responseJson.results[0].geometry.lat, responseJson.results[0].geometry.lng, endereco, cidade, uf);
+    }).catch(err => {
+      console.log('erro: ',err);
+    })
+  }
 
   render() {
     return (
@@ -162,9 +192,9 @@ export default class Pedido extends Component<Props> {
               this.setState({pesquisado: true});
               this.setState({input: value});
               this.getClientes();
-            
-            
-          }}/>
+
+            }
+          }/>
           {this.state.input != '' ?<Icon name='close' size={25} color="black"  style={{flex: 1,alignSelf: 'center', textAlign: 'right', paddingRight: 5}}
             onPress={()=> {
               this.setState({input: ''});
@@ -188,6 +218,8 @@ export default class Pedido extends Component<Props> {
                         nome: this.state.clientes[index].nome,
                         telefone: item.telefone,
                         endereco: item.endereco,
+                        cep: item.cep,
+                        bairro: item.bairro,
                         cidade: item.cidade,
                         numero: item.numero,
                         uf: item.uf,
@@ -224,12 +256,21 @@ export default class Pedido extends Component<Props> {
                         </View>
                         
                         <View style={{flex: 0, flexDirection: 'row'}}>
-                          <View style={{flex: 0,marginRight: 1}}>
+                          <View style={{flex: 1,marginRight: 1}}>
                             <View style={{flexDirection: 'row'}}>
                               <Text style={{fontWeight: '600'}}>CEP: </Text>
                               <Text>{item.cep}</Text>
                             </View>
                           </View>
+                          <View style={{flex: 2}}>
+                            <View style={{flexDirection: 'row'}}>
+                              <Text style={{fontWeight: '600'}}>Bairro: </Text>
+                              <Text>{item.bairro}</Text>
+                            </View>
+                          </View>  
+                        </View>
+
+                        <View style={{flex: 0, flexDirection: 'row'}}>
                           <View style={{flex: 0, marginRight: 2}}>
                             <View style={{flexDirection: 'row'}}>
                               <Text style={{fontWeight: '600', }}>Cidade: </Text>
@@ -248,7 +289,7 @@ export default class Pedido extends Component<Props> {
                               <View style={styles.float}>
                                 <MaterialCommunityIcons name={'map-marker'} size={25} color="#ea4335" 
                                 onPress={()=>{
-                                  this.props.navigation.navigate('Map',
+                                  /*this.props.navigation.navigate('Map',
                                   {
                                     cod_cliente: item.cod_cliente,
                                     nome: item.nome,
@@ -258,12 +299,13 @@ export default class Pedido extends Component<Props> {
                                     estado: item.estado,
                                     numero: item.numero,
                                     uf: item.uf,
-                                  });
+                                  });*/
+                                  this.getLatLng(item.endereco, item.numero, item.bairro, item.cidade, item.uf);
+                                  
                                 }}/>
                               </View>
                             </View>
                           </View>
-                          
                         </View>
 
                         <View style={{flex: 0, flexDirection: 'row', borderBottomWidth: 0.5,borderBottomColor: '#000000'}}>
