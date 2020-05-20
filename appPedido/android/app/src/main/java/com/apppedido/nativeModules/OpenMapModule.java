@@ -18,9 +18,12 @@ public class OpenMapModule extends ReactContextBaseJavaModule {
     public void show(int lat, int lng,String address, String city, String uf) {
         //Uri.parse("http://maps.google.com/maps?daddr="+lat+","+lng));
         Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-        
         Uri.parse("google.navigation:q="+address+","+city+" - "+uf));
-        getReactApplicationContext().startActivity(intent);
+        intent.setPackage("com.google.android.apps.maps");
+
+        if(intent.resolveActivity(getReactApplicationContext().getPackageManager())!= null){
+            getReactApplicationContext().startActivity(intent);
+        }
     }
 
 
