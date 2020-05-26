@@ -10,8 +10,10 @@ import com.facebook.react.bridge.ReactMethod;
 import javax.annotation.Nonnull;
 
 public class OpenMapModule extends ReactContextBaseJavaModule {
+    private ReactApplicationContext context;
     public OpenMapModule(@Nonnull ReactApplicationContext reactContext) {
         super(reactContext);
+        context = reactContext;
     }
 
     @ReactMethod
@@ -21,8 +23,8 @@ public class OpenMapModule extends ReactContextBaseJavaModule {
         Uri.parse("google.navigation:q="+address+","+city+" - "+uf));
         intent.setPackage("com.google.android.apps.maps");
 
-        if(intent.resolveActivity(getReactApplicationContext().getPackageManager())!= null){
-            getReactApplicationContext().startActivity(intent);
+        if(intent.resolveActivity(context.getPackageManager())!= null){
+            context.startActivity(intent);
         }
     }
 

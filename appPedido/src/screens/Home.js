@@ -36,9 +36,11 @@ export default class Home extends Component<Props> {
     this.state = {
       loading: true, user: '',
       empresa: '', empresa_cod: '',
+      usuario: '',
       imei: ''
     };
     this.getEmpresaData();
+    this.getUserType();
   }
 
   async getEmpresaData(){
@@ -48,6 +50,14 @@ export default class Home extends Component<Props> {
       }
     });
   }
+
+  async getUserType(){
+    await AsyncStorage.getItem('usuario', (error,result) => {
+       if(result){
+         this.setState({usuario: result});
+       }
+     });
+   }
 
   static navigationOptions = ({navigation}) => {
     const {params={}} = navigation.state;
@@ -145,7 +155,37 @@ export default class Home extends Component<Props> {
                     this.props.navigation.push('Cliente');
                   }
                   if(item.title == "Pedidos"){
-                    this.props.navigation.push('Pedido');
+                    AsyncStorage.getItem("usuario_tipo",(err,result)=> {
+                      if(result){
+                        if(result == "C"){
+                          AsyncStorage.getItem('userdata', (err, result)=> {
+                            if(result){
+                              let aux = JSON.parse(result);
+                              this.props.navigation.push('Request', {
+                                cod_cliente: aux.cod_cliente,
+                                nome: aux.nome,
+                                telefone: aux.telefone,
+                                endereco: aux.endereco,
+                                cep: aux.cep,
+                                bairro: aux.bairro,
+                                cidade: aux.cidade,
+                                numero: aux.numero,
+                                uf: aux.uf,
+                                observacao: aux.observacao,
+                                limite: aux.limite,
+                                saldo_devedor: aux['tbcontasreceber.saldo_devedor'],
+                                saldo_compra: aux['tbcontasreceber.saldo_compra']
+                              
+                              });
+                            }
+                          });
+                        }else
+                          this.props.navigation.push('Pedido');
+                          //AsyncStorage.getItem('userdata', (err, result)=> {if(result)alert(result)});
+                          
+                      }
+                    });
+                    
                   }
                   if(item.title == "Sair"){
                     Alert.alert('Atenção', 'confirma a sua ação?',
@@ -177,7 +217,8 @@ export default class Home extends Component<Props> {
                       <item.type name={item.icon} size={25} color="black"/> 
                     </View>
                     <View style={{flex: 6, textDecorationStyle: 'solid', textDecorationColor: 'red'}}>
-                      <Text style={{fontWeight: '700', fontSize: 15, color: 'black'}}>{item.title}</Text>
+                      <Text 
+                      style={{fontWeight: '700', fontSize: 15, color: 'black'}}>{item.title}</Text>
                       
                     </View>
                   </View>
@@ -228,3 +269,4 @@ const styles = StyleSheet.create({
   }
   
 });
+

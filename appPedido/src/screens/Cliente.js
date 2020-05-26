@@ -287,7 +287,7 @@ export default class Cliente extends Component<Props> {
                               <View style={styles.float}>
                                 <MaterialCommunityIcons name={'map-marker'} size={25} color="#ea4335" 
                                 onPress={()=>{
-                                  /*this.props.navigation.navigate('Map',
+                                  this.props.navigation.navigate('Map',
                                   {
                                     cod_cliente: item.cod_cliente,
                                     nome: item.nome,
@@ -297,8 +297,8 @@ export default class Cliente extends Component<Props> {
                                     estado: item.estado,
                                     numero: item.numero,
                                     uf: item.uf,
-                                  });*/
-                                  this.getLatLng(item.endereco, item.numero, item.bairro, item.cidade, item.uf);
+                                  });
+                                  //this.getLatLng(item.endereco, item.numero, item.bairro, item.cidade, item.uf);
                                   
                                 }}/>
                               </View>

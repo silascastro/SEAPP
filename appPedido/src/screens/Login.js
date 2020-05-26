@@ -59,8 +59,7 @@ export default class Login extends Component {
   getIp(){
     AsyncStorage.getItem('_ip',(error,result)=> {
         if(error){
-            //AsyncStorage.setItem('_ip',config.url);
-            //API = config.url;
+            
         }
         if(result){
 
@@ -84,7 +83,7 @@ export default class Login extends Component {
   }
 
   getUsers(){
-    fetch(config.url+'funcionarios', {
+    fetch(config.url+'usuario', {
       method: 'GET',
       headers: {
         Accept: 'application/json',
@@ -108,11 +107,12 @@ export default class Login extends Component {
   }
 
   doLogin(user){
+    
     if(user==""){
       Alert.alert('Atenção', 'nenhum usuário selecionado!');
     }else{
       this.setState({loading: true});
-      fetch(config.url+'funcionarios/'+user, {
+      fetch(config.url+'usuario/'+user, {
         method: 'GET',
         headers: {
           Accept: 'application/json',
@@ -127,13 +127,18 @@ export default class Login extends Component {
         this.setState({loading: false});
         if(this.state.password == resp.senha){
           
-          if(this.state.imei == resp.codigo1){
-            console.log(resp.id_funcionario);
+          if(this.state.imei == resp.imei1){
+            /*console.log(imei);
+            console.log(resp.id_funcionario);*/
             this.setuser(resp.nome);
-            this.setuserCode(resp.id_funcionario);
+            this.setuserCode(resp.codigo);
             
             this.getEmpresaName(resp.id_empresa);
-            LoginModule.login((resp.id_funcionario),this.state.password);
+            AsyncStorage.setItem('usuario_tipo',resp.tipo);
+            if(resp.tipo == "C"){
+              this.getClienteData(user);
+            }
+            LoginModule.login((resp.codigo),this.state.password);
             let {dispatch} = this.props.navigation;
             dispatch(resetActionHome);
             //this.props.navigation.navigate('Home');
@@ -150,6 +155,24 @@ export default class Login extends Component {
         Alert.alert('Atenção', 'erro ao conectar-se com o servidor!');
       });
     }
+  }
+
+  getClienteData(name){ 
+    fetch(config.url+'clientes/byname/'+(name).toUpperCase(), {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    }).then((response)=> response.json())
+    .then((resp) => {
+      AsyncStorage.setItem('userdata', JSON.stringify(JSON.parse(resp[0])));
+            
+    }).catch((err)=>{
+      console.log(err);
+      //this.setState({loading: false});
+      //Alert.alert('Atenção', 'erro');
+    });
   }
 
   setuser(user){

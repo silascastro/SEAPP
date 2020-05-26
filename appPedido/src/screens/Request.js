@@ -310,7 +310,7 @@ export default class Request extends Component<Props> {
                       <View style={styles.floatMarker}>
                         <MaterialCommunityIcons name={'map-marker'} size={25} color="#ea4335" 
                         onPress={()=>{
-                          /*this.props.navigation.navigate('Map',
+                          this.props.navigation.navigate('Map',
                           {
                             cod_cliente: item.cod_cliente,
                             nome: item.nome,
@@ -320,8 +320,8 @@ export default class Request extends Component<Props> {
                             estado: item.estado,
                             numero: item.numero,
                             uf: item.uf,
-                          });*/
-                          this.getLatLng(this.props.navigation.getParam('endereco'), this.props.navigation.getParam('numero'), this.props.navigation.getParam('bairro'), this.props.navigation.getParam('cidade'), this.props.navigation.getParam('uf'));
+                          });
+                          //this.getLatLng(this.props.navigation.getParam('endereco'), this.props.navigation.getParam('numero'), this.props.navigation.getParam('bairro'), this.props.navigation.getParam('cidade'), this.props.navigation.getParam('uf'));
                           
                         }}/>
                       </View>
