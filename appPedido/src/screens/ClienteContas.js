@@ -478,7 +478,7 @@ export default class ClienteContas extends Component<Props> {
   />
 
   <View style={{marginLeft: 10, marginRight: 10, paddingTop: 10, paddingBottom: 15}}>
-    <View style={{marginLeft: 15, flexDirection: 'row', 
+    <View style={{/*marginLeft: 15,*/ flexDirection: 'row', 
      borderTopWidth: 0.5, borderColor: 'gray'}}>
       <View style={{flex: 2}}>
         <Text style={{fontWeight: '600', color: 'black'}}>Total a Receber: </Text>
@@ -522,7 +522,8 @@ export default class ClienteContas extends Component<Props> {
         );
       }}
     />
-    </View>
+    <Text style={{fontWeight: '600', color: 'red'}}>As notas serão baixadas somente depois da confirmação do pagamento</Text>
+  </View>
   </View>
     );
   }

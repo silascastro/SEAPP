@@ -23,6 +23,7 @@ import java.util.List;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.airbnb.android.react.maps.MapsPackage;
 import com.reactnativecommunity.geolocation.GeolocationPackage;
+import com.learnium.RNDeviceInfo.RNDeviceInfo;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -47,7 +48,8 @@ public class MainApplication extends Application implements ReactApplication {
           new ToastPackage(),
           new VectorIconsPackage(),
           new MapsPackage(),
-          new GeolocationPackage()
+          new GeolocationPackage(),
+          new RNDeviceInfo()
       );
     }
 

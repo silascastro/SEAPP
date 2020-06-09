@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {ActivityIndicator,StyleSheet, Text, View, TextInput, 
   Button,Alert ,StatusBar, Switch, Picker, NativeModules, 
-  NativeEventEmitter} from 'react-native';
+  NativeEventEmitter, PermissionsAndroid} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { StackActions, NavigationActions } from 'react-navigation';
 import * as Permission from '../../Permissions';
@@ -9,6 +9,7 @@ import * as config from '../../config';
 const eventEmitter = new NativeEventEmitter(NativeModules.LoginModule);
 const LoginModule = NativeModules.LoginModule;
 import AsyncStorage from '@react-native-community/async-storage';
+import DeviceInfo from 'react-native-device-info';
 
 const resetActionHome = StackActions.reset({
   index: 0,
@@ -16,23 +17,35 @@ const resetActionHome = StackActions.reset({
     NavigationActions.navigate({ routeName: 'Home' }),
   ],
 });
+
 export default class Login extends Component {
   constructor(props){
     super(props);
-    this.state = {rememberPass: false,
+    this.state = {
+       rememberPass: false,
        userSelect: '', 
        usuarios: [],
        user: '', 
+       userData: {},
        password: '',
       // _ipAddress: '',
        loading: false, 
-       imei: ''};
+       loadingUser: true,
+       deviceId: '',
+       imei: '',
+       phoneNumber: '',
+    };
        
        this.willFocuSub = this.props.navigation.addListener(
         'willFocus',
         ()=>{
           //alert('voltando');
+          //Permission.readPhoneState();
           this.getIp();
+          this.getImeiStorage();
+          this.SetPermission();
+          //this.getImei();
+          setTimeout(()=>{this.getUser();},500);
         }
       );
   }
@@ -47,13 +60,59 @@ export default class Login extends Component {
 
   componentDidMount(){
     this.getIp();
-    Permission.readPhoneState();
-    AsyncStorage.getItem('imei',(error, result) => {
-      if(result)
-      this.setState({imei: result});
-    })
+    //Permission.readPhoneState();
+    //this.getPhoneNumber();
+    //this.getDeviceId();
+    this.getImeiStorage();
+    this.SetPermission();
+    //this.getImei();
+    setTimeout(()=>{this.getUser();},500);
+    
+    /*AsyncStorage.getItem('imei',(error, result) => {
+      if(result){
+        alert(result);
+        this.setState({imei: result});
+      }
+      
+    });*/
     //this. getUsers();
     //alert(config.url);
+  }
+
+  async SetPermission(){
+    try{
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE,
+        {
+          title: 'App read write read phone state Permission',
+            message:
+            'App needs write external storage ' +
+            'so you can take.',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+        },
+      );
+      if(granted== PermissionsAndroid.RESULTS.GRANTED){
+        console.log('permissão de ler estado concedida');
+        //CallPhone();
+        /*eventEmitter.addListener(
+          'imei', (e) =>{
+            //this.setState({imei: e.imei});
+            AsyncStorage.setItem('imei',e.imei);
+            
+          }
+        );*/
+        //Permission.readPhoneState();
+        LoginModule.getImei();
+        this.getImei();
+        
+      }else{
+        //alert("Permissão negada");
+      }
+    }catch(err){
+      alert(err);
+    }
   }
 
   getIp(){
@@ -64,7 +123,7 @@ export default class Login extends Component {
         if(result){
 
           config.url = result;
-          this.getUsers();
+          //this.getUsers();
           /*let aux = result.split('//')[1];
           let final = aux.split(':')[0];
           this.setState({_ipAddress: result});*/
@@ -72,14 +131,68 @@ export default class Login extends Component {
     });
   }
 
+  getImeiStorage(){
+    AsyncStorage.getItem('_imei',(error,result)=> {
+        if(error){
+            
+        }
+        if(result){
+          if(result!='' && result!= undefined && result!=null)
+            this.setState({imei: result});
+          //this.getUsers();
+          /*let aux = result.split('//')[1];
+          let final = aux.split(':')[0];
+          this.setState({_ipAddress: result});*/
+        }
+    });
+  }
+
+  getDeviceId(){
+
+  }
+
+  getPhoneNumber(){
+    
+  }
+
+  getUser(){
+    fetch(config.url+'usuario/byimei/'+this.state.imei, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      /*body: JSON.stringify({
+        firstParam: 'yourValue',
+        secondParam: 'yourOtherValue',
+      }),*/
+    }).then((response)=> response.json())
+      .then((resp) => {
+        if(resp.msg == "Usuário não encontrado!"){
+          Alert.alert('Atenção', resp.msg);
+        }
+      this.setState({
+        user: resp.nome, 
+      });
+      
+    }).catch((err)=>{
+      this.setState({loadingUser: false});
+      Alert.alert('Atenção', 'erro ao conectar-se com o servidor!'+'users');
+    });
+  }
+
   async getImei(){
-    eventEmitter.addListener(
-      'imei', (e) =>{
-        //alert(e.imei);
-        this.setState({imei: e.imei});
-      }
-    );
-    LoginModule.getImei();
+    const granted = await PermissionsAndroid.check( PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE );
+    if (granted) {
+      eventEmitter.addListener(
+        'imei', (e) =>{
+          if(e.imei != null && e.imei!=undefined && e.imei != '')
+            this.setState({imei: e.imei});
+        }
+      );
+      LoginModule.getImei();
+    } 
+    
   }
 
   getUsers(){
@@ -106,13 +219,9 @@ export default class Login extends Component {
     });
   }
 
-  doLogin(user){
-    
-    if(user==""){
-      Alert.alert('Atenção', 'nenhum usuário selecionado!');
-    }else{
+  doLogin(){
       this.setState({loading: true});
-      fetch(config.url+'usuario/'+user, {
+      fetch(config.url+'usuario/'+this.state.user.toUpperCase(), {
         method: 'GET',
         headers: {
           Accept: 'application/json',
@@ -122,39 +231,37 @@ export default class Login extends Component {
           firstParam: 'yourValue',
           secondParam: 'yourOtherValue',
         }),*/
-      }).then((response)=> response.json()).then((resp) => {
+      }).then((response)=> response.json())
+      .then((resp) => {
         console.log(resp);
-        this.setState({loading: false});
-        if(this.state.password == resp.senha){
-          
-          if(this.state.imei == resp.imei1){
-            /*console.log(imei);
-            console.log(resp.id_funcionario);*/
+        if(resp.msg == "Usuário não encontrado!"){
+          Alert.alert('Atenção', resp.msg);
+          this.setState({loading: false});
+        }else{
+          if(resp.imei1 == this.state.imei){
+            this.setState({loading: false});
             this.setuser(resp.nome);
             this.setuserCode(resp.codigo);
             
             this.getEmpresaName(resp.id_empresa);
             AsyncStorage.setItem('usuario_tipo',resp.tipo);
             if(resp.tipo == "C"){
-              this.getClienteData(user);
+              this.getClienteData(resp.nome);
             }
-            LoginModule.login((resp.codigo),this.state.password);
+            LoginModule.login((resp.codigo),"senha");
             let {dispatch} = this.props.navigation;
             dispatch(resetActionHome);
             //this.props.navigation.navigate('Home');
           }else{
-            
-            Alert.alert('Atenção', 'dispositivo não autorizado!');
+            Alert.alert('Atenção', 'Dispositivo não autorizado!');
           }
-        }else{
-          this.setState({password: ''});
-          alert('senha incorreta!');
+          this.setState({loading: false});
         }
       }).catch((err)=>{
         this.setState({loading: false});
+        
         Alert.alert('Atenção', 'erro ao conectar-se com o servidor!');
       });
-    }
   }
 
   getClienteData(name){ 
@@ -166,12 +273,10 @@ export default class Login extends Component {
       },
     }).then((response)=> response.json())
     .then((resp) => {
-      AsyncStorage.setItem('userdata', JSON.stringify(JSON.parse(resp[0])));
+      AsyncStorage.setItem('userdata', JSON.stringify(resp[0]));
             
     }).catch((err)=>{
       console.log(err);
-      //this.setState({loading: false});
-      //Alert.alert('Atenção', 'erro');
     });
   }
 
@@ -223,46 +328,41 @@ export default class Login extends Component {
               <Icon name="person" size={25} color="black" style={{alignSelf: 'baseline'}}/>
             </View>
             <View style={{flex: 1, justifyContent: 'center'}}>
-              <Picker
-                selectedValue={this.state.userSelect}
-                mode="dialog"
-                onValueChange={(itemValue, itemIndex) =>
-                  this.setState({userSelect: itemValue})
-                }>
-                  {serviceItems}
-              </Picker>
+              <TextInput  /*underlineColorAndroid='#0000ff'*/value={this.state.user} 
+                textContentType='nickname' placeholder="Usuário" secureTextEntry={false}
+                  onChangeText={(text)=>this.setState({user:text})}
+                />
             </View>
           </View>
-          <View style={styles.password}>
+          
+          <View style={styles.user}>
             <View style={{justifyContent: 'center', }}>
-              <Icon name="lock" size={25} color="black" style={{alignSelf: 'baseline'}}/>
+              <Icon name="settings-cell" size={25} color="black" style={{alignSelf: 'baseline'}}/>
             </View>
-            <View style={{justifyContent: 'center', flex: 1 }}>
-              <TextInput  /*underlineColorAndroid='#0000ff'*/value={this.state.password} 
-              textContentType='password' placeholder="Senha" secureTextEntry={true}
-                onChangeText={(text)=>this.setState({password:text})}
-              />
+            <View style={{flex: 1, justifyContent: 'center'}}>
+              <TextInput  /*underlineColorAndroid='#0000ff'*/value={this.state.imei} 
+                textContentType='postalCode' placeholder="Imei" secureTextEntry={false} editable={false}
+                  onChangeText={(text)=>this.setState({imei:text})}
+                />
             </View>
           </View>
         
-          <View style={styles.lembrarSenha}>
-            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-              <Text >Lembrar minha senha</Text>
-            </View>
-            <View style={{flex: 1, alignItems: 'center'}}>
-              <Switch value={this.state.rememberPass} 
-              onValueChange={()=>{
-                this.setState({rememberPass: !this.state.rememberPass});
-              }}/>
-            </View>
-          </View>
         </View>
         <View style={styles.btn}>
           <Button title="login" color="#124d34" onPress={()=>{
-            if(this.state.password!='')
-              this.doLogin(this.state.userSelect);
-            else
-            Alert.alert('Atenção', 'digite a sua senha!');
+            if(this.state.user!='' && this.state.imei != '')
+              {
+                this.doLogin(this.state.user);
+              }
+            else{
+              if(this.state.user == ''){
+                Alert.alert('Atenção', 'digite o seu nome!');
+              }
+              if(this.state.imei == ''){
+                Alert.alert('Atenção', 'digite o imei do aparelho!');
+              }
+            }
+              
             
             }/**/
           }/>
@@ -283,6 +383,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#ffffff'/*'#3ca597'*/,
+    //justifyContent: 'center'
   },
   loginCard:{
     //height: 40,

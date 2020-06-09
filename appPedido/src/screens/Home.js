@@ -152,19 +152,42 @@ export default class Home extends Component<Props> {
                 <TouchableNativeFeedback onPress={
                   ()=>{
                   if(item.title == "Clientes"){
-                    this.props.navigation.push('Cliente');
+                    AsyncStorage.getItem("usuario_tipo",(err,result)=> {
+                      if(result){
+                        if(result == "C"){
+                          
+                          AsyncStorage.getItem('userdata', (err, result)=> {
+                            if(result){                     
+                              let aux = JSON.parse(result);
+                              this.props.navigation.push('ClienteContas', {
+                                cod_cliente: aux.cod_cliente,
+                                nome: aux.nome,
+                                telefone: aux.telefone,
+                                endereco: aux.endereco,                             
+                              });
+                            }
+                          });
+                        }else
+                          this.props.navigation.push('Cliente');
+                          //AsyncStorage.getItem('userdata', (err, result)=> {if(result)alert(result)});
+                          
+                      }
+                    });
+                    
                   }
                   if(item.title == "Pedidos"){
                     AsyncStorage.getItem("usuario_tipo",(err,result)=> {
                       if(result){
                         if(result == "C"){
+                          
                           AsyncStorage.getItem('userdata', (err, result)=> {
-                            if(result){
+                            if(result){                     
                               let aux = JSON.parse(result);
                               this.props.navigation.push('Request', {
                                 cod_cliente: aux.cod_cliente,
                                 nome: aux.nome,
                                 telefone: aux.telefone,
+                                celular: aux.celular,
                                 endereco: aux.endereco,
                                 cep: aux.cep,
                                 bairro: aux.bairro,
@@ -172,7 +195,7 @@ export default class Home extends Component<Props> {
                                 numero: aux.numero,
                                 uf: aux.uf,
                                 observacao: aux.observacao,
-                                limite: aux.limite,
+                                limite: aux.limite_compra,
                                 saldo_devedor: aux['tbcontasreceber.saldo_devedor'],
                                 saldo_compra: aux['tbcontasreceber.saldo_compra']
                               

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Alert,StyleSheet, Text,
 View, TextInput, ActivityIndicator, FlatList, 
-TouchableNativeFeedback, NativeModules} from 'react-native';
+TouchableNativeFeedback, NativeModules, Linking} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as config from '../../config';
@@ -123,15 +123,15 @@ export default class Cliente extends Component<Props> {
           //resp[e].tbcontasreceber.saldo_devedor = "0.00";
           //resp[e].tbcontasreceber.saldo_compra = resp[e].limite;
           let aux2 = {
-            limite: resp[e].limite, 
+            limite_compra: resp[e].limite_compra, 
             cod_cliente: resp[e].cod_cliente,
             nome: resp[e].nome, endereco: resp[e].endereco,
-            bairro: resp[e].bairro, telefone: resp[e].telefone, 
+            bairro: resp[e].bairro, telefone: resp[e].telefone, celular: resp[e].celular,
             cidade: resp[e].cidade, numero: resp[e].numero,
             uf: resp[e].uf, cep: resp[e].cep, 
             observacao: resp[e].observacao,
             ["tbcontasreceber.saldo_devedor"]: '0.00',
-            ["tbcontasreceber.saldo_compra"]: resp[e].limite
+            ["tbcontasreceber.saldo_compra"]: resp[e].limite_compra
           }
           //alert(resp[e].nome);
           aux.push(aux2);
@@ -177,7 +177,8 @@ export default class Cliente extends Component<Props> {
     .then(responseJson => {
       console.log(responseJson);
       //this.setState({lat: responseJson.results[0].geometry.lat, lng: responseJson.results[0].geometry.lng});
-      OpenMapModule.show(responseJson.results[0].geometry.lat, responseJson.results[0].geometry.lng, endereco, cidade, uf);
+      Linking.openURL('https://www.google.com/maps/dir/?api=1&destination='+endereco+', '+numero+' - '+bairro+', '+cidade+' - '+uf+'&travelmode=driving');
+      //OpenMapModule.show(responseJson.results[0].geometry.lat, responseJson.results[0].geometry.lng, endereco, cidade, uf);
     }).catch(err => {
       console.log('erro: ',err);
     })
@@ -234,7 +235,7 @@ export default class Cliente extends Component<Props> {
                         </View>
                         <View style={{flex: 0, flexDirection: 'row'}}>
                           <Text style={{fontWeight: '600'}}>Telefone: </Text>
-                          <Text>{item.telefone}</Text>
+                          <Text>{item.telefone} / {item.celular}</Text>
                         </View>
 
                         <View style={{flex: 0, flexDirection: 'row'}}>
@@ -287,7 +288,7 @@ export default class Cliente extends Component<Props> {
                               <View style={styles.float}>
                                 <MaterialCommunityIcons name={'map-marker'} size={25} color="#ea4335" 
                                 onPress={()=>{
-                                  this.props.navigation.navigate('Map',
+                                  /*this.props.navigation.navigate('Map',
                                   {
                                     cod_cliente: item.cod_cliente,
                                     nome: item.nome,
@@ -297,8 +298,8 @@ export default class Cliente extends Component<Props> {
                                     estado: item.estado,
                                     numero: item.numero,
                                     uf: item.uf,
-                                  });
-                                  //this.getLatLng(item.endereco, item.numero, item.bairro, item.cidade, item.uf);
+                                  });*/
+                                  this.getLatLng(item.endereco, item.numero, item.bairro, item.cidade, item.uf);
                                   
                                 }}/>
                               </View>
@@ -320,7 +321,7 @@ export default class Cliente extends Component<Props> {
                             </View>
                             <View style={{flex: 1, alignContent: 'center', alignItems: 'flex-end'}}>
                               <Text style={{alignContent: "center", color: 'black', fontWeight: '600',fontSize: 13,}}>
-                              {this.state.moeda == "G" ? this.numberToReal(Number(item.limite)).split(',')[0]:this.numberToReal(Number(item.limite))}</Text>
+                              {this.state.moeda == "G" ? this.numberToReal(Number(item.limite_compra)).split(',')[0]:this.numberToReal(Number(item.limite_compra))}</Text>
                               <Text style={{color: 'red'}}>{this.state.moeda == "G" ? this.numberToReal(Number(item['tbcontasreceber.saldo_devedor'])).split(',')[0]:this.numberToReal(Number(item['tbcontasreceber.saldo_devedor']))}</Text>
                               <Text style={{color: item['tbcontasreceber.saldo_compra']<0?'red':'green'}}>
                               {this.state.moeda == "G" ? (this.numberToReal(Number(item['tbcontasreceber.saldo_compra'])).replace("-.","-")).split(',')[0]:this.numberToReal(Number(item['tbcontasreceber.saldo_compra'])).replace("-.","-")}</Text>

@@ -16,6 +16,7 @@ export default class Produto extends Component<Props> {
       loading: false, pesquisado: false, 
       input: '', produtos: [], qtds: [], fotosProdutos: [],
       produtoSelecionado: '', select_qtd: '1',
+      obs_produto: '',
       loadingAsync: false,
       unitOption: 'UND',
       moeda: ''
@@ -550,7 +551,26 @@ export default class Produto extends Component<Props> {
                   </View>
                 </View>
               </View>
+
+              <View style={{flex: 0, flexDirection: 'row',}}>
+                
+                <View style={{flex: 1, alignItems: 'flex-start', justifyContent: 'center'}}>
+                  <Text style={{fontSize: 15, 
+                    fontWeight: '600', color: 'red', paddingLeft: 10}}>
+                    Obs:
+                  </Text>
+                </View>
+                <View style={{flex: 3, textAlign: 'center', justifyContent: 'center'}}>
+                  <TextInput value={this.state.obs_produto} 
+                    underlineColorAndroid="blue"
+                    onChangeText={(value)=>this.setState({obs_produto: value})}
+                  />
+                </View>
+                
+              </View>
             </View>
+            
+
             <View>
                 <Button title="confirmar" onPress={()=>{
                   if(this.state.select_qtd == '' || this.state.select_qtd.startsWith('-')){
@@ -576,7 +596,8 @@ export default class Produto extends Component<Props> {
                     , 
                     qtd: Number(parseFloat((((this.state.select_qtd).split('.')).join('')).replace(/,/g,'.'))),
                     tipo_unid: this.state.produtoSelecionado.tipo_unid,
-                    preco_uni: Number(this.state.produtoSelecionado.preco_venda)
+                    preco_uni: Number(this.state.produtoSelecionado.preco_venda),
+                    obs_produto: this.state.obs_produto
                   });
                   this.setState({loadingAsync: true});
                   setTimeout(() => {

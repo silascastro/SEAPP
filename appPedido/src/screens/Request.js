@@ -159,6 +159,8 @@ export default class Request extends Component<Props> {
       qtd_pedida: data.qtd,
       preco_unitario: data.preco_uni,
       preco_total: data.preco_venda,
+      tipo: data.tipo_unid,
+      obs_produto: data.obs_produto
     };
 
     fetch(config.url+'pedidoitens', {
@@ -261,7 +263,7 @@ export default class Request extends Component<Props> {
                 </View>
                 <View style={{flex: 0, flexDirection: 'row'}}>
                   <Text style={{fontWeight: '600'}}>Telefone: </Text>
-                  <Text>{this.props.navigation.getParam('telefone')}</Text>
+                  <Text>{this.props.navigation.getParam('telefone')} / {this.props.navigation.getParam('celular')}</Text>
                 </View>
                 <View style={{flex: 0, flexDirection: 'row'}}>
                   <View style={{flex: 5, flexDirection: 'row'}}>

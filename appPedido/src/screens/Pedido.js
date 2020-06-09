@@ -122,15 +122,15 @@ export default class Pedido extends Component<Props> {
           //resp[e].tbcontasreceber.saldo_devedor = "0.00";
           //resp[e].tbcontasreceber.saldo_compra = resp[e].limite;
           let aux2 = {
-            limite: resp[e].limite, 
+            limite_compra: resp[e].limite_compra, 
             cod_cliente: resp[e].cod_cliente,
             nome: resp[e].nome, endereco: resp[e].endereco,
-            bairro: resp[e].bairro, telefone: resp[e].telefone, 
+            bairro: resp[e].bairro, telefone: resp[e].telefone, celular: resp[e].celular,
             cidade: resp[e].cidade,numero: resp[e].numero,
             uf: resp[e].uf, cep: resp[e].cep, 
             observacao: resp[e].observacao,
             ["tbcontasreceber.saldo_devedor"]: '0.00',
-            ["tbcontasreceber.saldo_compra"]: resp[e].limite
+            ["tbcontasreceber.saldo_compra"]: resp[e].limite_compra
           }
           //alert(resp[e].nome);
           aux.push(aux2);
@@ -218,6 +218,7 @@ export default class Pedido extends Component<Props> {
                         cod_cliente: item.cod_cliente,
                         nome: this.state.clientes[index].nome,
                         telefone: item.telefone,
+                        celular: item.celular,
                         endereco: item.endereco,
                         cep: item.cep,
                         bairro: item.bairro,
@@ -225,7 +226,7 @@ export default class Pedido extends Component<Props> {
                         numero: item.numero,
                         uf: item.uf,
                         observacao: item.observacao,
-                        limite: item.limite,
+                        limite: item.limite_compra,
                         saldo_devedor: item['tbcontasreceber.saldo_devedor'],
                         saldo_compra: item['tbcontasreceber.saldo_compra']
 
@@ -240,7 +241,7 @@ export default class Pedido extends Component<Props> {
                         </View>
                         <View style={{flex: 0, flexDirection: 'row'}}>
                           <Text style={{fontWeight: '600'}}>Telefone: </Text>
-                          <Text>{item.telefone}</Text>
+                          <Text>{item.telefone} / {item.celular}</Text>
                         </View>
 
                         <View style={{flex: 0, flexDirection: 'row'}}>
@@ -290,7 +291,7 @@ export default class Pedido extends Component<Props> {
                               <View style={styles.float}>
                                 <MaterialCommunityIcons name={'map-marker'} size={25} color="#ea4335" 
                                 onPress={()=>{
-                                  this.props.navigation.navigate('Map',
+                                  /*this.props.navigation.navigate('Map',
                                   {
                                     cod_cliente: item.cod_cliente,
                                     nome: item.nome,
@@ -300,8 +301,8 @@ export default class Pedido extends Component<Props> {
                                     estado: item.estado,
                                     numero: item.numero,
                                     uf: item.uf,
-                                  });
-                                  //this.getLatLng(item.endereco, item.numero, item.bairro, item.cidade, item.uf);
+                                  });*/
+                                  this.getLatLng(item.endereco, item.numero, item.bairro, item.cidade, item.uf);
                                   
                                 }}/>
                               </View>
@@ -322,7 +323,7 @@ export default class Pedido extends Component<Props> {
                             </View>
                             <View style={{flex: 1, alignContent: 'center', alignItems: 'flex-end'}}>
                               <Text style={{alignContent: "center", color: 'black', fontWeight: '600',fontSize: 13,}}>
-                              {this.state.moeda == "G" ? this.numberToReal(Number(item.limite)).split(',')[0]:this.numberToReal(Number(item.limite))}</Text>
+                              {this.state.moeda == "G" ? this.numberToReal(Number(item.limite_compra)).split(',')[0]:this.numberToReal(Number(item.limite_compra))}</Text>
                               <Text style={{color: 'red'}}>{this.state.moeda == "G" ? this.numberToReal(Number(item['tbcontasreceber.saldo_devedor'])).split(',')[0]:this.numberToReal(Number(item['tbcontasreceber.saldo_devedor']))}</Text>
                               <Text style={{color: item['tbcontasreceber.saldo_compra']<0?'red':'green'}}>{this.state.moeda == "G" ? (this.numberToReal(Number(item['tbcontasreceber.saldo_compra'])).replace("-.","-")).split(',')[0]:this.numberToReal(Number(item['tbcontasreceber.saldo_compra'])).replace("-.","-")}</Text>
                             </View>

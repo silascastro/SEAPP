@@ -27,6 +27,7 @@ export default class Settings extends Component<Props> {
     this.state = {
       loading: true,
       ip: '',
+      imei: '',
       descricao: '',
       ipcollections: [],
     };
@@ -56,9 +57,13 @@ export default class Settings extends Component<Props> {
   setIp(value, descricao){
     this.setIpCollections({descricao: descricao, ip: value});
     AsyncStorage.setItem('_ip',"http://"+value+":3000/");
-    ToastModule.show('endereço atualizado com sucesso!',3000);
+    ToastModule.show('configurações atualizadas com sucesso!',3000);
     let {dispatch} = this.props.navigation;
     dispatch(resetActionLogin);
+  }
+
+  setImei(value){
+    AsyncStorage.setItem("_imei", this.state.imei);
   }
   
   getIpCollections(){
@@ -178,6 +183,23 @@ export default class Settings extends Component<Props> {
                     />
                   </View>
                 </View>
+
+                <View style={{flexDirection: 'row'}}>
+                  <View style={{ flex: 1, justifyContent: 'center'}}>
+                      <Text style={{fontWeight: '600', 
+                      color: 'black', fontSize: 15}}>
+                          IMEI
+                      </Text>                                  
+                  </View>
+                  <View style={{flex: 2}}>
+                    <TextInput placeholder="Digite o imei" 
+                      value={this.state.imei}
+                      keyboardType="decimal-pad"
+                      onChangeText={(value) => 
+                      this.setState({imei: value})}
+                    />
+                  </View>
+                </View>
               </View>
 
           </View>
@@ -218,6 +240,7 @@ export default class Settings extends Component<Props> {
             onPress={() => {
                 this.setIp(this.state.ip, 
                   this.state.descricao);
+                  this.setImei();
             }}
             />
           </View>
