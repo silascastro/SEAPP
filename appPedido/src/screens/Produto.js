@@ -554,7 +554,7 @@ export default class Produto extends Component<Props> {
 
               <View style={{flex: 0, flexDirection: 'row',}}>
                 
-                <View style={{flex: 1, alignItems: 'flex-start', justifyContent: 'center'}}>
+                <View style={{flex: 0, alignItems: 'flex-start', justifyContent: 'center', }}>
                   <Text style={{fontSize: 15, 
                     fontWeight: '600', color: 'red', paddingLeft: 10}}>
                     Obs:
@@ -562,7 +562,7 @@ export default class Produto extends Component<Props> {
                 </View>
                 <View style={{flex: 3, textAlign: 'center', justifyContent: 'center'}}>
                   <TextInput value={this.state.obs_produto} 
-                    underlineColorAndroid="blue"
+                    underlineColorAndroid="red"
                     onChangeText={(value)=>this.setState({obs_produto: value})}
                   />
                 </View>

@@ -160,28 +160,7 @@ export default class Cliente extends Component<Props> {
   }
   
   getLatLng(endereco, numero, bairro, cidade, uf){
-    fetch('https://api.opencagedata.com/geocode/v1/json?key=27699a4b223f4c028bca825642181b0f&q='
-      +endereco+
-      ', '+numero+
-      ' - '+bairro+
-      ', '+cidade+
-      ' - '+uf+
-      '&pretty=1&no_annotations=1'
-    ,{
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    }).then(response => response.json())
-    .then(responseJson => {
-      console.log(responseJson);
-      //this.setState({lat: responseJson.results[0].geometry.lat, lng: responseJson.results[0].geometry.lng});
-      Linking.openURL('https://www.google.com/maps/dir/?api=1&destination='+endereco+', '+numero+' - '+bairro+', '+cidade+' - '+uf+'&travelmode=driving');
-      //OpenMapModule.show(responseJson.results[0].geometry.lat, responseJson.results[0].geometry.lng, endereco, cidade, uf);
-    }).catch(err => {
-      console.log('erro: ',err);
-    })
+    Linking.openURL('https://www.google.com/maps/dir/?api=1&destination='+endereco+', '+numero+' - '+bairro+', '+cidade+' - '+uf+'&travelmode=driving');
   }
 
 

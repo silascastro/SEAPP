@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, TextInput,
-   ActivityIndicator, FlatList, TouchableNativeFeedback, NativeModules} from 'react-native';
+import {StyleSheet, Text, View, TextInput, Linking,
+ActivityIndicator, FlatList, TouchableNativeFeedback, NativeModules} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from  '@react-native-community/async-storage';
@@ -159,27 +159,7 @@ export default class Pedido extends Component<Props> {
   }
   
   getLatLng(endereco, numero, bairro, cidade, uf){
-    fetch('https://api.opencagedata.com/geocode/v1/json?key=27699a4b223f4c028bca825642181b0f&q='
-      +endereco+
-      ', '+numero+
-      ' - '+bairro+
-      ', '+cidade+
-      ' - '+uf+
-      '&pretty=1&no_annotations=1'
-    ,{
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    }).then(response => response.json())
-    .then(responseJson => {
-      console.log(responseJson);
-      //this.setState({lat: responseJson.results[0].geometry.lat, lng: responseJson.results[0].geometry.lng});
-      OpenMapModule.show(responseJson.results[0].geometry.lat, responseJson.results[0].geometry.lng, endereco, cidade, uf);
-    }).catch(err => {
-      console.log('erro: ',err);
-    })
+    Linking.openURL('https://www.google.com/maps/dir/?api=1&destination='+endereco+', '+numero+' - '+bairro+', '+cidade+' - '+uf+'&travelmode=driving');
   }
 
   render() {

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Alert,StyleSheet, Text ,View,Button, 
+import {Alert,StyleSheet, Text ,View,Button, Linking,
   TouchableNativeFeedback, ScrollView, NativeModules} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -12,6 +12,7 @@ import MapView,{PROVIDER_GOOGLE} from 'react-native-maps';
 const OpenMapModule = NativeModules.OpenMapModule;
 
 const _request ="PEDIDO";
+const opencagedataApi_key = "27699a4b223f4c028bca825642181b0f";
 
 export default class Request extends Component<Props> {
   constructor(props){
@@ -227,28 +228,9 @@ export default class Request extends Component<Props> {
     return numero.join(',');
   }
 
+  //requisição para buscar Lat, Lng apartir de dados do endereço
   getLatLng(endereco, numero, bairro, cidade, uf){
-    fetch('https://api.opencagedata.com/geocode/v1/json?key=27699a4b223f4c028bca825642181b0f&q='
-      +endereco+
-      ', '+numero+
-      ' - '+bairro+
-      ', '+cidade+
-      ' - '+uf+
-      '&pretty=1&no_annotations=1'
-    ,{
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    }).then(response => response.json())
-    .then(responseJson => {
-      console.log(responseJson);
-      //this.setState({lat: responseJson.results[0].geometry.lat, lng: responseJson.results[0].geometry.lng});
-      OpenMapModule.show(responseJson.results[0].geometry.lat, responseJson.results[0].geometry.lng, endereco, cidade, uf);
-    }).catch(err => {
-      console.log('erro: ',err);
-    })
+      Linking.openURL('https://www.google.com/maps/dir/?api=1&destination='+endereco+', '+numero+' - '+bairro+', '+cidade+' - '+uf+'&travelmode=driving');
   }
 
   render(){
@@ -256,7 +238,7 @@ export default class Request extends Component<Props> {
     return (
       <View style={styles.container}>
           <View style={styles.cardContentOneRow}>
-                <View style={{flex: 0, flexDirection: 'row'}}>
+                <View style={{flex: 0, flexDirection: 'row', paddingTop: 15}}>
                     <Text style={styles.title}>{this.props.navigation.getParam('cod_cliente')}</Text>
                     <Text style={{  fontWeight: '600', fontSize: 15, color: 'black'}}>-</Text>
                     <Text style={{  fontWeight: '600', fontSize: 15, color: 'black', flex: 1}}>{this.props.navigation.getParam('nome')}</Text>    
@@ -312,7 +294,7 @@ export default class Request extends Component<Props> {
                       <View style={styles.floatMarker}>
                         <MaterialCommunityIcons name={'map-marker'} size={25} color="#ea4335" 
                         onPress={()=>{
-                          this.props.navigation.navigate('Map',
+                          /*this.props.navigation.navigate('Map',
                           {
                             cod_cliente: item.cod_cliente,
                             nome: item.nome,
@@ -322,8 +304,8 @@ export default class Request extends Component<Props> {
                             estado: item.estado,
                             numero: item.numero,
                             uf: item.uf,
-                          });
-                          //this.getLatLng(this.props.navigation.getParam('endereco'), this.props.navigation.getParam('numero'), this.props.navigation.getParam('bairro'), this.props.navigation.getParam('cidade'), this.props.navigation.getParam('uf'));
+                          });*/
+                          this.getLatLng(this.props.navigation.getParam('endereco'), this.props.navigation.getParam('numero'), this.props.navigation.getParam('bairro'), this.props.navigation.getParam('cidade'), this.props.navigation.getParam('uf'));
                           
                         }}/>
                       </View>
@@ -361,33 +343,40 @@ export default class Request extends Component<Props> {
                 </View>
           </View>
           <View style={styles.card} onPress={()=>{}}>
-              <View style={styles.cardContent}>
-                <View style={{ flex: 2}}>
-                  <Text style={{fontWeight: '600', color: 'black', fontSize: 15}}>Data/Hora</Text>
-                  <View style={{flex: 0, flexDirection: 'row'}}>
-                    <Text style={{marginRight: 10}}>
-                      {new Date().getDate()}/{new Date().getMonth()+1}/{new Date().getFullYear()}
-                    </Text>
-                    <Text>
-                      {new Date().getHours()}:{new Date().getMinutes()<10?'0'+new Date().getMinutes(): new Date().getMinutes()}
-                    </Text>
+              <View style={styles.cardContentOneRow}>
+                  <View style={{flex: 0, flexDirection: 'row', }}>
+                    <View style={{ flex: 2, flexDirection: 'row', paddingTop: 15}}>
+                      <Text style={{flex: 1,fontWeight: '600', color: 'black', fontSize: 15}}>Data: </Text>
+                      <View style={{flex: 2, flexDirection: 'row'}}>
+                        <Text style={{marginRight: 2}}>
+                          {new Date().getDate()}/{new Date().getMonth()+1}/{new Date().getFullYear()}
+                        </Text>
+                        <Text>
+                          {new Date().getHours()}:{new Date().getMinutes()<10?'0'+new Date().getMinutes(): new Date().getMinutes()}
+                        </Text>
+                      </View>
+                    </View>
+                    <View style={{flex: 1, paddingTop: 15}}>
+                      <Button title="Entrega" onPress={()=>this.props.navigation.navigate('DadosEntrega')}/>
+                    </View>
+                    <View style={{flex: 1, flexDirection: 'row',  justifyContent: 'flex-end', paddingTop: 2}}>
+                      <View style={styles.float}>
+                        <AntDesign name={'plus'} size={25} color="#ffffff" onPress={()=>{
+                          this.props.navigation.navigate('Produto');
+                        }}/>
+                      </View>
+                    </View>
                   </View>
-                 
-                </View>
-                <View style={{flex: 2}}>
-                  <Text style={{fontWeight: '600', 
-                  color: 'black', fontSize: 15}}>
-                    Forma de pagamento
-                  </Text>
-                  <Text>DINHEIRO</Text>
-                </View>
-                <View style={{flex: 1}}>
-                  <View style={styles.float}>
-                    <AntDesign name={'plus'} size={25} color="#ffffff" onPress={()=>{
-                      this.props.navigation.navigate('Produto');
-                    }}/>
+                  <View style={{flex: 0, flexDirection: 'row'}}>      
+                    <View style={{flex: 1, flexDirection: 'row'}}>
+                      <Text style={{fontWeight: '600', 
+                      color: 'black', fontSize: 15}}>F. Pagamento: </Text>
+                      <Text style={{flex: 3, justifyContent: 'flex-start'}}>DINHEIRO</Text>
+                    </View>
                   </View>
-                </View>
+
+
+                
               </View>
           </View>      
  
@@ -584,7 +573,7 @@ const styles = StyleSheet.create({
   },
   cardContentOneRow: {
     paddingLeft: 10,paddingRight: 10,
-    paddingTop: 15, paddingBottom:15,borderBottomColor: 'gray', borderBottomWidth: 0.65,
+    /*paddingTop: 15,*/ paddingBottom:15,borderBottomColor: 'gray', borderBottomWidth: 0.65,
   },
   rowFront: {
     alignItems: 'center',
