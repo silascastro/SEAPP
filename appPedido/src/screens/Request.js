@@ -60,6 +60,7 @@ export default class Request extends Component<Props> {
     this.getUserCod();
     //AsyncStorage.removeItem(_request)
     this.getTipoMoeda();
+    
   }
 
   
@@ -202,6 +203,15 @@ export default class Request extends Component<Props> {
       nome_vendedor: this.state.nome_vendedor,
       subtotal: Number(this.state.totalPedido),
       total: Number(this.state.totalPedido),
+      nome_entrega:	this.props.navigation.getParam('nome'),
+      cep_entrega: this.props.navigation.getParam('cep'),
+      endereco_entrega:	this.props.navigation.getParam('endereco'),
+      numero_entrega:	this.props.navigation.getParam('numero'),
+      bairro_entrega:	this.props.navigation.getParam('bairro'),
+      cidade_entrega:	this.props.navigation.getParam('cidade'),
+      estado_entrega:	this.props.navigation.getParam('uf'),
+      telefone_entrega:	this.props.navigation.getParam('telefone'),
+      celular_entrega: this.props.navigation.getParam('celular'),
     };
     fetch(config.url+'pedidoexterno', {
       method: 'POST',
@@ -345,19 +355,42 @@ export default class Request extends Component<Props> {
           <View style={styles.card} onPress={()=>{}}>
               <View style={styles.cardContentOneRow}>
                   <View style={{flex: 0, flexDirection: 'row', }}>
-                    <View style={{ flex: 2, flexDirection: 'row', paddingTop: 15}}>
-                      <Text style={{flex: 1,fontWeight: '600', color: 'black', fontSize: 15}}>Data: </Text>
-                      <View style={{flex: 2, flexDirection: 'row'}}>
-                        <Text style={{marginRight: 2}}>
-                          {new Date().getDate()}/{new Date().getMonth()+1}/{new Date().getFullYear()}
-                        </Text>
-                        <Text>
-                          {new Date().getHours()}:{new Date().getMinutes()<10?'0'+new Date().getMinutes(): new Date().getMinutes()}
-                        </Text>
+                    <View style={{flex: 2}}>
+                      <View style={{ flex: 0, flexDirection: 'row', paddingTop: 15}}>
+                        <Text style={{flex: 1,fontWeight: '600', color: 'black', fontSize: 15}}>Data: </Text>
+                        <View style={{flex: 2, flexDirection: 'row'}}>
+                          <Text style={{marginRight: 2}}>
+                            {new Date().getDate()}/{new Date().getMonth()+1}/{new Date().getFullYear()}
+                          </Text>
+                          <Text>
+                            {new Date().getHours()}:{new Date().getMinutes()<10?'0'+new Date().getMinutes(): new Date().getMinutes()}
+                          </Text>
+                        </View>
+                      </View>
+                      <View style={{flex: 0, flexDirection: 'row'}}>      
+                        <View style={{flex: 1, flexDirection: 'row'}}>
+                          <Text style={{fontWeight: '600', 
+                          color: 'black', fontSize: 15}}>F. Pagamento: </Text>
+                          <Text style={{flex: 3, justifyContent: 'flex-start'}}>DINHEIRO</Text>
+                        </View>
                       </View>
                     </View>
+                    
                     <View style={{flex: 1, paddingTop: 15}}>
-                      <Button title="Entrega" onPress={()=>this.props.navigation.navigate('DadosEntrega')}/>
+                      <Button title="Entrega" onPress={()=>this.props.navigation.navigate('DadosEntrega',
+                        {
+                          nome: this.props.navigation.getParam('nome'),
+                          telefone: this.props.navigation.getParam('telefone'),
+                          celular: this.props.navigation.getParam('celular'),
+                          endereco: this.props.navigation.getParam('endereco'),
+                          cep: this.props.navigation.getParam('cep'),
+                          bairro: this.props.navigation.getParam('bairro'),
+                          cidade: this.props.navigation.getParam('cidade'),
+                          numero: this.props.navigation.getParam('numero'),
+                          uf: this.props.navigation.getParam('uf'),
+                        }
+                        )
+                      }/>
                     </View>
                     <View style={{flex: 1, flexDirection: 'row',  justifyContent: 'flex-end', paddingTop: 2}}>
                       <View style={styles.float}>
@@ -366,17 +399,7 @@ export default class Request extends Component<Props> {
                         }}/>
                       </View>
                     </View>
-                  </View>
-                  <View style={{flex: 0, flexDirection: 'row'}}>      
-                    <View style={{flex: 1, flexDirection: 'row'}}>
-                      <Text style={{fontWeight: '600', 
-                      color: 'black', fontSize: 15}}>F. Pagamento: </Text>
-                      <Text style={{flex: 3, justifyContent: 'flex-start'}}>DINHEIRO</Text>
-                    </View>
-                  </View>
-
-
-                
+                  </View>                
               </View>
           </View>      
  

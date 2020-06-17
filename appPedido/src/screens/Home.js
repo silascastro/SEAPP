@@ -14,6 +14,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 const DATA = [
   {title: 'Pedidos', subtitle: 'Crie e gerencie os pedidos', icon: 'local-offer', type: Icon}, 
   {title: 'Clientes', subtitle: 'Analise e gerencie seus clientes', icon: 'people', type: Icon},
+  {title: 'Inventário', subtitle: 'Analise e gerencie seus inventarios', icon: 'inbox', type: Icon},
   {title: 'Configurações', subtitle: 'Analise e gerencie seus clientes', icon: 'md-settings', 
   type: Ionicons},
   {title: 'Sair', subtitle: 'Analise e gerencie seus clientes', icon: 'md-exit', type: Ionicons},
@@ -232,6 +233,11 @@ export default class Home extends Component<Props> {
                     //alert(this.state.empresa);
                     //alert(this.state.empresa);
                     this.props.navigation.navigate('Settings');
+                  }
+                  if(item.title == 'Inventário'){
+                    //alert(this.state.empresa);
+                    //alert(this.state.empresa);
+                    this.props.navigation.navigate('Inventario');
                   }
                 }}>
 
