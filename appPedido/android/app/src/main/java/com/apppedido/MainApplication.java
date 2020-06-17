@@ -6,6 +6,7 @@ import com.apppedido.nativeModules.OpenMapPackage;
 import com.apppedido.nativeModules.ToastPackage;
 import com.apppedido.ui.CheckBoxPackage;
 import com.facebook.react.ReactApplication;
+import org.reactnative.camera.RNCameraPackage;
 import com.RNTextInputMask.RNTextInputMaskPackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.swmansion.rnscreens.RNScreensPackage;
@@ -37,6 +38,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
                                                                                                                                                                                                                                               new MainReactPackage(),
+            new RNCameraPackage(),
             new RNTextInputMaskPackage(),
             new AsyncStoragePackage(),
             new RNScreensPackage(),
