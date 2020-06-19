@@ -14,6 +14,7 @@ import Settings from './src/screens/Settings';
 import Map from './src/screens/Map';
 import ClienteContas from './src/screens/ClienteContas';
 import DadosEntrega from './src/screens/DadosEntrega';
+import Inventario from './src/screens/Inventario';
 
 //AppRegistry.registerComponent(appName, ()=>Settings);
 //AppRegistry.registerComponent(appName, ()=>Request);
@@ -22,4 +23,5 @@ import DadosEntrega from './src/screens/DadosEntrega';
 //AppRegistry.registerComponent(appName, () => Map);
 AppRegistry.registerComponent(appName, () => Routes);
 //AppRegistry.registerComponent(appName, () => DadosEntrega);
+//AppRegistry.registerComponent(appName, () => Inventario);
 //AppRegistry.registerComponent(appName, () => ClienteContas);
