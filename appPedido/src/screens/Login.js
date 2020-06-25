@@ -242,7 +242,6 @@ export default class Login extends Component {
             this.setState({loading: false});
             this.setuser(resp.nome);
             this.setuserCode(resp.codigo);
-            
             this.getEmpresaName(resp.id_empresa);
             AsyncStorage.setItem('usuario_tipo',resp.tipo);
             if(resp.tipo == "C"){

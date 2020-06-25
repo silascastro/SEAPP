@@ -22,6 +22,7 @@ import Inventario from './src/screens/Inventario';
 //AppRegistry.registerComponent(appName, () => Pedidos);
 //AppRegistry.registerComponent(appName, () => Map);
 AppRegistry.registerComponent(appName, () => Routes);
+//AppRegistry.registerComponent(appName, () => Inventario);
 //AppRegistry.registerComponent(appName, () => DadosEntrega);
 //AppRegistry.registerComponent(appName, () => Inventario);
 //AppRegistry.registerComponent(appName, () => ClienteContas);
