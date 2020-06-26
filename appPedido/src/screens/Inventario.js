@@ -246,14 +246,14 @@ export default class Inventario extends Component<Props> {
   updateProduct(cod_produto){
     let date = new Date();
 
-    let _data = {
+    var _data = {
       data_hora_contagem:	date.toISOString(),
       item_ja_contado: 'S',
       estoque_certo: ( Number(this.state.select_qtd) == Number(this.state.produtos[0].qtd) )? 'S' : 'N',
       usuario_da_contagem: this.state.user,
-      qtde_digitada_balanco: Number(this.state.select_qtd)
+      qtde_digitada_balanco: Number(this.state.select_qtd).toString()
     };
-
+    //alert(JSON.stringify(_data));
     fetch(config.url+'update/'+(cod_produto), {
       method: 'PUT',
       headers: {
@@ -261,12 +261,12 @@ export default class Inventario extends Component<Props> {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(_data),
-    }).then(resp => resp.json())
+    }).then(resp => resp)
     .then((resp)=> {
       ToastModule.show("Produto atualizado com sucesso!",3000);
     })
     .catch((err)=> {
-      console.log(err);
+      alert(err);
     })
   }
  
@@ -517,7 +517,9 @@ export default class Inventario extends Component<Props> {
                 </View>
                 
               </View>
-              <Button title="confirmar" onPress={()=>{}}/>
+              <Button title="confirmar" onPress={()=>{
+                this.updateProduct(this.state.produtos[0].cod_produto);
+              }}/>
             </View>
 
           </View>
