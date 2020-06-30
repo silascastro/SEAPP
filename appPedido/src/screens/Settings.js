@@ -161,7 +161,7 @@ export default class Settings extends Component<Props> {
                   <View style={{flex: 2}}>
                     <TextInput placeholder="Digite o ip" 
                       value={this.state.ip}
-                      keyboardType="phone-pad"
+                      keyboardType="default"
                       onChangeText={(value) => 
                       this.setState({ip: value})}
                     />

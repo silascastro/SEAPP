@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import {StyleSheet, View, Button, Text,
-  TextInput, PermissionsAndroid, TouchableOpacity, 
-  ActivityIndicator, FlatList, TouchableNativeFeedback, Image, NativeModules, NativeEventEmitter} from 'react-native';
+  TextInput, PermissionsAndroid, 
+  ActivityIndicator, FlatList, TouchableNativeFeedback, 
+  Image, NativeModules, Alert, TouchableOpacity} from 'react-native';
 import {RNCamera} from 'react-native-camera';
 import {TextInputMask} from 'react-native-masked-text';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -85,28 +86,30 @@ export default class Inventario extends Component<Props> {
     }).then((response)=> response.json())
       .then((resp) => {
       let aux = [];
-      //this.setState({fotosProdutos: []});
-
-      let item = {
-        cod_produto: resp.cod_produto,
-        cod_cpd: resp.codigo1,
-        descricao: resp.descricao, marca: resp.marca,
-        preco_venda: resp.preco_venda, qtd: resp.qtd,
-        tipo_unid: resp.tipo_unidade,
-        qtd_selec: "1",
-        foto: '',
-        index: 1
-      };
-          aux.push(item);
-        
-
+      if(resp.msg != undefined){        
+        this.setState({loading: false});
+      }
+      else{
+        let item = {
+          cod_produto: resp.cod_produto,
+          cod_cpd: resp.codigo1,
+          descricao: resp.descricao, marca: resp.marca,
+          preco_venda: resp.preco_venda, qtd: resp.qtd,
+          tipo_unid: resp.tipo_unidade,
+          qtd_selec: "1",
+          foto: '',
+          index: 1
+        };
+        aux.push(item);
+        this.getFoto1Produto(aux);
+      }
         /*aux.sort(function (a, b) {
     
           return (a.descricao > b.descricao) ? 1 : ((b.descricao > a.descricao) ? -1 : 0);
         
         });*/
         
-        this.getFoto1Produto(aux);
+        
     }).catch((err)=>{
       this.setState({loading: false});
       console.log('erro ao carregar produtos: ',err);
@@ -130,23 +133,23 @@ export default class Inventario extends Component<Props> {
       let aux = [];
       //this.setState({fotosProdutos: []});
       //alert(JSON.stringify(resp.cod));
-      if(resp.msg != undefined){
-        
+      if(resp.msg != undefined){        
         this.getProdutctsByName(cod);
       }
       else{
-          let item = {
-            cod_produto: resp.cod_produto,
-            cod_cpd: resp.codigo1,
-            descricao: resp.descricao, marca: resp.marca,
-            preco_venda: resp.preco_venda, qtd: resp.qtd,
-            tipo_unid: resp.tipo_unidade,
-            qtd_selec: "1",
-            foto: '',
-            index: 1
-          };
-          aux.push(item);
-  
+        
+            let item = {
+              cod_produto: resp.cod_produto,
+              cod_cpd: resp.codigo1,
+              descricao: resp.descricao, marca: resp.marca,
+              preco_venda: resp.preco_venda, qtd: resp.qtd,
+              tipo_unid: resp.tipo_unidade,
+              qtd_selec: "1",
+              foto: '',
+              index: 1
+            };
+            aux.push(item);
+          
         /*aux.sort(function (a, b) {
     
           return (a.descricao > b.descricao) ? 1 : ((b.descricao > a.descricao) ? -1 : 0);
@@ -179,7 +182,7 @@ export default class Inventario extends Component<Props> {
         p.foto = config.url+'imagens/'+aux[4]+'/'+aux[5];
         
     });
-    this.setState({produtos: prod});
+    this.setState({produtos: prod, select_qtd: '0'});
     setTimeout(()=>this.setState({loading: false}),500);
   //this.setState({loading: false})
   }
@@ -247,14 +250,14 @@ export default class Inventario extends Component<Props> {
     let date = new Date();
 
     var _data = {
-      data_hora_contagem:	date.toISOString(),
+      data_hora_contagem:	(date.toISOString()).toString(),
       item_ja_contado: 'S',
       estoque_certo: ( Number(this.state.select_qtd) == Number(this.state.produtos[0].qtd) )? 'S' : 'N',
       usuario_da_contagem: this.state.user,
       qtde_digitada_balanco: Number(this.state.select_qtd).toString()
     };
     //alert(JSON.stringify(_data));
-    fetch(config.url+'update/'+(cod_produto), {
+    fetch(config.url+'produtos/update/'+(cod_produto), {
       method: 'PUT',
       headers: {
         Accept: 'application/json',
@@ -263,6 +266,7 @@ export default class Inventario extends Component<Props> {
       body: JSON.stringify(_data),
     }).then(resp => resp)
     .then((resp)=> {
+      this.setState({produtos: [], input: '', pesquisado: false});
       ToastModule.show("Produto atualizado com sucesso!",3000);
     })
     .catch((err)=> {
@@ -289,243 +293,297 @@ export default class Inventario extends Component<Props> {
   render(){
     return (
       <View style={styles.container}>
-        <View style={styles.input}>
-          <TextInput placeholder="Digite o nome do produto ou código de barras" 
-            style={{flex: 4}} 
-            value={this.state.input}
-            onChangeText={(value) => {
-              this.setState({input: value, loading: true, pesquisado: true, produtoSelecionado: ''});
-              this.getProductsByCode(value);
-            }}
-          />
-          {this.state.input != '' ?<Icon name='close' size={25} color="black"  
-            style={{flex: 1,alignSelf: 'center', textAlign: 'right', paddingRight: 5}}
-            onPress={()=> {
-              this.setState({input: ''});
-            }}
-          />:null}
-        </View>
-        {this.state.loading? <ActivityIndicator size="large"/>:null}        
-        {
-          this.state.produtos.length>0 && this.state.loading==false?
-            <FlatList
-              style={styles.list}
-              data={this.state.produtos}
-              numColumns={1}
-              extraData={this.state}
-              renderItem={({item, index}) => 
-                <View style={styles.card} >
-                    <TouchableNativeFeedback  onPress={()=>{
-                        //alert('clicou no '+item.descricao);
-                        //this.setState({produtoSelecionado: item});
-                      }}>
-                      <View style={styles.cardContent}>
-                        
-                        <View style={{flex: 1,}}>
+            {this.state.showCamera ? 
+                <View style={styles.containerReader}>
+                  <View style={{ position: 'absolute', top: 5, left: 5, zIndex: 20}}>
+                    <TouchableOpacity style={styles.capture} onPress={()=> this.setState({showCamera: false})}>
+                      <Text>voltar</Text>
+                    </TouchableOpacity>
+                  </View>
+                  <RNCamera
+                      ref={(ref) => {
+                        this.camera = ref;
+                      }}
+                      style={styles.preview}
+                      onBarCodeRead={(value)=>{
+                        this.setState({input: value.data, showCamera: false,loading: true, 
+                          pesquisado: true, produtoSelecionado: ''})
+                        this.getProductsByCode(value);
+                      }
+                      }
+                      androidCameraPermissionOptions={{
+                        title: 'Permission to use camera',
+                        message: 'We need your permission to use your camera',
+                        buttonPositive: 'Ok',
+                        buttonNegative: 'Cancel',
+                      }}
+                      type={RNCamera.Constants.Type.back}
+                      captureAudio={false}
+                  />
+                  {/*<View style={{ flex: 0, 
+                    flexDirection: 'row', 
+                    justifyContent: 'space-around' }}>
+                    <TouchableOpacity 
+                      onPress={this.takePicture.bind(this)} 
+                      style={styles.capture}>
+                      <Text style={{ fontSize: 14 }}> SNAP </Text>
+                    </TouchableOpacity>
+                  </View>*/}
+                </View> 
+            
+              :
+              <View style={{flex: 1}}>
+            <Button title="ler código de barras" color="#3700b3" onPress={()=>this.setState({showCamera: true})}/>
+            <View style={styles.input}>
+              <TextInput placeholder="Digite o nome do produto ou código de barras" 
+                style={{flex: 4}} 
+                value={this.state.input}
+                onChangeText={(value) => {
+                  if(value != ''){
+                    this.setState({input: value, loading: true, pesquisado: true, produtoSelecionado: ''});
+                    this.getProductsByCode(value);
+                  }else{
+                    this.setState({input: value});
+                  }
+                }}
+              />
+              {this.state.input != '' ?<Icon name='close' size={25} color="black"  
+                style={{flex: 1,alignSelf: 'center', textAlign: 'right', paddingRight: 5}}
+                onPress={()=> {
+                  this.setState({input: ''});
+                }}
+              />:null}
+            </View>
+            {this.state.loading? <ActivityIndicator size="large"/>:null}        
+            {
+              this.state.produtos.length>0 && this.state.loading==false?
+                <FlatList
+                  style={styles.list}
+                  data={this.state.produtos}
+                  numColumns={1}
+                  extraData={this.state}
+                  renderItem={({item, index}) => 
+                    <View style={styles.card} >
+                        <TouchableNativeFeedback  onPress={()=>{
+                            //alert('clicou no '+item.descricao);
+                            //this.setState({produtoSelecionado: item});
+                          }}>
+                          <View style={styles.cardContent}>
                             
-                            <Image
-                              style={ {
-                                width: "100%",
-                                height: 150,
-                                resizeMode: 'center',
-                              }}
-                             source={{uri:  this.state.produtos[index].foto }}
-                            />
-                            
-                            
-                          {item.index == 2?
-                          <View style={{flex: 1, position: 'absolute', left: 2, top: 50, justifyContent: 'center',}}>
-                              <View style={styles.float}>
-                                <Icon name={'navigate-before'} size={25} color="#ffffff" onPress={()=>{
-                                  this.changeFoto(item.cod_produto, 'before', index);
-                                }}/>
+                            <View style={{flex: 1,}}>
+                                
+                                <Image
+                                  style={ {
+                                    width: "100%",
+                                    height: 150,
+                                    resizeMode: 'center',
+                                  }}
+                                source={{uri:  this.state.produtos[index].foto }}
+                                />
+                                
+                                
+                              {item.index == 2?
+                              <View style={{flex: 1, position: 'absolute', left: 2, top: 50, justifyContent: 'center',}}>
+                                  <View style={styles.float}>
+                                    <Icon name={'navigate-before'} size={25} color="#ffffff" onPress={()=>{
+                                      this.changeFoto(item.cod_produto, 'before', index);
+                                    }}/>
+                                  </View>
                               </View>
-                          </View>
-                            :
-                          <View style={{flex: 1, position: 'absolute', right: 2, top: 50, justifyContent: 'center'}}>
-                              <View style={styles.float}>
-                                <Icon name={'navigate-next'} size={25} color="#ffffff" onPress={()=>{
-                                  this.changeFoto(item.cod_produto,'next',index);
-                                }}/>
+                                :
+                              <View style={{flex: 1, position: 'absolute', right: 2, top: 50, justifyContent: 'center'}}>
+                                  <View style={styles.float}>
+                                    <Icon name={'navigate-next'} size={25} color="#ffffff" onPress={()=>{
+                                      this.changeFoto(item.cod_produto,'next',index);
+                                    }}/>
+                                  </View>
                               </View>
+                              }
+                            </View>                     
+                            
+
                           </View>
-                          }
-                        </View>                     
-                        
 
-                      </View>
-
-                    </TouchableNativeFeedback>
-                </View>
-            }
-              keyExtractor={({id},index)=>index.toString()}
-            />:null
-          
-        }
-
-        {(this.state.produtos.length==0 && this.state.loading==false) && this.state.pesquisado?
-          <View style={{textAlign: 'center', justifyContent: 'center', alignItems: 'center'}}>
-            <Text>Produto não encontrado!</Text>
-          </View>
-          : null
-        }  
-        {
-          this.state.produtos.length>0 && this.state.loading==false && this.state.produtoSelecionado == ''?
-          <View style={{flex: 2, justifyContent: 'flex-start',paddingTop: 10,
-          paddingLeft: 10,
-          paddingRight: 10,
-          paddingBottom: 10,}}>
-            <View style={{alignContent: 'center',alignItems: 'center', borderBottomColor: 'gray', borderBottomWidth: 0.5}}>
-              <Text style={{fontSize: 18, fontWeight: '800'}}>Produto</Text>
-            </View>
-            <View style={{flex: 0, flexDirection: 'row'}}>
-                    <Text style={styles.title}>Cod.CPD: </Text>
-                    <Text style={{  fontWeight: '600', fontSize: 15, flex: 1}}>{this.state.produtos[0].cod_produto}</Text>
-            </View>
-            <View style={{flex: 0, flexDirection: 'row'}}>
-                    <Text style={styles.title}>Cod. Produto: </Text>
-                    <Text style={{  fontWeight: '600', fontSize: 15, flex: 1}}>{this.state.produtos[0].cod_cpd}</Text>
-            </View>
-            <View style={{flex: 0, flexDirection: 'row'}}>
-                    <Text style={styles.title}>Produto: </Text>
-                    <Text style={{  fontWeight: '600', fontSize: 15, flex: 1}}>{this.state.produtos[0].descricao}</Text>
-            </View>
-            <View style={{flex: 0, flexDirection: 'row'}}>
-              <View style={{flex: 1, flexDirection: 'row'}}>
-                      <Text style={styles.title}>Tipo: </Text>
-                      <Text style={{  fontWeight: '600', fontSize: 15, flex: 1}}>{this.state.produtos[0].tipo_unid}</Text>
-              </View>
+                        </TouchableNativeFeedback>
+                    </View>
+                }
+                  keyExtractor={({id},index)=>index.toString()}
+                />:null
               
-              <View style={{flex: 1, flexDirection: 'row'}}>
-                      <Text style={styles.title}>Marca: </Text>
-                      <Text style={{  fontWeight: '600', fontSize: 15, flex: 1}}>{this.state.produtos[0].marca }</Text>
-              </View>
-            </View>
-            <View style={{flex: 1, backgroundColor: '#E0E0E0'}}>
-              <View style={{flex: 0, flexDirection: 'row', flex: 1}}>
-                <View style={{flex: 1,
-                alignItems: 'center',
-                justifyContent: 'center'}}>  
-                  <View style={styles.float}>
-                    <AntDesign name='minus' 
-                    size={25} 
-                    color="black" 
-                    style={{}}
-                    onPress={()=>{
-                      if(this.state.produtos[0].tipo_unid == "UND" || this.state.produtos[0].tipo_unid == "UN"){
-                        let {select_qtd} = this.state;
-                        
-                        if(Number(select_qtd)>1){
-                        
-                        //select_qtd = Number(select_qtd)-1;
-                        select_qtd = Number((parseFloat((((select_qtd).split(".").join(''))).replace(/,/g,'.')))-1);
-                        //alert(qtds[index]);
-                        this.setState({
-                          select_qtd: select_qtd.toString()
-                        });
-                        }
-                      }else{
-                        let {select_qtd} = this.state;
-                        //alert(this.state.select_qtd);
-                        if((parseFloat((((select_qtd).split(".").join(''))).replace(/,/g,'.')))>1){
+            }
 
-                          let aux = parseFloat((((select_qtd).split(".").join('')))
-                          .replace(/,/g,'.'))-1;
-                          this.setState({
-                            select_qtd: this.numberToQTd(aux)
-                          });
-                          
-                        }
-                      }
-                    }}
-                    />
+            {(this.state.produtos.length==0 && this.state.loading==false) && this.state.pesquisado?
+              <View style={{textAlign: 'center', justifyContent: 'center', alignItems: 'center'}}>
+                <Text>Produto não encontrado!</Text>
+              </View>
+              : null
+            }  
+            {
+              this.state.produtos.length>0 && this.state.loading==false && this.state.produtoSelecionado == ''?
+              <View style={{flex: 2,
+              paddingLeft: 10,
+              paddingRight: 10,
+              paddingBottom: 10,}}>
+                <View style={{flex: 1, justifyContent: 'flex-start',}}>
+                  <View style={{alignContent: 'center',alignItems: 'center', borderBottomColor: 'gray', borderBottomWidth: 0.5}}>
+                    <Text style={{fontSize: 18, fontWeight: '800'}}>Produto</Text>
                   </View>
-                </View>
-                <View style={{flex: 2, justifyContent: 'center', alignItems: 'center'}}>
-                  
-                    {(this.state.produtos[0].tipo_unid == "UND") 
-                    || (this.state.produtos[0].tipo_unid == "UN") ? 
-                      
-                      
-                      
-                      <TextInput /*value={this.state.produtos[index].qtd_selec} */
-                      value={this.state.select_qtd}
-                      //editable={true}
-                      underlineColorAndroid="red"
-                      placeholder="qtd"
-                      keyboardType="numeric"
-                      style={{flex:1}}
-                      onChangeText={(value)=>{
-                        if(value == '0'){
-                          this.setState({
-                            select_qtd: '1'
-                          })
-                        }else{   
-                          this.setState({
-                            select_qtd: value,
-                          });
-                      }
-                      
-                    }}
+                  <View style={{flex: 0, flexDirection: 'row'}}>
+                          <Text style={styles.title}>Cod.CPD: </Text>
+                          <Text style={{  fontWeight: '600', fontSize: 15, flex: 1}}>{this.state.produtos[0].cod_produto}</Text>
+                  </View>
+                  <View style={{flex: 0, flexDirection: 'row'}}>
+                          <Text style={styles.title}>Cod. Produto: </Text>
+                          <Text style={{  fontWeight: '600', fontSize: 15, flex: 1}}>{this.state.produtos[0].cod_cpd}</Text>
+                  </View>
+                  <View style={{flex: 0, flexDirection: 'row'}}>
+                          <Text style={styles.title}>Produto: </Text>
+                          <Text style={{  fontWeight: '600', fontSize: 15, flex: 1}}>{this.state.produtos[0].descricao}</Text>
+                  </View>
+                  <View style={{flex: 0, flexDirection: 'row'}}>
+                    <View style={{flex: 1, flexDirection: 'row'}}>
+                            <Text style={styles.title}>Tipo: </Text>
+                            <Text style={{  fontWeight: '600', fontSize: 15, flex: 1}}>{this.state.produtos[0].tipo_unid}</Text>
+                    </View>
                     
-                    />
-                    :
-                    <TextInputMask
-                        type={'money'}
-                        options={{
-                          precision: 3,
-                          separator: ',',
-                          unit: '',
-                          delimiter:'' 
-                        }}
-                        keyboardType="number-pad"
-                        value={this.state.select_qtd}
-                        underlineColorAndroid="blue"
-                        onChangeText={text => {                        
-                          this.setState({select_qtd: text});
-                          //alert(Number((parseFloat(((text).replace(".","")).replace(/,/g,'.')))));
-                          //alert(this.numberToReal(Number(parseFloat(((text).replace(".","")).replace(/,/g,'.')))*Number(this.state.produtoSelecionado.preco_venda)));  
-                        }
-                        }
-                      />
-                    }
-                      
-                
-                </View>
-                <View style={{alignItems: 'center', 
-                justifyContent: 'center',
-                flex: 1}}>
-                  <View style={styles.float}>
-                    <AntDesign name='plus' size={25} 
-                      color="black" style={{}}
-                      onPress={()=>{
-                        let {select_qtd} = this.state;
-                        let aux;
-                        
-                        //aux = Number(aux)+1;
-                        select_qtd = Number((parseFloat((((select_qtd).split(".").join(''))).replace(/,/g,'.')))+1);
-                        if(this.state.produtos[0].tipo_unid == "UND" 
-                        || this.state.produtos[0].tipo_unid == "UN"){
-                          this.setState({select_qtd: select_qtd.toString()});
-                        }else{
-                        this.setState({select_qtd: this.numberToQTd(select_qtd)});
-                        }
-                      }
-                      /*this.state.produtos[index].qtd_selec+=1*/}
-                    />
+                    <View style={{flex: 1, flexDirection: 'row'}}>
+                            <Text style={styles.title}>Marca: </Text>
+                            <Text style={{  fontWeight: '600', fontSize: 15, flex: 1}}>{this.state.produtos[0].marca }</Text>
+                    </View>
                   </View>
                 </View>
-                
-              </View>
-              <Button title="confirmar" onPress={()=>{
-                this.updateProduct(this.state.produtos[0].cod_produto);
-              }}/>
-            </View>
+                <View style={{flex: 1, backgroundColor: '#E0E0E0',justifyContent: 'flex-end'}}>
+                  <View style={{flex: 0, flexDirection: 'row', flex: 1}}>
+                    <View style={{flex: 1,
+                    alignItems: 'center',
+                    justifyContent: 'center'}}>  
+                      <View style={styles.floatqtd}>
+                        <AntDesign name='minus' 
+                        size={35} 
+                        color="black" 
+                        style={{}}
+                        onPress={()=>{
+                          if(this.state.produtos[0].tipo_unid == "UND" || this.state.produtos[0].tipo_unid == "UN"){
+                            let {select_qtd} = this.state;
+                            
+                            if(Number(select_qtd)>1){
+                            
+                            //select_qtd = Number(select_qtd)-1;
+                            select_qtd = Number((parseFloat((((select_qtd).split(".").join(''))).replace(/,/g,'.')))-1);
+                            //alert(qtds[index]);
+                            this.setState({
+                              select_qtd: select_qtd.toString()
+                            });
+                            }
+                          }else{
+                            let {select_qtd} = this.state;
+                            //alert(this.state.select_qtd);
+                            if((parseFloat((((select_qtd).split(".").join(''))).replace(/,/g,'.')))>1){
 
-          </View>
-          :
-          null
-        }
+                              let aux = parseFloat((((select_qtd).split(".").join('')))
+                              .replace(/,/g,'.'))-1;
+                              this.setState({
+                                select_qtd: this.numberToQTd(aux)
+                              });
+                              
+                            }
+                          }
+                        }}
+                        />
+                      </View>
+                    </View>
+                    <View style={{flex: 2, justifyContent: 'center', alignItems: 'center'}}>
+                      
+                        {(this.state.produtos[0].tipo_unid == "UND") 
+                        || (this.state.produtos[0].tipo_unid == "UN") ? 
+                          
+                          
+                          
+                          <TextInput /*value={this.state.produtos[index].qtd_selec} */
+                          value={this.state.select_qtd}
+                          //editable={true}
+                          underlineColorAndroid="red"
+                          placeholder="qtd"
+                          keyboardType="numeric"
+                          style={{flex:1, height: 50, fontSize: 40, textAlign: 'center'}}
+                          onChangeText={(value)=>{
+                            if(value == '0'){
+                              this.setState({
+                                select_qtd: '1'
+                              })
+                            }else{   
+                              this.setState({
+                                select_qtd: value,
+                              });
+                          }
+                          
+                        }}
+                        
+                        />
+                        :
+                        <TextInputMask
+                            type={'money'}
+                            options={{
+                              precision: 3,
+                              separator: ',',
+                              unit: '',
+                              delimiter:'' 
+                            }}
+                            style={{flex:1, height: 50, fontSize: 40, textAlign: 'center'}}
+                            keyboardType="number-pad"
+                            value={this.state.select_qtd}
+                            underlineColorAndroid="blue"
+                            onChangeText={text => {                        
+                              this.setState({select_qtd: text});
+                              //alert(Number((parseFloat(((text).replace(".","")).replace(/,/g,'.')))));
+                              //alert(this.numberToReal(Number(parseFloat(((text).replace(".","")).replace(/,/g,'.')))*Number(this.state.produtoSelecionado.preco_venda)));  
+                            }
+                            }
+                          />
+                        }
+                          
+                    
+                    </View>
+                    <View style={{alignItems: 'center', 
+                    justifyContent: 'center',
+                    flex: 1}}>
+                      <View style={styles.floatqtd}>
+                        <AntDesign name='plus' size={35} 
+                          color="black" style={{}}
+                          onPress={()=>{
+                            let {select_qtd} = this.state;
+                            let aux;
+                            
+                            //aux = Number(aux)+1;
+                            select_qtd = Number((parseFloat((((select_qtd).split(".").join(''))).replace(/,/g,'.')))+1);
+                            if(this.state.produtos[0].tipo_unid == "UND" 
+                            || this.state.produtos[0].tipo_unid == "UN"){
+                              this.setState({select_qtd: select_qtd.toString()});
+                            }else{
+                              this.setState({select_qtd: this.numberToQTd(select_qtd)});
+                            }
+                          }
+                          /*this.state.produtos[index].qtd_selec+=1*/}
+                        />
+                      </View>
+                    </View>
+                    
+                  </View>
+                  <Button title="confirmar" onPress={()=>{
+                    if(this.state.select_qtd == '0'){
+                      Alert.alert('Atenção', 'Quantidade deve ser maior que 0!');
+                    }else{
+                      this.updateProduct(this.state.produtos[0].cod_produto);
+                    }
+                  }}/>
+                </View>
+
+              </View>
+              :
+              null
+            }
+        </View>
+            }
       </View>
     );                                                                                                                                    
   }
@@ -567,6 +625,20 @@ float: {
   elevation: 3,
   
 },
+
+floatqtd: {
+  width: 35,  
+  height: 35,   
+  borderRadius: 17,            
+  backgroundColor: '#30dac5',                                    
+  //position: 'absolute', 
+  justifyContent: "center",
+  alignItems: "center",                                     
+  //bottom: 10,                                                    
+  //right: 15,
+  elevation: 3,
+  
+},
   card: {
     //paddingLeft: 10,
     marginRight: 2,
@@ -599,5 +671,26 @@ title: {
   fontWeight: '600', 
   fontSize: 15, 
   color: 'black'
+},
+
+/* camera options */
+containerReader: {
+  flex: 1,
+  flexDirection: 'column',
+  backgroundColor: '#ffffff',    
+},
+preview: {
+  flex: 1,
+  justifyContent: 'flex-end',
+  alignItems: 'center',
+},
+capture: {
+  flex: 0,
+  backgroundColor: '#fff',
+  borderRadius: 5,
+  padding: 15,
+  paddingHorizontal: 20,
+  alignSelf: 'center',
+  margin: 20,
 },
 });
