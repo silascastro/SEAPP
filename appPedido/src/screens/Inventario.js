@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {StyleSheet, View, Button, Text,
   TextInput, PermissionsAndroid, 
   ActivityIndicator, FlatList, TouchableNativeFeedback, 
-  Image, NativeModules, Alert, TouchableOpacity} from 'react-native';
+  Image, NativeModules, Alert, TouchableOpacity, ScrollView} from 'react-native';
 import {RNCamera} from 'react-native-camera';
 import {TextInputMask} from 'react-native-masked-text';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -96,6 +96,11 @@ export default class Inventario extends Component<Props> {
           descricao: resp.descricao, marca: resp.marca,
           preco_venda: resp.preco_venda, qtd: resp.qtd,
           tipo_unid: resp.tipo_unidade,
+          data_hora_contagem:	resp.data_hora_contagem,
+          item_ja_contado:	resp.item_ja_contado,
+          estoque_certo:	resp.estoque_certo,
+          usuario_da_contagem:	resp.usuario_da_contagem,
+          qtde_digitada_balanco:	resp.qtde_digitada_balanco,
           qtd_selec: "1",
           foto: '',
           index: 1
@@ -144,6 +149,11 @@ export default class Inventario extends Component<Props> {
               descricao: resp.descricao, marca: resp.marca,
               preco_venda: resp.preco_venda, qtd: resp.qtd,
               tipo_unid: resp.tipo_unidade,
+              data_hora_contagem:	resp.data_hora_contagem,
+              item_ja_contado:	resp.item_ja_contado,
+              estoque_certo:	resp.estoque_certo,
+              usuario_da_contagem:	resp.usuario_da_contagem,
+              qtde_digitada_balanco:	resp.qtde_digitada_balanco,
               qtd_selec: "1",
               foto: '',
               index: 1
@@ -424,17 +434,20 @@ export default class Inventario extends Component<Props> {
               paddingLeft: 10,
               paddingRight: 10,
               paddingBottom: 10,}}>
-                <View style={{flex: 1, justifyContent: 'flex-start',}}>
-                  <View style={{alignContent: 'center',alignItems: 'center', borderBottomColor: 'gray', borderBottomWidth: 0.5}}>
+                <View style={{flex: 2, justifyContent: 'flex-start',marginBottom: 10}}>
+                  <View style={{alignContent: 'center',alignItems: 'center', 
+                  borderBottomColor: 'gray', borderBottomWidth: 0.5}}>
                     <Text style={{fontSize: 18, fontWeight: '800'}}>Produto</Text>
                   </View>
                   <View style={{flex: 0, flexDirection: 'row'}}>
-                          <Text style={styles.title}>Cod.CPD: </Text>
-                          <Text style={{  fontWeight: '600', fontSize: 15, flex: 1}}>{this.state.produtos[0].cod_produto}</Text>
-                  </View>
-                  <View style={{flex: 0, flexDirection: 'row'}}>
-                          <Text style={styles.title}>Cod. Produto: </Text>
-                          <Text style={{  fontWeight: '600', fontSize: 15, flex: 1}}>{this.state.produtos[0].cod_cpd}</Text>
+                    <View style={{flex: 1, flexDirection: 'row'}}>
+                            <Text style={styles.title}>Cod.CPD: </Text>
+                            <Text style={{  fontWeight: '600', fontSize: 15, flex: 1}}>{this.state.produtos[0].cod_produto}</Text>
+                    </View>
+                    <View style={{flex: 1, flexDirection: 'row'}}>
+                            <Text style={styles.title}>Cod. Produto: </Text>
+                            <Text style={{  fontWeight: '600', fontSize: 15, flex: 1}}>{this.state.produtos[0].cod_cpd}</Text>
+                    </View>
                   </View>
                   <View style={{flex: 0, flexDirection: 'row'}}>
                           <Text style={styles.title}>Produto: </Text>
@@ -451,8 +464,35 @@ export default class Inventario extends Component<Props> {
                             <Text style={{  fontWeight: '600', fontSize: 15, flex: 1}}>{this.state.produtos[0].marca }</Text>
                     </View>
                   </View>
+
                 </View>
-                <View style={{flex: 1, backgroundColor: '#E0E0E0',justifyContent: 'flex-end'}}>
+                <ScrollView style={{flex: 2}}>
+                  <View style={{alignContent: 'center',alignItems: 'center', 
+                  borderBottomColor: 'gray', borderBottomWidth: 0.5}}>
+                    <Text style={{fontSize: 18, fontWeight: '800'}}>Dados da última contagem</Text>
+                  </View>
+                  <View style={{flex: 0, flexDirection: 'row'}}>
+                          <Text style={styles.title}>Data: </Text>
+                          <Text style={{  fontWeight: '600', fontSize: 15, flex: 1}}>{((this.state.produtos[0].data_hora_contagem.split('T')[0]).split('-')[2])+'/'+((this.state.produtos[0].data_hora_contagem.split('T')[0]).split('-')[1])+'/'+((this.state.produtos[0].data_hora_contagem.split('T')[0]).split('-')[0])}</Text>
+                  </View>
+                  <View style={{flex: 0, flexDirection: 'row'}}>
+                          <Text style={styles.title}>Usuario: </Text>
+                          <Text style={{  fontWeight: '600', fontSize: 15, flex: 1}}>{this.state.produtos[0].usuario_da_contagem}</Text>
+                  </View>
+                  <View style={{flex: 0, flexDirection: 'row'}}>
+                    <View style={{flex: 1, flexDirection: 'row'}}>
+                            <Text style={styles.title}>QTDE: </Text>
+                            <Text style={{  fontWeight: '600', fontSize: 15, flex: 1}}>{this.state.produtos[0].qtde_digitada_balanco}</Text>
+                    </View>
+                    
+                    <View style={{flex: 1, flexDirection: 'row'}}>
+                            <Text style={styles.title}>Estoque ok: </Text>
+                            <Text style={{  fontWeight: '600', fontSize: 15, flex: 1}}>{this.state.produtos[0].estoque_certo }</Text>
+                    </View>
+                  </View>
+
+                </ScrollView>
+                <View style={{flex: 2, backgroundColor: '#E0E0E0',justifyContent: 'flex-end'}}>
                   <View style={{flex: 0, flexDirection: 'row', flex: 1}}>
                     <View style={{flex: 1,
                     alignItems: 'center',
