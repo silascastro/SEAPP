@@ -430,21 +430,21 @@ export default class Inventario extends Component<Props> {
             }  
             {
               this.state.produtos.length>0 && this.state.loading==false && this.state.produtoSelecionado == ''?
-              <View style={{flex: 2,
+              <View style={{flex: 3,
               paddingLeft: 10,
               paddingRight: 10,
-              paddingBottom: 10,}}>
-                <View style={{flex: 2, justifyContent: 'flex-start',marginBottom: 10}}>
+              }}>
+                <View style={{flex: 2, justifyContent: 'flex-start', marginBottom: 10}}>
                   <View style={{alignContent: 'center',alignItems: 'center', 
                   borderBottomColor: 'gray', borderBottomWidth: 0.5}}>
-                    <Text style={{fontSize: 18, fontWeight: '800'}}>Produto</Text>
+                    <Text style={{fontSize: 18, fontWeight: '800', color: 'red'}}>Produto</Text>
                   </View>
                   <View style={{flex: 0, flexDirection: 'row'}}>
                     <View style={{flex: 1, flexDirection: 'row'}}>
                             <Text style={styles.title}>Cod.CPD: </Text>
                             <Text style={{  fontWeight: '600', fontSize: 15, flex: 1}}>{this.state.produtos[0].cod_produto}</Text>
                     </View>
-                    <View style={{flex: 1, flexDirection: 'row'}}>
+                    <View style={{flex: 2, flexDirection: 'row', alignContent: 'flex-start'}}>
                             <Text style={styles.title}>Cod. Produto: </Text>
                             <Text style={{  fontWeight: '600', fontSize: 15, flex: 1}}>{this.state.produtos[0].cod_cpd}</Text>
                     </View>
@@ -466,23 +466,25 @@ export default class Inventario extends Component<Props> {
                   </View>
 
                 </View>
-                <ScrollView style={{flex: 2}}>
+                <View style={{flex: 2}} contentContainerStyle={{justifyContent: 'flex-start'}}>
                   <View style={{alignContent: 'center',alignItems: 'center', 
                   borderBottomColor: 'gray', borderBottomWidth: 0.5}}>
-                    <Text style={{fontSize: 18, fontWeight: '800'}}>Dados da última contagem</Text>
+                    <Text style={{fontSize: 18, fontWeight: '800', color: 'red'}}>Dados da última contagem</Text>
                   </View>
                   <View style={{flex: 0, flexDirection: 'row'}}>
-                          <Text style={styles.title}>Data: </Text>
-                          <Text style={{  fontWeight: '600', fontSize: 15, flex: 1}}>{((this.state.produtos[0].data_hora_contagem.split('T')[0]).split('-')[2])+'/'+((this.state.produtos[0].data_hora_contagem.split('T')[0]).split('-')[1])+'/'+((this.state.produtos[0].data_hora_contagem.split('T')[0]).split('-')[0])}</Text>
-                  </View>
-                  <View style={{flex: 0, flexDirection: 'row'}}>
-                          <Text style={styles.title}>Usuario: </Text>
-                          <Text style={{  fontWeight: '600', fontSize: 15, flex: 1}}>{this.state.produtos[0].usuario_da_contagem}</Text>
+                    <View style={{flex: 1, flexDirection: 'row'}}>
+                            <Text style={styles.title}>Data: </Text>
+                            <Text style={{  fontWeight: '600', fontSize: 15, flex: 1}}>{((this.state.produtos[0].data_hora_contagem.split('T')[0]).split('-')[2])+'/'+((this.state.produtos[0].data_hora_contagem.split('T')[0]).split('-')[1])+'/'+((this.state.produtos[0].data_hora_contagem.split('T')[0]).split('-')[0])}</Text>
+                    </View>
+                    <View style={{flex: 1, flexDirection: 'row'}}>
+                            <Text style={styles.title}>Usuario: </Text>
+                            <Text style={{  fontWeight: '600', fontSize: 15, flex: 1}}>{this.state.produtos[0].usuario_da_contagem}</Text>
+                    </View>
                   </View>
                   <View style={{flex: 0, flexDirection: 'row'}}>
                     <View style={{flex: 1, flexDirection: 'row'}}>
                             <Text style={styles.title}>QTDE: </Text>
-                            <Text style={{  fontWeight: '600', fontSize: 15, flex: 1}}>{this.state.produtos[0].qtde_digitada_balanco}</Text>
+                            <Text style={{  fontWeight: '600', fontSize: 15, flex: 1}}>{ (this.state.produtos[0].tipo_unidade == "UND" || this.state.produtos[0].tipo_unidade == "PCS") ? this.state.produtos[0].qtde_digitada_balanco:Number(this.state.produtos[0].qtde_digitada_balanco).toFixed(3)}</Text>
                     </View>
                     
                     <View style={{flex: 1, flexDirection: 'row'}}>
@@ -491,7 +493,7 @@ export default class Inventario extends Component<Props> {
                     </View>
                   </View>
 
-                </ScrollView>
+                </View>
                 <View style={{flex: 2, backgroundColor: '#E0E0E0',justifyContent: 'flex-end'}}>
                   <View style={{flex: 0, flexDirection: 'row', flex: 1}}>
                     <View style={{flex: 1,
