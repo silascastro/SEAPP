@@ -484,7 +484,12 @@ export default class Inventario extends Component<Props> {
                   <View style={{flex: 0, flexDirection: 'row'}}>
                     <View style={{flex: 1, flexDirection: 'row'}}>
                             <Text style={styles.title}>QTDE: </Text>
-                            <Text style={{  fontWeight: '600', fontSize: 15, flex: 1}}>{ (this.state.produtos[0].tipo_unidade == "UND" || this.state.produtos[0].tipo_unidade == "PCS") ? this.state.produtos[0].qtde_digitada_balanco:Number(this.state.produtos[0].qtde_digitada_balanco).toFixed(3)}</Text>
+                            <Text style={{  fontWeight: '600', fontSize: 15, flex: 1}}>{ 
+                            (this.state.produtos[0].tipo_unid == "UND" || this.state.produtos[0].tipo_unid == "PCS") ? 
+                              Number(this.state.produtos[0].qtde_digitada_balanco)
+                              :
+                              Number(this.state.produtos[0].qtde_digitada_balanco).toFixed(3)}
+                            </Text>
                     </View>
                     
                     <View style={{flex: 1, flexDirection: 'row'}}>

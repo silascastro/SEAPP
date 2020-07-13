@@ -21,8 +21,8 @@ export default class Pedido extends Component<Props> {
         lat: 37.78825,
         lng: -122.4324,
       };
-      Permission.location();
-      Permission.fine_location();
+      //Permission.location();
+      //Permission.fine_location();
     }
 
   static navigationOptions = ({navigation}) => ({
@@ -39,7 +39,6 @@ export default class Pedido extends Component<Props> {
   });
 
   componentDidMount(){
-    
     this.getIp();
     this.getTipoMoeda();
   }
@@ -63,6 +62,7 @@ export default class Pedido extends Component<Props> {
   }
 
     getClientes(){ 
+      
       fetch(config.url+'clientes/byname/'+(this.state.input).toUpperCase(), {
         method: 'GET',
         headers: {
