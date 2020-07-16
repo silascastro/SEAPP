@@ -62,8 +62,15 @@ export default class Cliente extends Component<Props> {
     let e = this.props.navigation.getParam('message');
     if(e!=null)
      ToastModule.show(e,3000);
+    this.getEmpresa();
     AsyncStorage.removeItem("PEDIDO");
   }
+
+  getEmpresa(){
+    setTimeout(() => {
+      this.props.navigation.setParams({empresa: this.state.empresa});
+    }, 2000);
+}
 
   getTipoMoeda(){
     AsyncStorage.getItem('moeda',(error,result)=> {
@@ -380,7 +387,14 @@ export default class Cliente extends Component<Props> {
                     <Button title="pontos" color="red"/>
                   </View>
                   <View style={{flex: 1, marginRight: 5}}>
-                    <Button title="pedidos" color="green"/>
+                    <Button title="pedidos" color="green" onPress={()=>{
+                      /*this.props.navigation.push('ClienteContas', {
+                        cod_cliente: aux.cod_cliente,
+                        nome: aux.nome,
+                        telefone: aux.telefone,
+                        endereco: aux.endereco,                             
+                      });*/
+                    }}/>
                   </View>
                 </View>
                 <View style={{flexDirection: 'row'}}>
