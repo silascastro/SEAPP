@@ -18,6 +18,13 @@ const resetActionHome = StackActions.reset({
   ],
 });
 
+const resetActionCliente = StackActions.reset({
+  index: 0,
+  actions: [
+    NavigationActions.navigate({ routeName: 'Cliente' }),
+  ],
+});
+
 export default class Login extends Component {
   constructor(props){
     super(props);
@@ -249,8 +256,7 @@ export default class Login extends Component {
             }
             LoginModule.login((resp.codigo),"senha");
             let {dispatch} = this.props.navigation;
-            dispatch(resetActionHome);
-            //this.props.navigation.navigate('Home');
+            dispatch(resetActionCliente);
           }else{
             Alert.alert('Atenção', 'Dispositivo não autorizado!');
           }

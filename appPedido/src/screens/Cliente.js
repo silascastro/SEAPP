@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Alert,StyleSheet, Text,
+import {Alert,StyleSheet, Text, Button,
 View, TextInput, ActivityIndicator, FlatList, 
 TouchableNativeFeedback, NativeModules, Linking} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -7,7 +7,9 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import * as config from '../../config';
 import AsyncStorage from '@react-native-community/async-storage';
 
-const OpenMapModule = NativeModules.OpenMapModule;
+//const OpenMapModule = NativeModules.OpenMapModule;
+const LoginModule = NativeModules.LoginModule;
+const ToastModule = NativeModules.ToastModule;
 
 export default class Cliente extends Component<Props> {
   constructor(props){
@@ -16,9 +18,13 @@ export default class Cliente extends Component<Props> {
       clientes: [], 
       pesquisado: false, 
       input: '', 
+      empresa: '',
+      usuario: '',
       contasareceber: [],
       moeda: ''
     };
+    this.getEmpresaData();
+    this.getUserType();
   }
 
   static navigationOptions = ({navigation}) => ({
@@ -34,9 +40,29 @@ export default class Cliente extends Component<Props> {
       tabBarVisible: true,
   });
 
+  async getEmpresaData(){
+    await AsyncStorage.getItem('empresa', (error,result) => {
+       if(result){
+         this.setState({empresa: result});
+       }
+     });
+   }
+ 
+   async getUserType(){
+     await AsyncStorage.getItem('usuario', (error,result) => {
+        if(result){
+          this.setState({usuario: result});
+        }
+      });
+    }
+
   componentDidMount(){
     this.getIp();
     this.getTipoMoeda();
+    let e = this.props.navigation.getParam('message');
+    if(e!=null)
+     ToastModule.show(e,3000);
+    AsyncStorage.removeItem("PEDIDO");
   }
 
   getTipoMoeda(){
@@ -65,25 +91,40 @@ export default class Cliente extends Component<Props> {
     });
   }
 
+  sair(){
+    LoginModule.logoff();
+    let {dispatch} = this.props.navigation;
+    dispatch(resetActionLogin);
+    AsyncStorage.removeItem('empresa');
+    AsyncStorage.removeItem('user');
+    AsyncStorage.removeItem('user_cod');
+  }
+
   getClientes(){ 
-    fetch(config.url+'clientes/byname/'+(this.state.input).toUpperCase(), {
+    fetch(config.url+'clientes/one/byname/'+(this.state.input).toUpperCase(), {
       method: 'GET',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
     }).then((response)=> response.json()).then((resp) => {
-      let aux = [];
-      
-      for(e in resp){
-        aux.push(resp[e]);
-      }
+      //alert(JSON.stringify(resp));
+      if(resp.length == 0 || (resp.msg != undefined)){
+        this.getClientesHasNotCont();
+      }else{
+        let aux = [];
+        for(e in resp){
+          aux.push(resp[e]);
+        }
 
-      this.setState({clientes: aux});
-      this.setState({loading: false});
-      this.getClientesHasNotCont();
+        this.setState({clientes: aux});
+        this.setState({loading: false});
+      
+      }
     }).catch((err)=>{
-      //Alert.alert('Atenção', 'erro');
+      //this.setState({loading: false});
+      this.getClientesHasNotCont();
+      //Alert.alert('Atenção', 'erro: '+err);
     });
   }
 
@@ -109,7 +150,7 @@ export default class Cliente extends Component<Props> {
   }
 
   getClientesHasNotCont(){
-    fetch(config.url+'clientes/notcont/'+(this.state.input).toUpperCase(), {
+    fetch(config.url+'clientes/one/notcont/'+(this.state.input).toUpperCase(), {
       method: 'GET',
       headers: {
         Accept: 'application/json',
@@ -117,30 +158,29 @@ export default class Cliente extends Component<Props> {
       },
     }).then((response)=> response.json())
       .then((resp) => {
-        let aux = this.state.clientes;
+        if((resp.msg != undefined) || (resp.length == 0)){        
+          this.setState({loading: false});
+        }else{
 
-        for(let e in resp){
-          //resp[e].tbcontasreceber.saldo_devedor = "0.00";
-          //resp[e].tbcontasreceber.saldo_compra = resp[e].limite;
-          let aux2 = {
-            limite_compra: resp[e].limite_compra, 
-            cod_cliente: resp[e].cod_cliente,
-            nome: resp[e].nome, endereco: resp[e].endereco,
-            bairro: resp[e].bairro, telefone: resp[e].telefone, celular: resp[e].celular,
-            cidade: resp[e].cidade, numero: resp[e].numero,
-            uf: resp[e].uf, cep: resp[e].cep, 
-            observacao: resp[e].observacao,
-            ["tbcontasreceber.saldo_devedor"]: '0.00',
-            ["tbcontasreceber.saldo_compra"]: resp[e].limite_compra
-          }
-          //alert(resp[e].nome);
-          aux.push(aux2);
-        }
-
-        aux.sort();
-        
-        this.setState({clientes: aux});
-
+          let aux = this.state.clientes;
+;
+            let aux2 = {
+              limite_compra: resp.limite_compra, 
+              cod_cliente: resp.cod_cliente,
+              nome: resp.nome, endereco: resp.endereco,
+              bairro: resp.bairro, telefone: resp.telefone, celular: resp.celular,
+              cidade: resp.cidade, numero: resp.numero,
+              uf: resp.uf, cep: resp.cep, 
+              observacao: resp.observacao,
+              ["tbcontasreceber.saldo_devedor"]: '0.00',
+              ["tbcontasreceber.saldo_compra"]: resp.limite_compra
+            };
+            //alert(resp[e].nome);
+            aux.push(aux2);
+          
+          
+          this.setState({clientes: aux});
+        } 
     }).catch(e => {
       //Alert.alert('Atenção', 'erro nos clientes que não tem contas');
     });
@@ -167,14 +207,17 @@ export default class Cliente extends Component<Props> {
   render() {
     return (
       <View style={styles.container}>
+        <View style={{flex:1}}>
         <View style={styles.input}>
           <TextInput placeholder="Digite o nome do cliente" style={{flex: 4}} 
           value={this.state.input} 
           onChangeText={(value)=>{
-              this.setState({loading: true});
-              this.setState({pesquisado: true});
-              this.setState({input: value});
+            if(value!=''){
+              this.setState({input: value,loading: true,pesquisado: true})
               this.getClientes();
+            }else{
+              this.setState({input: value, loading: false});
+            }
             
           }}/>
           {this.state.input != '' ?<Icon name='close' size={25} color="black"  
@@ -184,7 +227,7 @@ export default class Cliente extends Component<Props> {
             }}
           />:null}
         </View>
-        {this.state.loading? <ActivityIndicator size="large"/>:null}
+        {this.state.loading? <View style={{flex: 1}}><ActivityIndicator size="large"/></View>:null}
         {
           this.state.clientes.length>0 && this.state.loading==false?
             <FlatList
@@ -318,11 +361,89 @@ export default class Cliente extends Component<Props> {
           
         }
         {(this.state.clientes.length==0 && this.state.loading==false) && this.state.pesquisado?
-          <View style={{textAlign: 'center', justifyContent: 'center', alignItems: 'center'}}>
+          <View style={{textAlign: 'center', justifyContent: 'center', alignItems: 'center', flex:1}}>
             <Text>Cliente não encontrado!</Text>
           </View>
           : null
         }
+        {
+          //this.state.clientes.length>0 && !this.state.loading
+          //?
+            <View style={{flex: 2,
+            justifyContent: 'flex-start', padding: 10,}}>
+              <View style={{paddingBottom: 10,borderBottomWidth: 1,borderBottomColor: 'gray'}}>
+                <View style={{flexDirection: 'row', marginBottom: 10}}>
+                  <View style={{flex: 1, marginRight: 5}}>
+                    <Button title="C. Receber"/>
+                  </View>
+                  <View style={{flex: 1, marginRight: 5}}>
+                    <Button title="pontos" color="red"/>
+                  </View>
+                  <View style={{flex: 1, marginRight: 5}}>
+                    <Button title="pedidos" color="green"/>
+                  </View>
+                </View>
+                <View style={{flexDirection: 'row'}}>
+                  <View style={{flex: 1, marginRight: 5}}>
+                    <Button title="Inventário" color="blue"/>
+                  </View>
+                  <View style={{flex: 1, marginRight: 5}}>
+                    <Button title="pontos" color="orange"/>
+                  </View>
+                  <View style={{flex: 1, marginRight: 5}}>
+                    <Button title="pedidos" color="#124d34"/>
+                  </View>
+                </View>
+              </View>
+
+              <View style={{paddingTop: 10,}}>
+                <View style={{flexDirection: 'row', marginBottom: 10}}>
+                  <View style={{flex: 1, marginRight: 5}}>
+                    <Button title="C. Receber"/>
+                  </View>
+                  <View style={{flex: 1, marginRight: 5}}>
+                    <Button title="pontos" color="red"/>
+                  </View>
+                  <View style={{flex: 1, marginRight: 5}}>
+                    <Button title="pedidos" color="green"/>
+                  </View>
+                </View>
+                <View style={{flexDirection: 'row', marginBottom: 10}}>
+                  <View style={{flex: 1, marginRight: 5}}>
+                    <Button title="Inventário" color="blue"/>
+                  </View>
+                  <View style={{flex: 1, marginRight: 5}}>
+                    <Button title="pontos" color="orange"/>
+                  </View>
+                  <View style={{flex: 1, marginRight: 5}}>
+                    <Button title="pedidos" color="#124d34"/>
+                  </View>
+                </View>
+                <View style={{flexDirection: 'row', marginBottom: 10}}>
+                  <View style={{flex: 1, marginRight: 5}}>
+                    <Button title="C. Receber"/>
+                  </View>
+                  <View style={{flex: 1, marginRight: 5}}>
+                    <Button title="pontos" color="red"/>
+                  </View>
+                  <View style={{flex: 1, marginRight: 5}}>
+                    <Button title="pedidos" color="green"/>
+                  </View>
+                </View>
+                <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
+                  <View style={{flex: 1, marginRight: 15, justifyContent: 'flex-end'}}>
+                    <Button title="Configuração"/>
+                  </View>
+                  <View style={{flex: 1, marginLeft: 15}}>
+                    <Button title="sair" color="green"/>
+                  </View>
+                </View>
+              </View>
+            </View>
+            //:
+            //null
+        }
+        </View>
       </View>
     );
   }
@@ -357,11 +478,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   list:{
-
     paddingTop: 10,
     paddingLeft: 10,
     paddingRight: 10,
-    paddingBottom: 10
+    paddingBottom: 10,
+    flex: 1,
 },
   card: {
     //paddingLeft: 10,

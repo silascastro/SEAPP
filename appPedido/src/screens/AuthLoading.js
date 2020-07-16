@@ -32,6 +32,12 @@ export default class AuthLoadingScreen extends Component<Props> {
         NavigationActions.navigate({ routeName: 'Home' }),
       ],
     });
+    const resetActionCliente = StackActions.reset({
+      index: 0,
+      actions: [
+        NavigationActions.navigate({ routeName: 'Cliente' }),
+      ],
+    });
     const resetActionLogin = StackActions.reset({
       index: 0,
       actions: [
@@ -43,7 +49,7 @@ export default class AuthLoadingScreen extends Component<Props> {
       'LoginStatus', (e) =>{
         
         if(e.login==1){
-          dispatch(resetActionHome);
+          dispatch(resetActionCliente);
           this.setState({login: true});
         }if(e.login==0){
           dispatch(resetActionLogin);
