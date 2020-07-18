@@ -120,9 +120,8 @@ export default class Cliente extends Component<Props> {
         this.getClientesHasNotCont();
       }else{
         let aux = [];
-        for(e in resp){
-          aux.push(resp[e]);
-        }
+        aux.push(resp[0]);
+        
 
         this.setState({clientes: aux});
         this.setState({loading: false});
@@ -245,13 +244,14 @@ export default class Cliente extends Component<Props> {
                 <View style={styles.card} >
                     <TouchableNativeFeedback  onPress={()=>{
                       //this.refs['DRAWER'].openDrawer();
-                      //this.getContasAReceber(item.cod_cliente);
+                      //this.getContasAReceber this.state.clientes[0].cod_cliente);
                       this.props.navigation.navigate('ClienteContas',{
                         cod_cliente: item.cod_cliente,
                         nome: item.nome,
                         endereco: item.endereco,
                         telefone: item.telefone
                       });
+                      //alert(JSON.stringify(this.state.clientes));
                       }}>
                       <View style={styles.cardContent}>
                         <View style={{flex: 0, flexDirection: 'row'}}>
@@ -381,31 +381,56 @@ export default class Cliente extends Component<Props> {
               <View style={{paddingBottom: 10,borderBottomWidth: 1,borderBottomColor: 'gray'}}>
                 <View style={{flexDirection: 'row', marginBottom: 10}}>
                   <View style={{flex: 1, marginRight: 5}}>
-                    <Button title="C. Receber"/>
+                    <Button title="C. Receber" onPress={()=>{
+                      if(this.state.clientes.length>0 && !this.state.loading){
+                      this.props.navigation.navigate('ClienteContas',{
+                        cod_cliente: this.state.clientes[0].cod_cliente,
+                        nome: this.state.clientes[0].nome,
+                        endereco: this.state.clientes[0].endereco,
+                        telefone: this.state.clientes[0].telefone
+                      });
+                    }
+                    }}/>
                   </View>
                   <View style={{flex: 1, marginRight: 5}}>
                     <Button title="pontos" color="red"/>
                   </View>
                   <View style={{flex: 1, marginRight: 5}}>
                     <Button title="pedidos" color="green" onPress={()=>{
-                      /*this.props.navigation.push('ClienteContas', {
-                        cod_cliente: aux.cod_cliente,
-                        nome: aux.nome,
-                        telefone: aux.telefone,
-                        endereco: aux.endereco,                             
-                      });*/
+                      if(this.state.clientes.length>0 && !this.state.loading){
+                      this.props.navigation.navigate('Request',
+                      {
+                        cod_cliente: this.state.clientes[0].cod_cliente,
+                        nome: this.state.clientes[0].nome,
+                        telefone: this.state.clientes[0].telefone,
+                        celular: this.state.clientes[0].celular,
+                        endereco: this.state.clientes[0].endereco,
+                        cep: this.state.clientes[0].cep,
+                        bairro: this.state.clientes[0].bairro,
+                        cidade: this.state.clientes[0].cidade,
+                        numero: this.state.clientes[0].numero,
+                        uf: this.state.clientes[0].uf,
+                        observacao: this.state.clientes[0].observacao,
+                        limite: this.state.clientes[0].limite_compra,
+                        saldo_devedor: this.state.clientes[0]['tbcontasreceber.saldo_devedor'],
+                        saldo_compra: this.state.clientes[0]['tbcontasreceber.saldo_compra']
+
+                      });
+                    }
                     }}/>
                   </View>
                 </View>
                 <View style={{flexDirection: 'row'}}>
                   <View style={{flex: 1, marginRight: 5}}>
-                    <Button title="Inventário" color="blue"/>
+                    <Button title="Inventário" color="blue" onPress={()=>{
+                      this.props.navigation.navigate('Inventario');
+                    }}/>
                   </View>
                   <View style={{flex: 1, marginRight: 5}}>
-                    <Button title="pontos" color="orange"/>
+                    <Button title="" color="orange"/>
                   </View>
                   <View style={{flex: 1, marginRight: 5}}>
-                    <Button title="pedidos" color="#124d34"/>
+                    <Button title="" color="#124d34"/>
                   </View>
                 </View>
               </View>
@@ -413,40 +438,40 @@ export default class Cliente extends Component<Props> {
               <View style={{paddingTop: 10,}}>
                 <View style={{flexDirection: 'row', marginBottom: 10}}>
                   <View style={{flex: 1, marginRight: 5}}>
-                    <Button title="C. Receber"/>
+                    <Button title=""/>
                   </View>
                   <View style={{flex: 1, marginRight: 5}}>
-                    <Button title="pontos" color="red"/>
+                    <Button title="" color="red"/>
                   </View>
                   <View style={{flex: 1, marginRight: 5}}>
-                    <Button title="pedidos" color="green"/>
-                  </View>
-                </View>
-                <View style={{flexDirection: 'row', marginBottom: 10}}>
-                  <View style={{flex: 1, marginRight: 5}}>
-                    <Button title="Inventário" color="blue"/>
-                  </View>
-                  <View style={{flex: 1, marginRight: 5}}>
-                    <Button title="pontos" color="orange"/>
-                  </View>
-                  <View style={{flex: 1, marginRight: 5}}>
-                    <Button title="pedidos" color="#124d34"/>
+                    <Button title="" color="green"/>
                   </View>
                 </View>
                 <View style={{flexDirection: 'row', marginBottom: 10}}>
                   <View style={{flex: 1, marginRight: 5}}>
-                    <Button title="C. Receber"/>
+                    <Button title="" color="blue"/>
                   </View>
                   <View style={{flex: 1, marginRight: 5}}>
-                    <Button title="pontos" color="red"/>
+                    <Button title="" color="orange"/>
                   </View>
                   <View style={{flex: 1, marginRight: 5}}>
-                    <Button title="pedidos" color="green"/>
+                    <Button title="" color="#124d34"/>
+                  </View>
+                </View>
+                <View style={{flexDirection: 'row', marginBottom: 10}}>
+                  <View style={{flex: 1, marginRight: 5}}>
+                    <Button title=""/>
+                  </View>
+                  <View style={{flex: 1, marginRight: 5}}>
+                    <Button title="" color="red"/>
+                  </View>
+                  <View style={{flex: 1, marginRight: 5}}>
+                    <Button title="" color="green"/>
                   </View>
                 </View>
                 <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
                   <View style={{flex: 1, marginRight: 15, justifyContent: 'flex-end'}}>
-                    <Button title="Configuração"/>
+                    <Button title="Configuração" onPress={()=>this.props.navigation.navigate('Settings')}/>
                   </View>
                   <View style={{flex: 1, marginLeft: 15}}>
                     <Button title="sair" color="green"/>
