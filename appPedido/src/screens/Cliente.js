@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Alert,StyleSheet, Text, Button,
 View, TextInput, ActivityIndicator, FlatList, 
 TouchableNativeFeedback, NativeModules, Linking} from 'react-native';
+import { StackActions, NavigationActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as config from '../../config';
@@ -10,6 +11,13 @@ import AsyncStorage from '@react-native-community/async-storage';
 //const OpenMapModule = NativeModules.OpenMapModule;
 const LoginModule = NativeModules.LoginModule;
 const ToastModule = NativeModules.ToastModule;
+
+const resetActionLogin = StackActions.reset({
+  index: 0,
+  actions: [
+    NavigationActions.navigate({ routeName: 'Login' }),
+  ],
+});
 
 export default class Cliente extends Component<Props> {
   constructor(props){
@@ -376,8 +384,7 @@ export default class Cliente extends Component<Props> {
         {
           //this.state.clientes.length>0 && !this.state.loading
           //?
-            <View style={{flex: 2,
-            justifyContent: 'flex-start', padding: 10,}}>
+            <View style={{flex: 2, padding: 10,}}>
               <View style={{paddingBottom: 10,borderBottomWidth: 1,borderBottomColor: 'gray'}}>
                 <View style={{flexDirection: 'row', marginBottom: 10}}>
                   <View style={{flex: 1, marginRight: 5}}>
@@ -469,15 +476,34 @@ export default class Cliente extends Component<Props> {
                     <Button title="" color="green"/>
                   </View>
                 </View>
-                <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
-                  <View style={{flex: 1, marginRight: 15, justifyContent: 'flex-end'}}>
+                
+              </View>
+              <View style={{flex: 1,justifyContent: 'flex-end'}}>
+                  <View style={{flexDirection: 'row'}}>
+                  <View style={{flex: 1, marginRight: 15,}}>
                     <Button title="Configuração" onPress={()=>this.props.navigation.navigate('Settings')}/>
                   </View>
                   <View style={{flex: 1, marginLeft: 15}}>
-                    <Button title="sair" color="green"/>
+                    <Button title="sair" color="green" onPress={()=>{
+                      Alert.alert('Atenção', 'confirma a sua ação?',
+                      [
+                        {
+                          text: 'Cancelar',
+                          onPress: () => console.log('cancel'),
+                          style: 'cancel',
+                        },
+                        {
+                          text: 'Confimar',
+                          onPress: () => {
+                            this.sair();
+                            
+                          },  
+                        }
+                      ]);
+                    }}/>
                   </View>
                 </View>
-              </View>
+                </View>
             </View>
             //:
             //null
