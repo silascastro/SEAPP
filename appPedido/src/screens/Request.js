@@ -180,7 +180,7 @@ export default class Request extends Component<Props> {
       const resetActionHome = StackActions.reset({
         index: 0,
         actions: [
-          NavigationActions.navigate({ routeName: 'Home', 
+          NavigationActions.navigate({ routeName: 'Cliente', 
           params: {message: 'contas enviado com sucesso!'} }),
         ],
       });

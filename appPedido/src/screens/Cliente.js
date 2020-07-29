@@ -454,7 +454,25 @@ export default class Cliente extends Component<Props> {
                   <View style={{flex: 1, marginRight: 5}}>
                     <Button title="pedidos" color="green" onPress={()=>{
                       if(this.state.clientes.length>0 && !this.state.loading){
-                        
+                        this.props.navigation.navigate('Request',
+                            {
+                              cod_cliente: this.state.clientes[0].cod_cliente,
+                              nome: this.state.clientes[0].nome,
+                              telefone: this.state.clientes[0].telefone,
+                              celular: this.state.clientes[0].celular,
+                              endereco: this.state.clientes[0].endereco,
+                              cep: this.state.clientes[0].cep,
+                              bairro: this.state.clientes[0].bairro,
+                              cidade: this.state.clientes[0].cidade,
+                              numero: this.state.clientes[0].numero,
+                              uf: this.state.clientes[0].uf,
+                              observacao: this.state.clientes[0].observacao,
+                              limite: this.state.clientes[0].limite_compra,
+                              saldo_devedor: this.state.clientes[0]['tbcontasreceber.saldo_devedor'],
+                              saldo_compra: this.state.clientes[0]['tbcontasreceber.saldo_compra']
+      
+                            });
+
                       /**/
                     }else{
                       AsyncStorage.getItem("usuario_tipo",(err,result)=> {
@@ -507,6 +525,27 @@ export default class Cliente extends Component<Props> {
                           }
                             
                             
+                        }else{
+                          if(this.state.clientes.length> 0){
+                            this.props.navigation.navigate('Request',
+                            {
+                              cod_cliente: this.state.clientes[0].cod_cliente,
+                              nome: this.state.clientes[0].nome,
+                              telefone: this.state.clientes[0].telefone,
+                              celular: this.state.clientes[0].celular,
+                              endereco: this.state.clientes[0].endereco,
+                              cep: this.state.clientes[0].cep,
+                              bairro: this.state.clientes[0].bairro,
+                              cidade: this.state.clientes[0].cidade,
+                              numero: this.state.clientes[0].numero,
+                              uf: this.state.clientes[0].uf,
+                              observacao: this.state.clientes[0].observacao,
+                              limite: this.state.clientes[0].limite_compra,
+                              saldo_devedor: this.state.clientes[0]['tbcontasreceber.saldo_devedor'],
+                              saldo_compra: this.state.clientes[0]['tbcontasreceber.saldo_compra']
+      
+                            });
+                          }
                         }
                       });
                     }
@@ -515,7 +554,8 @@ export default class Cliente extends Component<Props> {
                 </View>
                 <View style={{flexDirection: 'row'}}>
                   <View style={{flex: 1, marginRight: 5}}>
-                    <Button title="Inventário" color="blue" onPress={()=>{
+                    <Button title={this.state.usuario != '' ? '' : "Inventário"} color="blue" onPress={()=>{
+                      if(this.state.usuario == '')
                       this.props.navigation.navigate('Inventario');
                     }}/>
                   </View>

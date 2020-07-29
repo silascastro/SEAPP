@@ -244,7 +244,7 @@ export default class ClienteContas extends Component<Props> {
       const resetActionHome = StackActions.reset({
         index: 0,
         actions: [
-          NavigationActions.navigate({ routeName: 'Home', 
+          NavigationActions.navigate({ routeName: 'Cliente', 
           params: {message: 'contas recebidas com sucesso!'} }),
         ],
       });
