@@ -62,8 +62,17 @@ export default class Cliente extends Component<Props> {
      await AsyncStorage.getItem('usuario_tipo', (error,result) => {
         if(result){
           this.setState({usuario: result});
+          if(result == 'C'){
+            AsyncStorage.getItem('user', (error, result) => {
+              if(result){
+                this.setState({input: result});
+                this.getClientes();
+              }
+            });
+          }
         }
       });
+      
     }
 
   componentDidMount(){
@@ -554,8 +563,8 @@ export default class Cliente extends Component<Props> {
                 </View>
                 <View style={{flexDirection: 'row'}}>
                   <View style={{flex: 1, marginRight: 5}}>
-                    <Button title={this.state.usuario != '' ? '' : "Inventário"} color="blue" onPress={()=>{
-                      if(this.state.usuario == '')
+                    <Button title={this.state.usuario != "C" ? 'Inventário' : ""} color="blue" onPress={()=>{
+                      if(this.state.usuario != "C" )
                       this.props.navigation.navigate('Inventario');
                     }}/>
                   </View>

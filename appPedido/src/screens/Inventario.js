@@ -21,7 +21,7 @@ export default class Inventario extends Component<Props> {
       input: '',
       produtos: [],
       produtoSelecionado: '',
-      select_qtd: '0',
+      select_qtd: '1',
       user: '',
       pesquisado: false,
       loading: false,
@@ -77,6 +77,7 @@ export default class Inventario extends Component<Props> {
   }
 
   getProdutctsByName(value){ 
+    
     fetch(config.url+'produtos/byname/'+(value).toUpperCase(), {
       method: 'GET',
       headers: {
@@ -101,7 +102,7 @@ export default class Inventario extends Component<Props> {
           estoque_certo:	resp.estoque_certo,
           usuario_da_contagem:	resp.usuario_da_contagem,
           qtde_digitada_balanco:	resp.qtde_digitada_balanco,
-          qtd_selec: "1",
+          qtd_selec: resp.item_ja_contado == "S" ? /*(resp.qtde_digitada_balanco).toString()*/ "1,500" : ("1"),
           foto: '',
           index: 1
         };
@@ -192,7 +193,26 @@ export default class Inventario extends Component<Props> {
         p.foto = config.url+'imagens/'+aux[4]+'/'+aux[5];
         
     });
-    this.setState({produtos: prod, select_qtd: '0'});
+    this.setState({produtos: prod});
+
+    //alert((((prod[0].qtde_digitada_balanco).toString()).replace(".",",")).slice(0,-2));
+    //alert(((Number(prod[0].qtde_digitada_balanco)).toString()));
+    if(prod[0].item_ja_contado == "S"){
+      if(prod[0].tipo_unid == "UND"){
+        this.setState({select_qtd: (Number(prod[0].qtde_digitada_balanco)).toString()});
+      }else{
+        this.setState({select_qtd: (((prod[0].qtde_digitada_balanco).toString()).replace(".",",")).slice(0,-2)});
+      }
+    }else{
+      if(prod[0].tipo_unid == "UND"){
+        this.setState({select_qtd: '1'})
+      }
+      else{
+        this.setState({select_qtd: '1,000'})
+      }
+    }
+
+    
     setTimeout(()=>this.setState({loading: false}),500);
   //this.setState({loading: false})
   }
@@ -258,13 +278,14 @@ export default class Inventario extends Component<Props> {
 
   updateProduct(cod_produto){
     let date = new Date();
-
+    //alert(parseFloat((((this.state.select_qtd).split(".")).join('')).replace(/,/g,'.')));
+    //parseFloat((((aux[e].valor_parcial).split(".")).join('')).replace(/,/g,'.'))
     var _data = {
       data_hora_contagem:	(date.toISOString()).toString(),
       item_ja_contado: 'S',
       estoque_certo: ( Number(this.state.select_qtd) == Number(this.state.produtos[0].qtd) )? 'S' : 'N',
       usuario_da_contagem: this.state.user,
-      qtde_digitada_balanco: Number(this.state.select_qtd).toString()
+      qtde_digitada_balanco: parseFloat((((this.state.select_qtd).split(".")).join('')).replace(/,/g,'.'))
     };
     //alert(JSON.stringify(_data));
     fetch(config.url+'produtos/update/'+(cod_produto), {
