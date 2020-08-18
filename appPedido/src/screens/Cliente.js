@@ -124,10 +124,7 @@ export default class Cliente extends Component<Props> {
 
   getIp(){
     AsyncStorage.getItem('_ip',(error,result)=> {
-        if(error){
-            //AsyncStorage.setItem('_ip',config.url);
-            //API = config.url;
-        }
+        
         if(result){
           //API = result;
           config.url = result;
