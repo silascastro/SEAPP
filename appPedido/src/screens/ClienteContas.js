@@ -364,7 +364,6 @@ export default class ClienteContas extends Component<Props> {
                 }
                 <TextInputMask
                   type={'money'}
-                  
                   onEndEditing={()=>{
                     let {contasareceber} = this.state;
 
