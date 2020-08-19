@@ -445,7 +445,7 @@ export default class ClienteContas extends Component<Props> {
                     });
                   }}
                   options={{
-                    precision: 0,
+                    precision: 2,
                     unit: '',
                   }}
                   keyboardType="number-pad"
