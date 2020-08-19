@@ -128,7 +128,7 @@ export default class Login extends Component {
             
         }
         if(result){
-
+          console.log(result);
           config.url = result;
           //this.getUsers();
           /*let aux = result.split('//')[1];
