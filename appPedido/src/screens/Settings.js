@@ -55,6 +55,7 @@ export default class Settings extends Component<Props> {
   }
 
   setIp(value, descricao){
+    console.log(value+descricao);
     this.setIpCollections({descricao: descricao, ip: value});
     AsyncStorage.setItem('_ip',"http://"+value+":3000/");
     ToastModule.show('configurações atualizadas com sucesso!',3000);
@@ -63,6 +64,7 @@ export default class Settings extends Component<Props> {
   }
 
   setImei(value){
+    //console.log(this.state.imei);
     AsyncStorage.setItem("_imei", this.state.imei);
   }
   
@@ -96,6 +98,7 @@ export default class Settings extends Component<Props> {
   }
 
   setIpCollections(data){
+    console.log(data);
     data.ip = "http://"+data.ip+":3000/"
     AsyncStorage.getItem(_ipcollections, (error,result)=>{
       if(result){
@@ -238,8 +241,8 @@ export default class Settings extends Component<Props> {
             <Button title="confirmar" 
             disabled={this.state.ip!=''?false:true}
             onPress={() => {
-                this.setIp(this.state.ip, 
-                  this.state.descricao);
+                this.setIp(this.state.descricao, 
+                  this.state.ip);
                   this.setImei();
             }}
             />
